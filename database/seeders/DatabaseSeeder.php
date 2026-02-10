@@ -23,7 +23,9 @@ class DatabaseSeeder extends Seeder
             FleaMarketSeeder::class,
             AdministratorSeeder::class,
             StallsSeeders::class,
-            PaymentMethodSeeder::class
+            PaymentMethodSeeder::class,
+            PaymentMethodStallSeeder::class,
+            StallsCategorySeeder::class,
         ]);
     }
 }

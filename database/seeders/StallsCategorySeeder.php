@@ -21,7 +21,7 @@ class StallsCategorySeeder extends Seeder
         ];
 
         foreach ($stallsCategories as $stallCategory) {
-            DB::table('stall_category')->insert(
+            DB::table('stalls_category')->insert(
                 [
                     'stall_id' => $stallCategory['stall_id'],
                     'category_id' => $stallCategory['category_id'],
