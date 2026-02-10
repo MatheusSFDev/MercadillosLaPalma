@@ -17,35 +17,30 @@ class ProductSeeder extends Seeder
         $products = [
             [
                 'name' => 'Carne de cerdo',
-                'photos' => 'carne_de_cerdo.jpg',
                 'unit'=>'kg',
                 'user_id'=>1,
                 'category_id'=>1
             ],
             [
                 'name' => 'Pescado fresco',
-                'photos' => 'pescado_fresco.jpg',
                 'unit'=>'kg',
                 'user_id'=>2,
                 'category_id'=>2
             ],
             [
                 'name' => 'Frutas y verduras',
-                'photos' => 'frutas_verduras.jpg',
                 'unit'=>'kg',
                 'user_id'=>3,
                 'category_id'=>3
             ],
             [
                 'name' => 'Artesanía local',
-                'photos' => 'artesania_local.jpg',
                 'unit'=>'kg',
                 'user_id'=>1,
                 'category_id'=>4
             ],
             [
                 'name' => 'Productos varios',
-                'photos' => 'productos_varios.jpg',
                 'unit'=>'kg ',
                 'user_id'=>2,
                 'category_id'=>5
@@ -55,7 +50,6 @@ class ProductSeeder extends Seeder
         foreach ($products as $product) {
             DB::table('products')->insert([
                 'name' => $product['name'],
-                'photos' => $product['photos'],
                 'unit' => $product['unit'],
                 'user_id' => $product['user_id'],
                 'category_id' => $product['category_id']
