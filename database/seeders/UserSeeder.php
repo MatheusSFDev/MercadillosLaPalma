@@ -19,7 +19,7 @@ class UserSeeder extends Seeder
             'name' => 'Paco',
             'surname' => 'Gimenez',
             'address' => 'Calle Falsa 123',
-            'number' => '123456789',
+            'phone_number' => '123456789',
             'email' => 'paco@example.com',
             'password' => 'password'
         ],
@@ -27,7 +27,7 @@ class UserSeeder extends Seeder
             'name' => 'Maria',
             'surname' => 'Lopez',
             'address' => 'Avenida Siempre Viva 456',
-            'number' => '987654321',
+            'phone_number' => '987654321',
             'email' => 'maria@example.com',
             'password' => 'password'
         ],
@@ -35,7 +35,7 @@ class UserSeeder extends Seeder
             'name' => 'Juan',
             'surname' => 'Perez',
             'address' => 'Calle Real 789',
-            'number' => '555555555',
+            'phone_number' => '555555555',
             'email' => 'juan@example.com',
             'password' => 'password'
         ]
@@ -46,7 +46,7 @@ class UserSeeder extends Seeder
             'name' => $user['name'],
             'surname' => $user['surname'],
             'address' => $user['address'],
-            'number' => $user['number'],
+            'phone_number' => $user['phone_number'],
             'email' => $user['email'],
             'password' => $user['password'],
         ]);
