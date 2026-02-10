@@ -10,8 +10,6 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 class Stall extends Model
 {
     //
-    protected $table = "stalls";
-    protected $prymaryKey = "stalls_id";
     protected $fillable = [
         "home_delivery",
         "information",
