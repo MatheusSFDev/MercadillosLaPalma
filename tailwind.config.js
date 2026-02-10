@@ -13,6 +13,9 @@ export default {
         extend: {
             fontFamily: {
                 sans: ['Figtree', ...defaultTheme.fontFamily.sans],
+                'playfair': ['"Playfair Display"', ...defaultTheme.fontFamily.serif],
+                'dm-serif': ['"DM Serif Display"', ...defaultTheme.fontFamily.serif],
+                'atkinson': ['"Atkinson Hyperlegible"', ...defaultTheme.fontFamily.sans],
             },
         },
     },
