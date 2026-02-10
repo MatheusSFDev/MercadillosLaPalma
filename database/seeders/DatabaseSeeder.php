@@ -22,7 +22,8 @@ class DatabaseSeeder extends Seeder
             MunicipalitiesSeeder::class,
             FleaMarketSeeder::class,
             AdministratorSeeder::class,
-            StallsSeeders::class
+            StallsSeeders::class,
+            PaymentMethodSeeder::class
         ]);
     }
 }
