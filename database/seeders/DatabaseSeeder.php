@@ -26,6 +26,10 @@ class DatabaseSeeder extends Seeder
             PaymentMethodSeeder::class,
             PaymentMethodStallSeeder::class,
             StallsCategorySeeder::class,
+            PhotosSeeder::class,
+            OrderSeeder::class,
+            OrderProductSeeder::class,
+            StockProductSeeder::class
         ]);
     }
 }
