@@ -8,7 +8,6 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 class PaymentMethod extends Model
 {
     //
-    protected $table = "payment_methods";
     protected $fillable = [
         "name"
     ];
