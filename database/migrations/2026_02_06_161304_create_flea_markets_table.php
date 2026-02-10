@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id();
             $table->string("address");
             $table->unsignedBigInteger('municipality_id');
+            $table->string('img_url');
             
             $table->foreign('municipality_id')->references('id')->on('municipalities')->onDelete('cascade');
         });
