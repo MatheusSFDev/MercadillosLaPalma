@@ -14,14 +14,15 @@ class CategoriesSeeder extends Seeder
      */
     public function run(): void
     {
-        $Categories=[
+        $Categories = [
             'Carniceria',
             'Pescaderia',
             'Verduleria',
             'Artesania',
-            'Otros',
+            'Otros'
         ];
-        foreach($Categories as $Category){
+
+        foreach ($Categories as $Category) {
             DB::table('categories')->insert([
                 'name' => $Category,
             ]);

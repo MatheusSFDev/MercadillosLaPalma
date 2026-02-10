@@ -19,7 +19,7 @@ class DatabaseSeeder extends Seeder
             CategoriesSeeder::class,
             UserSeeder::class,
             ProductSeeder::class,
-            MunicipalitiesSeeder::class,        
-            ]);
+            MunicipalitiesSeeder::class
+        ]);
     }
 }

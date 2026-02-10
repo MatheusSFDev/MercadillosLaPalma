@@ -14,7 +14,7 @@ class MunicipalitiesSeeder extends Seeder
      */
     public function run(): void
     {
-        $Municipalities=[
+        $Municipalities = [
             'Breña Alta',
             'Breña Baja',
             'Fuencaliente de la Palma',
@@ -28,14 +28,13 @@ class MunicipalitiesSeeder extends Seeder
             'Tazacorte',
             'Villa de Mazo',
             'Tijarafe',
-            'Barlovento',
+            'Barlovento'
         ];
-        foreach($Municipalities as $Municipality){
+
+        foreach ($Municipalities as $Municipality) {
             DB::table('municipalities')->insert([
                 'name' => $Municipality,
             ]);
         }
-
-        
     }
 }

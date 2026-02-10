@@ -14,13 +14,14 @@ class UserSeeder extends Seeder
     public function run(): void
     {
 
-    $Users=[[
+    $Users = [
+        [
             'name' => 'Paco',
             'surname' => 'Gimenez',
             'address' => 'Calle Falsa 123',
             'number' => '123456789',
             'email' => 'paco@example.com',
-            'password' => 'password',
+            'password' => 'password'
         ],
         [
             'name' => 'Maria',
@@ -28,17 +29,19 @@ class UserSeeder extends Seeder
             'address' => 'Avenida Siempre Viva 456',
             'number' => '987654321',
             'email' => 'maria@example.com',
-            'password' => 'password',
+            'password' => 'password'
         ],
-            [
-                'name' => 'Juan',
-                'surname' => 'Perez',
-                'address' => 'Calle Real 789',
-                'number' => '555555555',
-                'email' => 'juan@example.com',
-                'password' => 'password',
-            ] ];
-    foreach($Users as $user){
+        [
+            'name' => 'Juan',
+            'surname' => 'Perez',
+            'address' => 'Calle Real 789',
+            'number' => '555555555',
+            'email' => 'juan@example.com',
+            'password' => 'password'
+        ]
+    ];
+
+    foreach ($Users as $user) {
         DB::table('users')->insert([
             'name' => $user['name'],
             'surname' => $user['surname'],
@@ -47,6 +50,6 @@ class UserSeeder extends Seeder
             'email' => $user['email'],
             'password' => $user['password'],
         ]);
-            }
+    }
 }
 }
