@@ -14,7 +14,6 @@ return new class extends Migration
         Schema::create('orders', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('user_id');
-            $table->string('status'); //Yo usaria un enum para esto, con los estados posibles de una orden (pendiente, pagada, enviada, etc)
             $table->dateTime('order_date');
             $table->dateTime('delivery_date')->nullable();
             $table->timestamps();
