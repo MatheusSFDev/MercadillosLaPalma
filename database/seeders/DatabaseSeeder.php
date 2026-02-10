@@ -22,7 +22,11 @@ class DatabaseSeeder extends Seeder
             MunicipalitiesSeeder::class,
             FleaMarketSeeder::class,
             AdministratorSeeder::class,
-            StallsSeeders::class
+            StallsSeeders::class,
+            PhotosSeeder::class,
+            OrderSeeder::class,
+            OrderProductSeeder::class,
+            StockProductSeeder::class
         ]);
     }
 }
