@@ -25,7 +25,7 @@ class OrderProductSeeder extends Seeder
                 'product_id' => 2,
                 'quantity' => 1,
                 'price_per_unit' => 12.00,
-                'status' => 'Enviado',
+                'status' => 'Aceptado',
             ],
             [
                 'order_id' => 2,
@@ -39,14 +39,14 @@ class OrderProductSeeder extends Seeder
                 'product_id' => 4,
                 'quantity' => 1,
                 'price_per_unit' => 20.00,
-                'status' => 'Entregado',
+                'status' => 'Completado',
             ],
             [
                 'order_id' => 3,
                 'product_id' => 5,
                 'quantity' => 5,
                 'price_per_unit' => 2.00,
-                'status' => 'Enviado',
+                'status' => 'Aceptado',
             ],
         ];
 
