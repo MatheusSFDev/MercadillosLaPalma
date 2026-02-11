@@ -1,3 +1,23 @@
+@font-face {
+    font-family: 'Atkinson';
+    src: url('../fonts/AtkinsonHyperlegible-Regular.ttf') format('truetype');
+}
+
+@font-face {
+    font-family: 'Black Mango';
+    src: url('../fonts/Black Mango Regular.ttf') format('truetype');
+}
+
+@font-face {
+    font-family: 'DM Serif';
+    src: url('../fonts/DMSerifDisplay-Regular.ttf') format('truetype');
+}
+
+@font-face {
+    font-family: 'Playfair';
+    src: url('../fonts/PlayfairDisplay-Regular.ttf') format('truetype');
+}
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
