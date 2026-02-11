@@ -6,6 +6,8 @@ use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use App\Models\User;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Hash;
+
 class UserSeeder extends Seeder
 {
     /**
@@ -48,7 +50,7 @@ class UserSeeder extends Seeder
             'address' => $user['address'],
             'phone_number' => $user['phone_number'],
             'email' => $user['email'],
-            'password' => $user['password'],
+            'password' => Hash::make($user['password']),
         ]);
     }
 }
