@@ -39,7 +39,7 @@ new #[Layout('layouts.guest')] class extends Component {
                     <x-input-label for="email" value="Correo Electrónico"
                         class="block text-gray-700 text-sm font-medium mb-2" />
                     <x-text-input wire:model="form.email" id="email"
-                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#2b5c01] focus:border-[#2b5c01] outline-none transition-colors"
+                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary outline-none transition-colors"
                         type="email" name="email" required autofocus autocomplete="username"
                         placeholder="Introduce tu correo electrónico." />
                     <x-input-error :messages="$errors->get('form.email')" class="mt-2" />
@@ -49,7 +49,7 @@ new #[Layout('layouts.guest')] class extends Component {
                     <x-input-label for="password" value="Contraseña"
                         class="block text-gray-700 text-sm font-medium mb-2" />
                     <x-text-input wire:model="form.password" id="password"
-                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#2b5c01] focus:border-[#2b5c01] outline-none transition-colors"
+                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary outline-none transition-colors"
                         type="password" name="password" required autocomplete="current-password"
                         placeholder="Introduce tu contraseña." />
                     <x-input-error :messages="$errors->get('form.password')" class="mt-2" />
@@ -58,12 +58,12 @@ new #[Layout('layouts.guest')] class extends Component {
                 <div class="flex items-center justify-between mb-6">
                     <label for="remember" class="flex items-center">
                         <input wire:model="form.remember" id="remember" type="checkbox"
-                            class="w-4 h-4 text-[#2b5c01] rounded focus:ring-[#2b5c01]" name="remember">
+                            class="w-4 h-4 text-primary rounded focus:ring-primary" name="remember">
                         <span class="ml-2 text-sm text-gray-600">Recuérdame</span>
                     </label>
 
                     @if (Route::has('password.request'))
-                        <a class="text-sm text-[#2b5c01] hover:text-[#5a8713] hover:underline"
+                        <a class="text-sm text-primary hover:text-primary-hover hover:underline"
                             href="{{ route('password.request') }}" wire:navigate>
                             ¿Olvidaste tu contraseña?
                         </a>
@@ -71,14 +71,14 @@ new #[Layout('layouts.guest')] class extends Component {
                 </div>
 
                 <x-primary-button
-                    class="w-full bg-[#2b5c01] hover:bg-[#5a8713] text-white font-bold py-2.5 px-4 rounded-lg transition-colors flex justify-center">
+                    class="w-full bg-primary hover:bg-primary-hover text-white font-bold py-2.5 px-4 rounded-lg transition-colors flex justify-center">
                     {{ __('Iniciar sesión') }}
                 </x-primary-button>
 
                 <div class="mt-6 text-center text-sm text-gray-600">
                     ¿No tienes una cuenta?
                     <a href="{{ route('register') }}" wire:navigate
-                        class="text-[#2b5c01] hover:text-[#5a8713] font-medium hover:underline">Regístrate</a>
+                        class="text-primary hover:text-primary-hover font-medium hover:underline">Regístrate</a>
                 </div>
             </form>
         </div>

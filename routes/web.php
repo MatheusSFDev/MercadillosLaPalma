@@ -13,6 +13,6 @@ Route::view('profile', 'profile')
     ->middleware(['auth'])
     ->name('profile');
 
-Route::view('/loginp', 'general.login');
+Route::view('/login', 'general.login');
 
 require __DIR__.'/auth.php';
