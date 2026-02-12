@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+
+use App\Services\StallService;
 use Illuminate\Http\Request;
 
 class AdminController extends Controller
@@ -17,7 +19,15 @@ class AdminController extends Controller
     public function controlPanel()
     {
         return view("admin.controlPanel");
-    } 
+    }
+
+   public function stalls(StallService $stalls)
+{
+    
+    $stalls->getAllWithRelations();
+
+    return view('admin.controlPanel', compact('stalls'));
+}
 
     /**
      * Show the form for creating a new resource.
