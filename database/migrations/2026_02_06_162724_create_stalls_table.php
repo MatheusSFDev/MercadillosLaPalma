@@ -15,10 +15,13 @@ return new class extends Migration
             $table->id();
             $table->unsignedBigInteger('user_id');
             $table->unsignedBigInteger('flea_market_id');
-            $table->boolean("home_delivery"); // boolean / string
-            $table->string("information");
-            $table->boolean("active");
-            $table->dateTime("reset_date");
+            $table->boolean("home_delivery")->default(false); // boolean / string
+            $table->string("information")->nullable();
+            $table->boolean("active")->default(true);
+            $table->dateTime("reset_date")->nullable();
+            $table->dateTime('register_date')->nullable();
+            $table->string('name')->nullable();
+            $table->string('img_url')->default('img/imgNotAvailable.png');
             $table->timestamps();
 
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
