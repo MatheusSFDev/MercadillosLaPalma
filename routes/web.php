@@ -6,16 +6,20 @@ use App\Http\Controllers\SellerController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 
-// Route::get("/general", [UserController::class, 'index']);
+Route::view("profile", "profile")
+    ->middleware(["auth"])
+    ->name("profile");
+
+Route::view("register", "register")
+    ->middleware(["auth"])
+    ->name("profile");
 
 Route::controller(UserController::class)
     ->prefix("general")
     ->name("general.")
     ->group(function () {
+        // Modificar prefix y name y colocar debajo de ruta index
         Route::get('/', 'index');
-        Route::get('/login', 'login')->name("login");
-        Route::get('/register', 'create')->name("register");
-
         // Añadir middleware Auth && Role
         Route::get("/orders", "orders")->name("orders");
         Route::get("/profile", "profile")->name("profile");
@@ -48,6 +52,35 @@ Route::controller(AdminController::class)
     ->group(function () {
         Route::get('/controlpanel', 'controlPanel')->name("control-panel");
         Route::get('/markets', 'indexMarkets')->name("markets");
+});
+
+Route::prefix('deploy')->group(function () {
+    // Función auxiliar para verificar la clave
+    function checkDeployKey($key) {
+        $serverKey = env('DEPLOY_KEY');
+
+        if (empty($serverKey) || $key !== $serverKey) {
+            abort(403, 'Acceso denegado o clave no configurada.');
+        }
+    }
+
+    Route::get('/migrate/{key}', function ($key) {
+        checkDeployKey($key);
+        Artisan::call('migrate', ['--force' => true]);
+        return 'Migración completada: <br>' . nl2br(Artisan::output());
+    });
+
+    Route::get('/optimize/{key}', function ($key) {
+        checkDeployKey($key);
+        Artisan::call('optimize:clear');
+        return 'Caché borrada: <br>' . nl2br(Artisan::output());
+    });
+    
+    Route::get('/link/{key}', function ($key) {
+        checkDeployKey($key);
+        Artisan::call('storage:link');
+        return 'Storage linkeado: <br>' . nl2br(Artisan::output());
+    });
 });
 
 require __DIR__.'/auth.php';
