@@ -9,10 +9,15 @@ class AdminController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function indexMarkets()
     {
-        //
+        return view("admin.markets");
     }
+
+    public function controlPanel()
+    {
+        return view("admin.controlPanel");
+    } 
 
     /**
      * Show the form for creating a new resource.

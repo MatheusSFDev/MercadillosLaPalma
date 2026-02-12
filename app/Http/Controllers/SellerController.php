@@ -9,11 +9,19 @@ class SellerController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function indexStalls()
     {
-        //
+        return view("sellers.stallSellers");
+    }
+    public function createProduct()
+    {
+        return view("sellers.addProducts");
     }
 
+    public function editProducts()
+    {
+        return view("sellers.editProducts");
+    }
     /**
      * Show the form for creating a new resource.
      */

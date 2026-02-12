@@ -11,7 +11,16 @@ class UserController extends Controller
      */
     public function index()
     {
-        //
+        return view("general.index");
+    }
+
+    public function login()
+    {
+        return view("general.login");
+    }
+
+    public function orders(){
+        return view("general.orders");
     }
 
     /**
@@ -19,7 +28,12 @@ class UserController extends Controller
      */
     public function create()
     {
-        //
+        return view("general.register");
+    }
+
+    public function showProducts()
+    {
+        return view("general.products");
     }
 
     /**
@@ -33,9 +47,9 @@ class UserController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(string $id)
+    public function profile()
     {
-        //
+        return view("general.profile");
     }
 
     /**
