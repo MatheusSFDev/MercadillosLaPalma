@@ -14,21 +14,8 @@ class UserController extends Controller
         return view("general.index");
     }
 
-    public function login()
-    {
-        return view("general.login");
-    }
-
     public function orders(){
         return view("general.orders");
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        return view("general.register");
     }
 
     public function showProducts()
