@@ -3,11 +3,11 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use App\Models\Product;
 use App\Models\User;
 use App\Models\Stall;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class Order extends Model
 {
@@ -19,8 +19,8 @@ class Order extends Model
     ];
 
     // Falta test relaciones
-    public function product(): HasMany {
-        return $this->hasMany(Product::class);
+    public function products(): BelongsToMany {
+        return $this->belongsToMany(Product::class)->withPivot('quantity','price_per_unit','status');
     }
 
     public function user(): BelongsTo {

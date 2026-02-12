@@ -58,7 +58,7 @@ class User extends Authenticatable
     // Falta test relaciones
     public function fleaMarkets(): BelongsToMany
     {
-        return $this->belongsToMany(FleaMarket::class);
+        return $this->belongsToMany(FleaMarket::class, 'administrators');
     }
 
     public function stalls(): HasMany
