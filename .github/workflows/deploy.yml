@@ -1,0 +1,67 @@
+name: Deploy MercadillosLaPalma
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  web-deploy:
+    name: 🚀 Deploy to Hostinger
+    runs-on: ubuntu-latest
+
+    steps:
+      # 1. Obtener el código del repositorio
+      - name: 🚚 Get latest code
+        uses: actions/checkout@v4
+
+      # 2. Configurar PHP (Necesario para 'composer install')
+      - name: 🧩 Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.2'
+          extensions: dom, curl, libxml, mbstring, zip, pcntl, pdo, sqlite, pdo_sqlite, bcmath, soap, intl, gd, exif, iconv
+          coverage: none
+
+      # 3. Instalar dependencias de Backend (Vendor)
+      # --no-dev: No subimos PHPUnit ni herramientas de desarrollo a producción
+      - name: 📦 Install Composer Dependencies
+        run: composer install --no-ansi --no-interaction --no-progress --no-dev --optimize-autoloader
+
+      # 4. Configurar Node.js (Necesario para Vite/Tailwind)
+      - name: ⚡ Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      # 5. Compilar los assets (CSS y JS)
+      # Esto generará la carpeta public/build que SÍ se debe subir
+      - name: 🔨 Build Frontend Assets (Vite)
+        run: |
+          npm ci
+          npm run build
+
+      # 6. Subir todo a Hostinger vía FTP
+      - name: 📂 Sync files via FTP
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
+        with:
+          server: ${{ secrets.FTP_SERVER }}
+          username: ${{ secrets.FTP_USERNAME }}
+          password: ${{ secrets.FTP_PASSWORD }}
+          server-dir: ./
+          
+          # Excluimos archivos pesados o innecesarios para producción
+          exclude: |
+            **/.git*
+            **/.git*/**
+            **/node_modules/**
+            **/tests/**
+            **/storage/*.key
+            .editorconfig
+            .env.example
+            .env
+            .gitattributes
+            .gitignore
+            phpunit.xml
+            README.md
+            vite.config.js.timestamp-*
