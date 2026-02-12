@@ -15,27 +15,22 @@ class FleaMarketSeeder extends Seeder
         $fleaMarkets = [
             [
                 'address' => 'Av. Carlos Francisco Lorenzo Navarro, Los Llanos',
-                'img_url' => 'https://example.com/mercadillo-los-llanos.jpg',
                 'municipality' => 'Los Llanos de Aridane',
             ],
             [
                 'address' => 'Av. Marítima, Santa Cruz de La Palma',
-                'img_url' => 'https://example.com/mercadillo-santa-cruz.jpg',
                 'municipality' => 'Santa Cruz de La Palma',
             ],
             [
                 'address' => 'Calle Manuel Taño, El Paso',
-                'img_url' => 'https://example.com/mercadillo-el-paso.jpg',
                 'municipality' => 'El Paso',
             ],
             [
                 'address' => 'Plaza del Mercadillo, Puntagorda',
-                'img_url' => 'https://example.com/mercadillo-puntagorda.jpg',
                 'municipality' => 'Puntagorda',
             ],
             [
                 'address' => 'Calle Charco, Fuencaliente',
-                'img_url' => 'https://example.com/mercadillo-fuencaliente.jpg',
                 'municipality' => 'Fuencaliente de La Palma',
             ],
         ];
@@ -48,7 +43,6 @@ class FleaMarketSeeder extends Seeder
             if ($municipalityId) {
                 DB::table('flea_markets')->insert([
                     'address' => $market['address'],
-                    'img_url' => $market['img_url'],
                     'municipality_id' => $municipalityId,
                 ]);
             }

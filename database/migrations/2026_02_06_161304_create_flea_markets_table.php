@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('flea_markets', function (Blueprint $table) {
             $table->id();
             $table->string("address");
-            $table->string('img_url');
+            $table->string('img_url')->default('img/imgNotAvailable.png');
             $table->unsignedBigInteger('municipality_id');
             
             $table->foreign('municipality_id')->references('id')->on('municipalities')->onDelete('cascade');
