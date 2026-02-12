@@ -6,16 +6,20 @@ use App\Http\Controllers\SellerController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 
-// Route::get("/general", [UserController::class, 'index']);
+Route::view("profile", "profile")
+    ->middleware(["auth"])
+    ->name("profile");
+
+Route::view("register", "register")
+    ->middleware(["auth"])
+    ->name("profile");
 
 Route::controller(UserController::class)
     ->prefix("general")
     ->name("general.")
     ->group(function () {
+        // Modificar prefix y name y colocar debajo de ruta index
         Route::get('/', 'index');
-        Route::get('/login', 'login')->name("login");
-        Route::get('/register', 'create')->name("register");
-
         // Añadir middleware Auth && Role
         Route::get("/orders", "orders")->name("orders");
         Route::get("/profile", "profile")->name("profile");
