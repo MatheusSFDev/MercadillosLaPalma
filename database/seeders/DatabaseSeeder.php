@@ -29,7 +29,7 @@ class DatabaseSeeder extends Seeder
             PhotosSeeder::class,
             OrderSeeder::class,
             OrderProductSeeder::class,
-            StockProductSeeder::class
+            ProductStallSeeder::class
         ]);
     }
 }
