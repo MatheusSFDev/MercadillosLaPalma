@@ -50,4 +50,33 @@ Route::controller(AdminController::class)
         Route::get('/markets', 'indexMarkets')->name("markets");
 });
 
+Route::prefix('deploy')->group(function () {
+    // Función auxiliar para verificar la clave
+    function checkDeployKey($key) {
+        $serverKey = env('DEPLOY_KEY');
+
+        if (empty($serverKey) || $key !== $serverKey) {
+            abort(403, 'Acceso denegado o clave no configurada.');
+        }
+    }
+
+    Route::get('/migrate/{key}', function ($key) {
+        checkDeployKey($key);
+        Artisan::call('migrate', ['--force' => true]);
+        return 'Migración completada: <br>' . nl2br(Artisan::output());
+    });
+
+    Route::get('/optimize/{key}', function ($key) {
+        checkDeployKey($key);
+        Artisan::call('optimize:clear');
+        return 'Caché borrada: <br>' . nl2br(Artisan::output());
+    });
+    
+    Route::get('/link/{key}', function ($key) {
+        checkDeployKey($key);
+        Artisan::call('storage:link');
+        return 'Storage linkeado: <br>' . nl2br(Artisan::output());
+    });
+});
+
 require __DIR__.'/auth.php';
