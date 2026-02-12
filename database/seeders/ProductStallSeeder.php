@@ -6,7 +6,7 @@ use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
 
-class StockProductSeeder extends Seeder
+class ProductStallSeeder extends Seeder
 {
     /**
      * Run the database seeds.
@@ -56,6 +56,6 @@ class StockProductSeeder extends Seeder
             ],
         ];
 
-        DB::table('stock_products')->insert($stockProducts);
+        DB::table('product_stall')->insert($stockProducts);
     }
 }
