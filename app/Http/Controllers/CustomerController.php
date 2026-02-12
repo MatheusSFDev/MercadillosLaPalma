@@ -6,6 +6,16 @@ use Illuminate\Http\Request;
 
 class CustomerController extends Controller
 {
+    public function showCart()
+    {
+        return view("customers.cart");
+    }
+
+    public function showStalls()
+    {
+        return view("customers.stallsCustomers");
+    }
+
     /**
      * Display a listing of the resource.
      */
