@@ -56,7 +56,7 @@ class ShowMercadillo extends Component
         ];
     }
 
-    #[Layout('layouts.guest')]
+    #[Layout('layouts.guest-full')]
     public function render()
     {
         return view('livewire.guest.mercadillo.show-mercadillo');

@@ -7,12 +7,13 @@ use Livewire\Component;
 class PuestoCard extends Component
 {
 
-    public $nombre;
+    public $titulo;
     public $categoria;
     public $imagen;
-        public function mount($nombre , $categoria , $imagen=null) {
-        $this->nombre = $nombre;
-        $this->imagen = $imagen ??'imagenporDefecto' ;
+    public function mount($nombre, $categoria, $imagen = null)
+    {
+        $this->titulo = $nombre;
+        $this->imagen = $imagen ?? 'imagenporDefecto';
         $this->categoria = $categoria;
     }
 
