@@ -1,0 +1,10 @@
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+    RewriteBase /
+    
+    # Redirigir la raíz a public
+    RewriteRule ^$ public/index.php [L]
+    
+    # Redirigir el resto de peticiones a public
+    RewriteRule ^((?!public/).*)$ public/$1 [L,NC]
+</IfModule>
