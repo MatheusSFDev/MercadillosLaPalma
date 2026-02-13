@@ -66,7 +66,6 @@ Route::controller(AdminController::class)
         Route::post('/controlpanel/market/{mercadilloId}/holidays', 'createHoliday')->name('holidays.store');
         Route::patch('/controlpanel/holidays/{holiday}', 'updateHoliday')->name('holidays.update');
         Route::delete('/controlpanel/holidays/{holiday}', 'deleteHoliday')->name('holidays.destroy');
-        Route::get('/controlpanel/market/{id}', 'controlPanel')->name("control-panel");
 });
 
 Route::prefix('deploy')->group(function () {
