@@ -3,63 +3,162 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Routing\Controller;
+use App\Models\User;
 
 class GenericController extends Controller
 {
     /**
-     * Display a listing of the resource.
+     * Constructor
+     * Protege rutas privadas excepto index y store (registro)
+     */
+    public function __construct()
+    {
+        $this->middleware('auth')->except([
+            'index',
+            'store'
+        ]);
+    }
+
+    /**
+     * Página principal general
+     * GET /
      */
     public function index()
     {
-        return view("general.index");
-    }
-
-    public function orders(){
-        return view("general.orders");
-    }
-
-    public function showStallProducts()
-    {
-        return view("general.products");
+        return view('general.index');
     }
 
     /**
-     * Store a newly created resource in storage.
+     * Pedidos del usuario autenticado
+     * GET /customer/orders
      */
-    public function store(Request $request)
+    public function orders()
     {
-        //
+        $orders = auth()->user()
+            ->orders()
+            ->with(['stall'])
+            ->latest()
+            ->get();
+
+        return view('general.orders', compact('orders'));
     }
 
     /**
-     * Display the specified resource.
+     * Perfil del usuario autenticado
+     * GET /customer/profile
      */
     public function profile()
     {
-        return view("general.profile");
+        $user = auth()->user()->load([
+            'stalls',
+            'products',
+            'fleaMarketsAsAdmin'
+        ]);
+
+        return view('general.profile', compact('user'));
     }
 
     /**
-     * Show the form for editing the specified resource.
+     * Mostrar productos de un puesto específico
+     * GET /general/stall/{id}
      */
-    public function edit(string $id)
+    public function showStallProducts($id)
     {
-        //
+        $stall = auth()->user()->stalls()->findOrFail($id);
+        $products = $stall->products()->latest()->get();
+
+        return view('general.products', compact('stall', 'products'));
     }
 
     /**
-     * Update the specified resource in storage.
+     * Mostrar puestos de un mercadillo
+     * GET /general/fleamarket/{id}/stalls
      */
-    public function update(Request $request, string $id)
+    public function showStalls($fleamarketId)
     {
-        //
+        $stalls = \App\Models\Stall::where('flea_market_id', $fleamarketId)
+            ->with(['user'])
+            ->get();
+
+        return view('general.stalls', compact('stalls'));
     }
 
     /**
-     * Remove the specified resource from storage.
+     * Registro de usuario (POST)
+     * Mantener compatibilidad
+     */
+    public function store(Request $request)
+    {
+        $validated = $request->validate([
+            'name'         => 'required|string|max:255',
+            'surname'      => 'required|string|max:255',
+            'email'        => 'required|email|unique:users,email',
+            'password'     => 'required|string|min:6|confirmed',
+            'address'      => 'nullable|string|max:255',
+            'phone_number' => 'nullable|string|max:20',
+        ]);
+
+        $user = User::create([
+            'name'         => $validated['name'],
+            'surname'      => $validated['surname'],
+            'email'        => $validated['email'],
+            'password'     => bcrypt($validated['password']),
+            'address'      => $validated['address'] ?? null,
+            'phone_number' => $validated['phone_number'] ?? null,
+        ]);
+
+        Auth::login($user);
+
+        return redirect()
+            ->route('general.profile')
+            ->with('success', 'Usuario registrado correctamente');
+    }
+
+    /**
+     * Editar perfil del usuario
+     */
+    public function edit()
+    {
+        return view('general.edit-profile', [
+            'user' => auth()->user()
+        ]);
+    }
+
+    /**
+     * Actualizar perfil del usuario
+     */
+    public function update(Request $request)
+    {
+        $user = auth()->user();
+
+        $validated = $request->validate([
+            'name'         => 'required|string|max:255',
+            'surname'      => 'required|string|max:255',
+            'email'        => 'required|email|unique:users,email,' . $user->id,
+            'address'      => 'nullable|string|max:255',
+            'phone_number' => 'nullable|string|max:20',
+        ]);
+
+        $user->update($validated);
+
+        return redirect()
+            ->route('general.profile')
+            ->with('success', 'Perfil actualizado correctamente');
+    }
+
+    /**
+     * Eliminar cuenta del usuario autenticado
      */
     public function destroy(string $id)
     {
-        //
+        $user = auth()->user();
+
+        Auth::logout();
+        $user->delete();
+
+        return redirect('/')
+            ->with('success', 'Cuenta eliminada correctamente');
     }
 }
