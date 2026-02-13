@@ -55,11 +55,13 @@ Route::controller(AdminController::class)
 
 Route::prefix('deploy')->group(function () {
     // Función auxiliar para verificar la clave
-    function checkDeployKey($key) {
-        $serverKey = env('DEPLOY_KEY');
-
-        if (empty($serverKey) || $key !== $serverKey) {
-            abort(403, 'Acceso denegado o clave no configurada.');
+    if (!function_exists('checkDeployKey')) {
+        function checkDeployKey($key) {
+            $serverKey = env('DEPLOY_KEY');
+    
+            if (empty($serverKey) || $key !== $serverKey) {
+                abort(403, 'Acceso denegado o clave no configurada.');
+            }
         }
     }
 
