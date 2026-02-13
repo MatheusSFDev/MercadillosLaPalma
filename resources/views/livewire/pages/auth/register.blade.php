@@ -12,6 +12,8 @@ new #[Layout('layouts.guest')] class extends Component
 {
     public string $name = '';
     public string $surname = '';
+    public string $address = '';
+    public string $phone = '';
     public string $email = '';
     public string $password = '';
     public string $password_confirmation = '';
@@ -29,6 +31,7 @@ new #[Layout('layouts.guest')] class extends Component
         $validated = $this->validate([
             'name' => ['required', 'string', 'max:255'],
             'surname' => ['required', 'string', 'max:255'],
+            'address' => ['string', 'max:255'],
             'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:'.User::class],
             'password' => ['required', 'string', 'confirmed', Rules\Password::defaults()],
         ]);
@@ -65,6 +68,18 @@ new #[Layout('layouts.guest')] class extends Component
                     <x-input-label for="surnames" value="Apellidos"/>
                     <x-text-input wire:model="surname" id="surname" class="block mt-1 w-full" type="text" name="surname" required autofocus autocomplete="name" placeholder="Introduce tus apellidos"/>
                     {{-- <x-input-error :messages="$errors->get('name')" class="mt-2" /> --}}
+                </div>
+
+                <div class="mt-4">
+                    <x-input-label for="address" value="Dirección"/>
+                    <x-text-input wire:model="address" id="address" class="block mt-1 w-full" type="text" name="address" required autofocus autocomplete="address" placeholder="Introduce tu dirección de domicilio (Opcional)"/>
+                    <!-- {{-- <x-input-error :messages="$errors->get('address')" class="mt-2" /> --}} -->
+                </div>
+
+                <div class="mt-4">
+                    <x-input-label for="phone" value="Número de teléfono"/>
+                    <x-text-input wire:model="phone" id="phone" class="block mt-1 w-full" type="text" name="phone" required autofocus autocomplete="phone" placeholder="Introduce tu número de teléfono"/>
+                    <!-- {{-- <x-input-error :messages="$errors->get('phone')" class="mt-2" /> --}} -->
                 </div>
 
                 <div class="mt-4">
