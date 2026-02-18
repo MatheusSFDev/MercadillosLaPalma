@@ -5,6 +5,9 @@ use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\SellerController;
 use App\Http\Controllers\GenericController;
 use Illuminate\Support\Facades\Route;
+use App\Livewire\Guest\Mercadillo\ShowMercadillo;
+
+
 
 //GenericController
 Route::controller(GenericController::class)  
@@ -78,25 +81,30 @@ Route::prefix('deploy')->group(function () {
                 abort(403, 'Acceso denegado o clave no configurada.');
             }
         }
-    }
 
-    Route::get('/migrate/{key}', function ($key) {
-        checkDeployKey($key);
-        Artisan::call('migrate', ['--force' => true]);
-        return 'Migración completada: <br>' . nl2br(Artisan::output());
+        Route::get('/migrate/{key}', function ($key) {
+            checkDeployKey($key);
+            Artisan::call('migrate', ['--force' => true]);
+            return 'Migración completada: <br>' . nl2br(Artisan::output());
+        }
+        );
+
+        Route::get('/optimize/{key}', function ($key) {
+            checkDeployKey($key);
+            Artisan::call('optimize:clear');
+            return 'Caché borrada: <br>' . nl2br(Artisan::output());
+        }
+        );
+
+        Route::get('/link/{key}', function ($key) {
+            checkDeployKey($key);
+            Artisan::call('storage:link');
+            return 'Storage linkeado: <br>' . nl2br(Artisan::output());
+        }
+        );
+
     });
 
-    Route::get('/optimize/{key}', function ($key) {
-        checkDeployKey($key);
-        Artisan::call('optimize:clear');
-        return 'Caché borrada: <br>' . nl2br(Artisan::output());
-    });
-    
-    Route::get('/link/{key}', function ($key) {
-        checkDeployKey($key);
-        Artisan::call('storage:link');
-        return 'Storage linkeado: <br>' . nl2br(Artisan::output());
-    });
-});
+Route::get('/showmercadillo', ShowMercadillo::class)->name('showmercadillo');
 
 require __DIR__ . '/auth.php';
