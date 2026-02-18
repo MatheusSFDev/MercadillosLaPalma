@@ -6,8 +6,7 @@ use App\Http\Controllers\SellerController;
 use App\Http\Controllers\GenericController;
 use Illuminate\Support\Facades\Route;
 use App\Livewire\Guest\Mercadillo\ShowMercadillo;
-
-
+use Illuminate\Support\Facades\Artisan;
 
 //GenericController
 Route::controller(GenericController::class)  
@@ -102,8 +101,8 @@ Route::prefix('deploy')->group(function () {
             return 'Storage linkeado: <br>' . nl2br(Artisan::output());
         }
         );
-
-    });
+    }
+});
 
 Route::get('/showmercadillo', ShowMercadillo::class)->name('showmercadillo');
 
