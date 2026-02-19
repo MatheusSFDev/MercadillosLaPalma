@@ -54,7 +54,7 @@ Route::controller(AdminController::class)
         Route::get('/markets', 'indexMarkets')->name("markets");
 });
 
-/*Route::prefix('deploy')->group(function () {
+Route::prefix('deploy')->group(function () {
     // Función auxiliar para verificar la clave
     function checkDeployKey($key) {
         $serverKey = env('DEPLOY_KEY');
@@ -82,6 +82,5 @@ Route::controller(AdminController::class)
         return 'Storage linkeado: <br>' . nl2br(Artisan::output());
     });
 });
-*/
 
 require __DIR__.'/auth.php';
