@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 class Photo extends Model
 {
     protected $fillable = [
+        'product_id',
         'url',
         'description'
     ];

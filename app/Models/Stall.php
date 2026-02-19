@@ -11,8 +11,15 @@ class Stall extends Model
 {
     //
     protected $fillable = [
+        "flea_market_id",
+        "user_id",
         "home_delivery",
         "information",
+        'active',
+        'reset_date',
+        'register_date',
+        'name',
+        'img_url',
     ];
 
     public function fleaMarket(): BelongsTo{

@@ -15,10 +15,10 @@ use Illuminate\Support\Facades\DB;
 class Order extends Model
 {
     protected $fillable = [
-        'home_delivery',
-        'information',
-        'active',
-        'reset_date',
+        'user_id',
+        'stall_id',
+        'order_date',
+        'delivery_date',
         'completed'
     ];
 

@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Routing\Controller;
 use App\Models\User;
+use Spatie\Permission\Models\Role;
 
 class GenericController extends Controller
 {
@@ -108,6 +109,8 @@ class GenericController extends Controller
             'address'      => $validated['address'] ?? null,
             'phone_number' => $validated['phone_number'] ?? null,
         ]);
+
+        $user->assignRole('customer');
 
         Auth::login($user);
 
