@@ -19,6 +19,7 @@ class Order extends Model
         'information',
         'active',
         'reset_date',
+        'completed'
     ];
 
     // Relaciones
