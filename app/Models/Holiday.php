@@ -12,6 +12,7 @@ class Holiday extends Model
      *
      * @var list<string>
      */
+    public $timestamps = false;
     protected $fillable = [
         'flea_market_id',
         'start_date',

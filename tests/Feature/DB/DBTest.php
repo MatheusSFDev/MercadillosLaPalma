@@ -1,8 +1,13 @@
 <?php
+
+use App\Models\Category;
 use App\Models\User;
+use App\Models\Photo;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use App\Models\Municipality;
 use App\Models\Product;
+use App\Models\FleaMarket;
+use App\Models\Holiday;
 use Illuminate\Support\Facades\DB;
 use function Pest\Laravel\assertDatabaseHas;
 use function Pest\Laravel\assertDatabaseMissing;
@@ -83,8 +88,8 @@ test("CRUD Municipios", function (){
     assertDatabaseMissing('municipalities', [
         'id' => $municipality->id,    ]);
 });
-test("CRUD Categorias", function () {
-    DB::table('categories')->insert([
+test("CRUD Categproas (Con modelo)",function (){
+    $category = Category::create([
         'name' => 'Frutas',
     ]);
     // Verificar creación
@@ -92,74 +97,181 @@ test("CRUD Categorias", function () {
         'name' => 'Frutas',
     ]);
     // Actualizar categoría
-    DB::table('categories')
-        ->where('name', 'Frutas')
-        ->update(['name' => 'Verduras']);
+    $category->update([
+        'name' => 'Verduras',
+    ]);
     // Verificar actualización
     assertDatabaseHas('categories', [
+        'id' => $category->id,
         'name' => 'Verduras',
     ]);
     // Verificar que el nombre anterior ya no existe
     assertDatabaseMissing('categories', [
+        'id' => $category->id,
         'name' => 'Frutas',
     ]);
     // Eliminar categoría
-    DB::table('categories')
-        ->where('name', 'Verduras')
-        ->delete();
+    $category->delete();
     // Verificar eliminación
     assertDatabaseMissing('categories', [
+        'id' => $category->id,
         'name' => 'Verduras',
     ]);
 });
-test("CRUD Productos", function (){
-    DB::table('categories')->insert([
-        'name' => 'Frutas',
-    ]);
-    DB::table('users')->insert([
+test("Crud Productos  y Fotos (Con modelo)", function (){
+    //Crear Dependencias
+    $user = User::create([
         'name' => 'John',
         'surname' => 'Doe',
-        'email' => 'Jhon.2example.com',
+        'email' => 'john.2@example.com',
         'password' => bcrypt('password'),
     ]);
-    DB::table('products')->insert([
+    $category = Category::create([
+        'name' => 'Frutas',
+    ]);
+    $product = Product::create([
         'name' => 'Producto 1',
         'unit'=> 'kg',
-        'user_id' => DB::table('users')->where('email', 'Jhon.2example.com')->value('id'),
-        'category_id' => DB::table('categories')->where('name', 'Frutas')->value('id'),
+        'user_id' => $user->id,
+        'category_id' => $category->id,
+    ]);
+    $photo = Photo::create([
+        'product_id' => $product->id,
+        'url' => 'http://example.com/photo.jpg',
+        'description' => 'Foto del producto',
     ]);
     // Verificar creación
     assertDatabaseHas('products', [
         'name' => 'Producto 1',
         'unit' => 'kg',
-        'user_id' => DB::table('users')->where('email', 'Jhon.2example.com')->value('id'),
-        'category_id' => DB::table('categories')->where('name', 'Frutas')->value('id'),
+        'user_id' => $user->id,
+        'category_id' => $category->id,
+    ]);
+    assertDatabaseHas('photos', [
+        'product_id' => $product->id,
+        'url' => 'http://example.com/photo.jpg',
+        'description' => 'Foto del producto',
     ]);
     // Actualizar producto
-    DB::table('products')
-        ->where('name', 'Producto 1')
-        ->update(['name' => 'Producto 1 actualizado']);
+    $product->update([
+        'name' => 'Producto 1 actualizado',
+    ]);
+    $photo->update([
+        'description' => 'Foto actualizada',
+    ]);
     // Verificar actualización
     assertDatabaseHas('products', [
+        'id' => $product->id,
         'name' => 'Producto 1 actualizado',
+    ]);
+     assertDatabaseHas('photos', [
+        'id' => $photo->id,
+        'description' => 'Foto actualizada',
     ]);
     // Verificar que el nombre anterior ya no existe
     assertDatabaseMissing('products', [
+        'id' => $product->id,
         'name' => 'Producto 1',
     ]);
+    assertDatabaseMissing('photos', [
+            'id' => $photo->id,
+            'description' => 'Foto del producto',
+        ]);
     // Eliminar producto
-    DB::table('products')
-        ->where('name', 'Producto 1 actualizado')
-        ->delete();
+    $product->delete();
+    $photo->delete();
     // Verificar eliminación
     assertDatabaseMissing('products', [
+        'id' => $product->id,
         'name' => 'Producto 1 actualizado',
     ]);
+    assertDatabaseMissing('photos', [
+        'id' => $photo->id,
+        'description' => 'Foto actualizada',
+    ]);
     // Limpiar tablas relacionadas
-    DB::table('categories')
-        ->where('name', 'Frutas')
-        ->delete();
-    DB::table('users')
-        ->where('email', 'Jhon.2example.com')
-        ->delete();
+    $category->delete();
+    $user->delete();
+});
+test('Crud Mercadillos', function () {
+    $municipality = Municipality::create([
+        'name' => 'Santa Cruz de La Palma',
+    ]);
+    $fleaMarket = FleaMarket::create([
+        'address' => 'Calle Falsa 123',
+        'municipality_id' => $municipality->id,
+        'img_url' => 'http://example.com/mercadillo.jpg',
+    ]);
+    // Verificar creación
+    assertDatabaseHas('flea_markets', [
+        'address' => 'Calle Falsa 123',
+        'municipality_id' => $municipality->id,
+        'img_url' => 'http://example.com/mercadillo.jpg',
+    ]);
+    // Actualizar mercadillo
+    $fleaMarket->update([
+        'address' => 'Calle Verdadera 456',
+    ]);
+    // Verificar actualización
+    assertDatabaseHas('flea_markets', [
+        'id' => $fleaMarket->id,
+        'address' => 'Calle Verdadera 456',
+    ]);
+    // Verificar que la dirección anterior ya no existe
+    assertDatabaseMissing('flea_markets', [
+        'id' => $fleaMarket->id,
+        'address' => 'Calle Falsa 123',
+    ]);
+    // Eliminar mercadillo
+    $fleaMarket->delete();
+    // Verificar eliminación
+    assertDatabaseMissing('flea_markets', [
+        'id' => $fleaMarket->id,
+    ]);
+    // Limpiar tabla relacionada
+    $municipality->delete();
+});
+test('Crud Dias festivos/Vacaciones', function () { 
+    $municipality = Municipality::create([
+        'name' => 'Santa Cruz de La Palma',
+    ]);
+    $fleaMarket = FleaMarket::create([
+        'address' => 'Calle Falsa 123',
+        'municipality_id' => $municipality->id,
+        'img_url' => 'http://example.com/mercadillo.jpg',
+    ]);
+    $holiday = Holiday::create([
+        'flea_market_id' => $fleaMarket->id,
+        'start_date' => '2024-12-24',
+        'end_date' => '2024-12-26',
+    ]);
+    // Verificar creación
+    assertDatabaseHas('holidays', [
+        'flea_market_id' => $fleaMarket->id,
+        'start_date' => '2024-12-24',
+        'end_date' => '2024-12-26',
+    ]);
+    // Actualizar día festivo
+    $holiday->update([
+        'end_date' => '2024-12-27',
+    ]);
+    // Verificar actualización
+    assertDatabaseHas('holidays', [
+        'id' => $holiday->id,
+        'end_date' => '2024-12-27',
+    ]);
+    // Verificar que la fecha anterior ya no existe
+    assertDatabaseMissing('holidays', [
+        'id' => $holiday->id,
+        'end_date' => '2024-12-26',
+    ]);
+    // Eliminar día festivo
+    $holiday->delete();
+    // Verificar eliminación
+    assertDatabaseMissing('holidays', [
+        'id' => $holiday->id,
+    ]);
+    // Limpiar tablas relacionadas
+    $fleaMarket->delete();
+    $municipality->delete();
 });
