@@ -25,7 +25,7 @@
 
 <body class="font-sans antialiased">
     <div class="min-h-screen bg-gray-100">
-        <livewire:layout.navbar />
+    {{-- <livewire:layout.navbar /> --}} 
 
         <!-- Page Heading -->
         @if (isset($header))

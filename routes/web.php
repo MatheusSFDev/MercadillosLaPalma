@@ -6,6 +6,7 @@ use App\Http\Controllers\SellerController;
 use App\Http\Controllers\GenericController;
 use Illuminate\Support\Facades\Route;
 use App\Livewire\Guest\Mercadillo\ShowMercadillo;
+use App\Livewire\NewProductForm;
 use Illuminate\Support\Facades\Artisan;
 
 //GenericController
@@ -105,5 +106,9 @@ Route::prefix('deploy')->group(function () {
 });
 
 Route::get('/showmercadillo', ShowMercadillo::class)->name('showmercadillo');
+
+Route::get('/NewProduct', NewProductForm::class)->name('NewProductForm');
+
+
 
 require __DIR__ . '/auth.php';

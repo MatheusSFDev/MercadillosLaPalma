@@ -19,6 +19,8 @@ export default {
                 // --- COLORES CORPORATIVOS (Basados en pág. 6 Guía de Estilos) ---
 
                 // Verde Principal (Botones, Enlaces importantes, Iconos activos)
+                background:'#e3eccd',
+                
                 primary: {
                     DEFAULT: '#2b5c01', // El verde oscuro fuerte [cite: 441]
                     hover: '#5a8713', // Verde hoja más vivo para hovers [cite: 441]
