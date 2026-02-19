@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Schedule extends Model
 {
+    public $timestamps = false;
     /**
      * The attributes that are mass assignable.
      *
