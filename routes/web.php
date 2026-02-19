@@ -8,6 +8,25 @@ use Illuminate\Support\Facades\Route;
 use App\Livewire\Guest\Mercadillo\ShowMercadillo;
 use Illuminate\Support\Facades\Artisan;
 
+//RedirectLivewire
+Route::middleware(['auth', 'verified'])->get('/dashboard', function () {
+    $user = auth()->user();
+
+    if ($user->hasRole('admin')) {
+        return redirect()->route('admin.control-panel');
+    }
+
+    if ($user->hasRole('seller')) {
+        return redirect()->route('seller.index-stalls');
+    }
+
+    if ($user->hasRole('customer')) {
+        return redirect()->route('general.profile');
+    }
+
+    return redirect('/');
+})->name('dashboard');
+
 //GenericController
 Route::controller(GenericController::class)  
     ->group(function () {
@@ -16,32 +35,36 @@ Route::controller(GenericController::class)
 
     Route::prefix("general")
         ->name("general.")
+        ->middleware(['auth', 'verified']) //Añadido un Auth, aunque primitivo
         ->group(function (){
-        // Añadir middleware Auth && Role
-        Route::get("/orders", "orders")->name("orders");
-        Route::get("/profile", "profile")->name("profile");
-        Route::get("/products", "showProducts")->name("products");
-        Route::get('fleamarket/{id}/stalls', 'showStalls')->name("stalls");
-        Route::get("/stall/{id}", "showStallProducts")->name("stall");
+
+            Route::get("/orders", "orders")->name("orders");
+            Route::get("/profile", "profile")->name("profile");
+            Route::get("/products", "showProducts")->name("products");
+
+            Route::get('fleamarket/{id}/stalls', 'showStalls')->name("stalls");
+            Route::get("/stall/{id}", "showStallProducts")->name("stall");
     });   
 });
 
-// Añadir middleware Auth && Role
 Route::controller(CustomerController::class)
     ->prefix("customer")
     ->name("customer.")
+    ->middleware(['auth', 'verified', 'role:customer']) //Añadido un Auth y Role, aunque primitivo
     ->group(function () {
+
         Route::get("/profile", "profile")->name("profile");
         Route::get("/orders", "orders")->name("orders");
         Route::get('/cart', 'showCart')->name("cart");
         Route::get('/stalls', 'showStalls')->name("stalls");
     });
 
-// Añadir middleware Auth && Role
 Route::controller(SellerController::class)
     ->prefix("seller")
     ->name("seller.")
+    ->middleware(['auth', 'verified', 'role:seller']) //Añadido un Auth y Role, aunque primitivo
     ->group(function () {
+
         Route::get("/orders", "orders")->name("orders");
         Route::get('/create/product', 'createProduct')->name("create-product");
         Route::get('/edit/products', 'editProducts')->name("edit-products");
@@ -50,21 +73,25 @@ Route::controller(SellerController::class)
         Route::get("stall/{id}/products", "showSellerProducts")->name("products");
 });
 
-// Añadir middleware Auth && Role
 Route::controller(AdminController::class)
     ->prefix("admin")
     ->name("admin.")
+    ->middleware(['auth', 'verified', 'role:admin']) //Añadido un Auth y Role, aunque primitivo
     ->group(function (): void {
+
         Route::get('/controlpanel/markets', 'indexMarkets')->name("markets");
         Route::get('/controlpanel/market/{id}', 'show')->name("control-panel");
+
         Route::post('/controlpanel/market/{mercadilloId}/stalls', 'createStall')->name('stalls.store');
         Route::patch('/controlpanel/stalls/{stall}', 'updateStall')->name('stalls.update');
         Route::patch('/controlpanel/stalls/{stall}/activate', 'activateStall')->name('stalls.activate');
         Route::patch('/controlpanel/stalls/{stall}/deactivate', 'deactivateStall')->name('stalls.deactivate');
         Route::delete('/controlpanel/stalls/{stall}', 'deleteStall')->name('stalls.destroy');
+
         Route::post('/controlpanel/market/{mercadilloId}/schedules', 'createSchedule')->name('schedules.store');
         Route::patch('/controlpanel/schedules/{schedule}', 'updateSchedule')->name('schedules.update');
         Route::delete('/controlpanel/schedules/{schedule}', 'deleteSchedule')->name('schedules.destroy');
+
         Route::post('/controlpanel/market/{mercadilloId}/holidays', 'createHoliday')->name('holidays.store');
         Route::patch('/controlpanel/holidays/{holiday}', 'updateHoliday')->name('holidays.update');
         Route::delete('/controlpanel/holidays/{holiday}', 'deleteHoliday')->name('holidays.destroy');
