@@ -1,8 +1,9 @@
 <?php
 namespace App\Services;
 
+use App\Models\FleaMarket;
 use App\Models\Stall;
-
+use App\Models\User;
 
 class StallService
 {
@@ -87,5 +88,39 @@ class StallService
             ->with(['fleaMarket', 'products'])
             ->get();
     }
+    public function assignStallToUser(User $user, FleaMarket $mercadillo): Stall
+    {
+        // Crear el puesto
+        $stall = $user->stalls()->create([
+            'flea_market_id' => $mercadillo->id,
+            'active' => true,
+            'register_date' => now(),
+            'name' => 'Nuevo puesto',
+            'img_url' => 'img/imgNotAvailable.png'
+        ]);
+
+        return $stall;
+    }
+    public function getWithoutRegisterDateByMarket(int $marketId)
+    {
+        return Stall::where('flea_market_id', $marketId)
+            ->whereNull('register_date')
+            ->with('user')
+            ->get();
+    }
+    public function registerStall(Stall $stall): Stall
+{
+    if ($stall->register_date !== null) {
+        throw new \Exception('El puesto ya está dado de alta.');
+    }
+
+    $stall->update([
+        'register_date' => now(),
+       
+    ]);
+
+    return $stall;
+}
+
 
 }

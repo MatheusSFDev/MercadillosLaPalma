@@ -8,8 +8,10 @@ use App\Services\StallService;
 use Illuminate\Http\Request;
 use App\Http\Requests\StallStoreRequest;
 use App\Http\Requests\StallUpdateRequest;
+use App\Models\FleaMarket;
 use App\Models\Schedule;
 use App\Models\Stall;
+use App\Models\User;
 
 class AdminController extends Controller
 {
@@ -19,7 +21,7 @@ class AdminController extends Controller
     /**
      * Display a listing of the resource.
      */
-  
+
 
     public function controlPanel()
     {
@@ -40,14 +42,8 @@ class AdminController extends Controller
         return view('admin.markets', compact('mercadillos'));
     }
 
-   
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request)
-    {
-        //
-    }
+
+
 
 
     public function show($id)
@@ -96,7 +92,7 @@ class AdminController extends Controller
 
         return back()->with('success', 'Puesto eliminado.');
     }
-     public function createSchedule(ScheduleRequest $request, $mercadilloId)
+    public function createSchedule(ScheduleRequest $request, $mercadilloId)
     {
         $data = $request->validated();
         $data['flea_market_id'] = $mercadilloId;
@@ -121,4 +117,44 @@ class AdminController extends Controller
 
         return back()->with('success', 'Horario eliminado correctamente.');
     }
+    public function assignStallToUser(FleaMarket $mercadillo, User $user)
+    {
+        try {
+            $this->stallService->assignStallToUser($user, $mercadillo);
+            return back()->with('success', 'Usuario ahora es vendedor (puesto asignado).');
+        } catch (\Exception $e) {
+            return back()->with('error', $e->getMessage());
+        }
+    }
+    public function getStallWithoutR($id)
+    {
+        $mercadillo = FleaMarket::with([
+            'municipality',
+            'schedules',
+            'holidays',
+            'stalls.user',
+            'stalls.products'
+        ])->findOrFail($id);
+
+        $stallsWithoutDate = $this->stallService
+            ->getWithoutRegisterDateByMarket($id);
+
+        return view('admin.controlPanel', compact(
+            'mercadillo',
+            'stallsWithoutDate'
+        ));
+    }
+   
+
+    public function registerStall(Stall $stall)
+    {
+        try {
+            $this->stallService->registerStall($stall);
+
+            return back()->with('success', 'Puesto dado de alta correctamente.');
+        } catch (\Exception $e) {
+            return back()->with('error', $e->getMessage());
+        }
+    }
+
 }
