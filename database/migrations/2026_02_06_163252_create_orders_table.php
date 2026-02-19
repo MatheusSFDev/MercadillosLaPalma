@@ -19,6 +19,7 @@ return new class extends Migration
             $table->timestamps();
             $table->primary(['id','user_id']);
             $table->unsignedBigInteger('stall_id');
+            $table->boolean('completed')->default(false);
 
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
             $table->foreign('stall_id')->references('id')->on('stalls')->onDelete('cascade');

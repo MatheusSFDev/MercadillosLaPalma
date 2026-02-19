@@ -21,6 +21,7 @@ class OrderSeeder extends Seeder
                 'delivery_date' => Carbon::now()->addDays(2),
                 'created_at' => Carbon::now(),
                 'updated_at' => Carbon::now(),
+                'completed' => false,
             ],
             [
                 'user_id' => 2,
@@ -29,6 +30,7 @@ class OrderSeeder extends Seeder
                 'delivery_date' => null,
                 'created_at' => Carbon::now(),
                 'updated_at' => Carbon::now(),
+                'completed' => false,
             ],
             [
                 'user_id' => 1,
@@ -37,6 +39,7 @@ class OrderSeeder extends Seeder
                 'delivery_date' => Carbon::now()->addDays(5),
                 'created_at' => Carbon::now(),
                 'updated_at' => Carbon::now(),
+                'completed' => false,
             ],
         ];
 
