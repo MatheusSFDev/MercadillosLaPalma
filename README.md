@@ -2,7 +2,7 @@
 
 <p align="center">
     <a href="https://laravel.com" target="_blank">
-        <img src="public/img/Logo Mercadillos.png" width="400" alt="Logo Mercadillos Palma">
+        <img src="public/img/logo-mercadillos.png" width="400" alt="Logo Mercadillos Palma">
     </a>
 </p>
 
