@@ -2,77 +2,71 @@
 
 namespace App\Http\Controllers;
 
+use App\Enums\Status;
+use App\Enums\Units;
+use App\Models\Order;
+use App\Models\Stall;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class SellerController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
-    public function indexStalls()
-    {
-        return view("sellers.stallSellers");
-    }
-    public function createProduct()
-    {
-        return view("sellers.addProducts");
-    }
-
-    public function editProducts()
-    {
-        return view("sellers.editProducts");
-    }
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request)
-    {
-        //
+    public function sellerOrders(){
+        if(Auth::user()->hasRole('seller')){
+            $orders = Auth::user()->stalls()->orders();
+            $data = [];
+            foreach($orders as $order){
+                $stall_name = $order->stall()->name;
+                $products = $order->products()->count('order_product.product_id')->orderBy('order_product.order_id');
+                $total = $order->products()->multiply('order_product.price_per_unit', 'total', 'order_product.quantity');
+                $status = $order->completed == false ? Status::Pendiente : Status::Compleado;
+                array_push($data, [
+                    "stall_name" => $stall_name,
+                    "order_date" => $order->order_date,
+                    "products" => $products,
+                    "total" => $total,
+                    "status" => $status
+                ]);
+            }
+            return view('general.orders', [$data]);
+        }else{
+            return view('/');
+        }
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
-    {
-        //
-    }
+    public function orederDetail($order_id){
+        if(Auth::user()->hasRole('seller')){
+            $orderData = Order::findOrFail($order_id);
+            $order_products = $orderData->products()->map(function ($product_order){
+                return [
+                    "name" => $product_order->name,
+                    "price_data" => [
+                        "price_per_unit" => $product_order->pivot->price_per_unit,
+                        "unit" => $product_order->unit
+                    ],
+                    "buy_data" => [
+                        "product_cant" => $product_order->pivot->quantity,
+                        "total" => $product_order->multiply('order_product.price_per_unit', 'total', 'order_product.quantity')
+                    ],
+                    "status" => $product_order->status
+                ];
+            });
+        
+            $data = [
+                "id_pedido" => $orderData->order_id,
+                "order_date" => $orderData->order_date,
+                "delivery_date" => $orderData->delivery_date,
+                "customer_data" => [
+                    "name" => $orderData->user()->name,
+                    "email" => $orderData->user()->name,
+                    "phone" => $orderData->user()?->phone_number ?? 'Sin teléfono asociado'
+                ],
+                "product_data" => $order_products
+            ];
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(string $id)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, string $id)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(string $id)
-    {
-        //
-    }
-
-        public function orders()
-    {
-        // Esto llama a la carcasa que creaste antes
-        return view('general.orders'); 
+            return view('general.orders', [$data]);
+        }else{
+            return view('/');
+        }
     }
 }
