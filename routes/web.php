@@ -10,20 +10,6 @@ use Illuminate\Support\Facades\Artisan;
 
 //RedirectLivewire
 Route::middleware(['auth', 'verified'])->get('/dashboard', function () {
-    $user = auth()->user();
-
-    if ($user->hasRole('admin')) {
-        return redirect()->route('admin.control-panel');
-    }
-
-    if ($user->hasRole('seller')) {
-        return redirect()->route('seller.index-stalls');
-    }
-
-    if ($user->hasRole('customer')) {
-        return redirect()->route('general.profile');
-    }
-
     return redirect('/');
 })->name('dashboard');
 
