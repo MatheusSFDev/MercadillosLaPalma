@@ -69,4 +69,10 @@ class SellerController extends Controller
     {
         //
     }
+
+        public function orders()
+    {
+        // Esto llama a la carcasa que creaste antes
+        return view('general.orders'); 
+    }
 }
