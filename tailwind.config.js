@@ -19,6 +19,7 @@ export default {
                     DEFAULT: '#2b5c01', // El verde oscuro fuerte [cite: 441]
                     hover: '#5a8713', // Verde hoja más vivo para hovers [cite: 441]
                     light: '#7c995c', // Verde salvia para bordes o fondos suaves [cite: 441]
+                    pastel: '#e3eccd', // Verde pastel para fondos o tarjetas [cite: 441]
                 },
 
                 // Tonos Tierra (Textos, Fondos secundarios)
@@ -51,6 +52,7 @@ export default {
                 'titulo-seccion': ['Playfair', ...defaultTheme.fontFamily.serif],
                 'subtitulo': ['"DM Serif"', ...defaultTheme.fontFamily.serif],
                 'general': ['Atkinson', ...defaultTheme.fontFamily.serif],
+                'open-sans': ['"Open Sans"', ...defaultTheme.fontFamily.sans],
             },
         },
     },
