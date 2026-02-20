@@ -36,9 +36,10 @@ $user = auth()->user();
                             Mis Productos
                         </a>
 
-                        @if (request()->routeIs('seller.edit-products')) {{-- CORREGIDO --}}
+                        @if (request()->routeIs('seller.edit-products'))
+                            {{-- CORREGIDO --}}
                             <a href="{{ route('seller.create-product') }}" {{-- CORREGIDO --}}
-                               class="bg-green-100 text-green-800 px-3 py-2 rounded-md text-sm font-medium">
+                                class="bg-green-100 text-green-800 px-3 py-2 rounded-md text-sm font-medium">
                                 + Añadir Producto
                             </a>
                         @endif
@@ -56,7 +57,7 @@ $user = auth()->user();
                         </a>
 
                         {{-- Asegúrate de que esta ruta seller.request exista en web.php --}}
-                        <a href="{{ route('seller.request') }}" 
+                        <a href="{{ route('seller.request') }}"
                             class="ml-4 bg-orange-100 text-orange-700 hover:bg-orange-200 px-3 py-2 rounded-md text-sm font-medium border border-orange-300">
                             🏪 ¡Quiero Vender!
                         </a>
@@ -65,8 +66,8 @@ $user = auth()->user();
                     {{-- Opciones de ADMIN --}}
                     @if ($user->role === 'admin')
                         <a href="{{ route('admin.control-panel') }}" {{-- CORREGIDO --}}
-                           class="text-red-500 hover:text-red-700 font-bold px-3 py-2 text-sm">
-                           Panel Admin
+                            class="text-red-500 hover:text-red-700 font-bold px-3 py-2 text-sm">
+                            Panel Admin
                         </a>
                     @endif
                 @endauth
@@ -91,9 +92,10 @@ $user = auth()->user();
                             <div class="px-4 py-2 text-xs text-gray-400">
                                 {{ $user->name }} ({{ ucfirst($user->role) }})
                             </div>
-                            
+
                             {{-- CORREGIDO: Ruta perfil --}}
-                            <a href="{{ route('profile.edit') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Mi Perfil</a>
+                            <a href="{{ route('profile.edit') }}"
+                                class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Mi Perfil</a>
 
                             <form method="POST" action="{{ route('logout') }}">
                                 @csrf
@@ -106,7 +108,8 @@ $user = auth()->user();
                     </div>
                 @else
                     <div class="space-x-4">
-                        <a href="{{ route('login') }}" class="text-gray-500 hover:text-gray-900 font-medium">Iniciar sesión</a>
+                        <a href="{{ route('login') }}" class="text-gray-500 hover:text-gray-900 font-medium">Iniciar
+                            sesión</a>
                         <a href="{{ route('register') }}"
                             class="bg-primary text-white px-4 py-2 rounded-md text-sm font-medium hover:bg-primary-hover">Registrarse</a>
                     </div>
@@ -130,7 +133,7 @@ $user = auth()->user();
 
     <div :class="{ 'block': open, 'hidden': !open }" class="hidden sm:hidden bg-gray-50">
         <div class="pt-2 pb-3 space-y-1">
-            <a href="{{ route('home') }}"
+            <a href="/"
                 class="block w-full ps-3 pe-4 py-2 border-l-4 border-transparent text-start text-base font-medium text-gray-600 hover:text-gray-800 hover:bg-gray-50 hover:border-gray-300">
                 Mercadillos
             </a>
@@ -141,18 +144,23 @@ $user = auth()->user();
                     <span class="px-4 text-xs text-gray-400 font-bold uppercase">Zona Vendedor</span>
                     {{-- CORREGIDO RUTAS MÓVIL --}}
                     <a href="{{ route('seller.index-stalls') }}"
-                        class="block w-full ps-3 pe-4 py-2 text-base font-medium text-gray-600 hover:bg-gray-100">Mis Puestos</a>
+                        class="block w-full ps-3 pe-4 py-2 text-base font-medium text-gray-600 hover:bg-gray-100">Mis
+                        Puestos</a>
                     <a href="{{ route('general.orders') }}"
-                        class="block w-full ps-3 pe-4 py-2 text-base font-medium text-gray-600 hover:bg-gray-100">Mis Pedidos</a>
+                        class="block w-full ps-3 pe-4 py-2 text-base font-medium text-gray-600 hover:bg-gray-100">Mis
+                        Pedidos</a>
                     <a href="{{ route('seller.edit-products') }}"
-                        class="block w-full ps-3 pe-4 py-2 text-base font-medium text-gray-600 hover:bg-gray-100">Mis Productos</a>
+                        class="block w-full ps-3 pe-4 py-2 text-base font-medium text-gray-600 hover:bg-gray-100">Mis
+                        Productos</a>
                 @endif
 
                 @if ($user->role === 'comprador')
                     <a href="{{ route('customer.cart') }}"
-                        class="block w-full ps-3 pe-4 py-2 text-base font-medium text-gray-600 hover:bg-gray-100">Mi Carrito</a>
+                        class="block w-full ps-3 pe-4 py-2 text-base font-medium text-gray-600 hover:bg-gray-100">Mi
+                        Carrito</a>
                     <a href="{{ route('general.orders') }}"
-                        class="block w-full ps-3 pe-4 py-2 text-base font-medium text-gray-600 hover:bg-gray-100">Mis Pedidos</a>
+                        class="block w-full ps-3 pe-4 py-2 text-base font-medium text-gray-600 hover:bg-gray-100">Mis
+                        Pedidos</a>
                 @endif
             @endauth
         </div>
@@ -173,7 +181,8 @@ $user = auth()->user();
 
                 <div class="mt-3 space-y-1">
                     <a href="{{ route('profile.edit') }}"
-                        class="block w-full ps-3 pe-4 py-2 text-base font-medium text-gray-600 hover:bg-gray-100">Mi Perfil</a>
+                        class="block w-full ps-3 pe-4 py-2 text-base font-medium text-gray-600 hover:bg-gray-100">Mi
+                        Perfil</a>
                     <form method="POST" action="{{ route('logout') }}">
                         @csrf
                         <button type="submit"
@@ -185,7 +194,8 @@ $user = auth()->user();
             @else
                 <div class="mt-3 space-y-1 p-4">
                     <a href="{{ route('login') }}"
-                        class="block text-center w-full bg-white border border-gray-300 text-gray-700 py-2 rounded-md mb-2">Iniciar Sesión</a>
+                        class="block text-center w-full bg-white border border-gray-300 text-gray-700 py-2 rounded-md mb-2">Iniciar
+                        Sesión</a>
                     <a href="{{ route('register') }}"
                         class="block text-center w-full bg-green-600 text-white py-2 rounded-md">Registrarse</a>
                 </div>
