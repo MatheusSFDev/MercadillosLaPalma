@@ -16,7 +16,7 @@ return new class extends Migration
             $table->unsignedBigInteger('order_id');
             $table->unsignedBigInteger('quantity');
             $table->double('price_per_unit');
-            $table->enum('status', ['Aceptado', 'Rechazado', 'Pendiente', 'Completado'])->default('Pendiente');
+            $table->enum('status', ['Aceptado', 'Rechazado', 'Pendiente'])->default('Pendiente');
             $table->primary(['product_id', 'order_id']);
 
             $table->foreign('order_id')->references('id')->on('orders')->onDelete('cascade');

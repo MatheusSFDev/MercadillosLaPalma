@@ -1,59 +1,119 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# Mercadillos La Palma - Proyecto Intermodular
 
 <p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
+    <a href="https://laravel.com" target="_blank">
+        <img src="public/img/logo-mercadillos.png" width="400" alt="Logo Mercadillos Palma">
+    </a>
 </p>
 
-## About Laravel
+## 📖 Sobre el Proyecto
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+**Mercadillos La Palma** es una plataforma web adaptativa desarrollada como parte del **Proyecto Intermodular de 2º DAW (2025-2026)** en el **IES José María Pérez Pulido**.
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+El objetivo principal es la digitalización y fomento del comercio local, conectando a los clientes directamente con los puestos (agricultores, artesanos, etc.) de los diferentes mercadillos de la isla (Mazo, Los Llanos, El Paso, entre otros). La aplicación permite realizar pedidos online, gestionar inventarios y administrar la logística de los mercadillos.
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+## 🚀 Funcionalidades Principales
 
-## Learning Laravel
+El sistema está dividido en roles específicos según la documentación del proyecto:
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework. You can also check out [Laravel Learn](https://laravel.com/learn), where you will be guided through building a modern Laravel application.
+### 🛒 Para Clientes
+- **Registro y Perfil:** Gestión de datos personales e historial de pedidos.
+- **Navegación Intuitiva:** Selección de mercadillo por municipio.
+- **Filtrado:** Búsqueda de productos por categorías (carnicería, pescadería, artesanía, etc.).
+- **Carrito de Compra:** Añadir productos de diferentes puestos.
+- **Pedidos:** Realización de pedidos con opciones de pago (Efectivo/Bizum).
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+### 🏪 Para Vendedores (Agricultores/Puestos)
+- **Gestión del Puesto:** Administración de información del puesto.
+- **Inventario:** CRUD de productos (nombre, fotos, stock, unidades/kilos, precio).
+- **Gestión de Pedidos:** Cambio de estados (Recibido, Preparado, Entregado, Cancelado).
+- **Categorización:** Definición de categorías propias del puesto.
 
-## Laravel Sponsors
+### 🏛️ Administración (Mercadillo y Sistema)
+- **Admin de Mercadillo:** Gestión de horarios, ubicación y validación de puestos.
+- **Super Admin:** Control total del sistema, gestión de usuarios y roles.
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+## 🛠️ Stack Tecnológico
 
-### Premium Partners
+Este proyecto utiliza una arquitectura moderna basada en el ecosistema de Laravel:
 
-- **[Vehikl](https://vehikl.com)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Redberry](https://redberry.international/laravel-development)**
-- **[Active Logic](https://activelogic.com)**
+- **Backend:** [Laravel 12](https://laravel.com) (PHP 8.2+)
+- **Frontend / Interactividad:** [Livewire](https://livewire.laravel.com) (Componentes dinámicos sin recarga)
+- **Estilos:** [Tailwind CSS](https://tailwindcss.com)
+- **Base de Datos:** MySQL / MariaDB
+- **Autenticación:** Laravel Breeze / Volt
+- **Entorno de Desarrollo:** XAMPP / Composer / Node.js
 
-## Contributing
+## ⚙️ Instalación y Configuración
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+Sigue estos pasos para levantar el proyecto en local:
 
-## Code of Conduct
+### 1. Clonar el repositorio
+```bash
+git clone https://https://github.com/MatheusSFDev/MercadillosLaPalma
+cd MercadillosLaPalma
+```
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+### 2. Instalar dependencias de PHP
+```bash
+composer install
+```
 
-## Security Vulnerabilities
+### 3. Instalar dependencias de Frontend
+```bash
+npm install
+```
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+### 4. Configurar entorno
+Copia el archivo de ejemplo y genera la clave de la aplicación:
+```bash
+cp .env.example .env
+php artisan key:generate
+```
 
-## License
+### 5. Configuración de Base de Datos
+Crea una base de datos vacía (ej. `mercadillos_db`) y configura tu archivo `.env`. Luego ejecuta las migraciones y los seeders para cargar datos de prueba (Municipios, Categorías, Usuarios base):
+```bash
+php artisan migrate --seed
+```
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+### 6. Ejecutar el servidor
+Necesitarás dos terminales:
+```bash
+# Terminal 1 (Servidor Laravel)
+php artisan serve
+
+# Terminal 2 (Compilación de assets en tiempo real)
+npm run dev
+```
+
+## 👥 Equipo de Desarrollo
+
+Proyecto realizado por los alumnos de 2º DAW (2025-2026):
+
+**Integrantes del Equipo:**
+- [Aday Guillem Pérez](https://github.com/ElZorroGG)
+- [Adriano Martín Lorenzo](https://github.com/Sylvan0r)
+- [Alejandro Lopez Exposito](https://github.com/AlexLopEx03)
+- [Ali Antonio Hurtado Hernandez](https://github.com/AliHurtado01)
+- [Brian Pérez Pérez](https://github.com/brianpr-pr)
+- [Carlos Eduardo Durán Banegas](https://github.com/edudbdaw)
+- [Claudia Hernández García](https://github.com/Claudiahg97)
+- [Daniel Brito Fiel](https://github.com/DanielBFiel13)
+- [Gabriel Cárdenas Martín](https://github.com/Bisferoz45)
+- [José Gregorio Reyes Ojeda](https://github.com/josejr3)
+- [Matheus Souza Fernandes](https://github.com/MatheusSFDev)
+- [Miguel Barreto García](https://github.com/migbg)
+- [Raúl Rodríguez Martin](https://github.com/raulcitorm)
+
+## 📄 Licencia
+
+Este proyecto es de código abierto, desarrollado con fines educativos.
+
+---
+
+## 📝 Notas Adicionales
+
+Esta plataforma está diseñada para fortalecer la economía local de La Palma proporcionando una herramienta digital moderna que conecta a los productores locales con su comunidad. El proyecto integra las mejores prácticas en desarrollo web y sirve como una experiencia de aprendizaje integral para los estudiantes del programa de Desarrollo de Aplicaciones Web.
+
+Para preguntas o contribuciones, por favor contacta al equipo de desarrollo.

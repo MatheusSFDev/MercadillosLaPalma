@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class FleaMarket extends Model
 {
+    public $timestamps = false;
     /**
      * The attributes that are mass assignable.
      *

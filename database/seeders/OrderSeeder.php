@@ -16,27 +16,30 @@ class OrderSeeder extends Seeder
         $orders = [
             [
                 'user_id' => 1,
-                'stalls_id' => 1,
+                'stall_id' => 1,
                 'order_date' => Carbon::now()->subDays(5),
                 'delivery_date' => Carbon::now()->addDays(2),
                 'created_at' => Carbon::now(),
                 'updated_at' => Carbon::now(),
+                'completed' => false,
             ],
             [
                 'user_id' => 2,
-                'stalls_id' => 2,
+                'stall_id' => 2,
                 'order_date' => Carbon::now()->subDays(3),
                 'delivery_date' => null,
                 'created_at' => Carbon::now(),
                 'updated_at' => Carbon::now(),
+                'completed' => false,
             ],
             [
                 'user_id' => 1,
-                'stalls_id' => 3,
+                'stall_id' => 3,
                 'order_date' => Carbon::now()->subDay(),
                 'delivery_date' => Carbon::now()->addDays(5),
                 'created_at' => Carbon::now(),
                 'updated_at' => Carbon::now(),
+                'completed' => false,
             ],
         ];
 

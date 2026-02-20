@@ -2,7 +2,6 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 
@@ -13,49 +12,57 @@ class StallsSeeders extends Seeder
      */
     public function run(): void
     {
-        $Stalls = [
+        $stalls = [
             [
-                'User_id' => '1',
-                'flea_market_id' => '1',
-                'home_delivery' => '0',
+                'user_id' => 1,
+                'flea_market_id' => 1,
+                'home_delivery' => 0,
                 'information' => 'Vendo ropa de segunda mano en buen estado',
-                'active' => '1',
-                'reset_date' => date('Y-m-d H:i:s', strtotime('+30 days'))
+                'active' => 1,
+                'reset_date' => date('Y-m-d H:i:s', strtotime('+30 days')),
+                'register_date' => date('Y-m-d H:i:s'),
+                'name' => 'Ropa Vintage',
+                'created_at' => date('Y-m-d H:i:s'),
+                'updated_at' => date('Y-m-d H:i:s')
             ],
             [
-                'User_id' => '2',
-                'flea_market_id' => '1',
-                'home_delivery' => '1',
+                'user_id' => 2,
+                'flea_market_id' => 1,
+                'home_delivery' => 1,
                 'information' => 'Vendo muebles antiguos restaurados',
-                'active' => '1',
-                'reset_date' => date('Y-m-d H:i:s', strtotime('+30 days'))
+                'active' => 1,
+                'reset_date' => date('Y-m-d H:i:s', strtotime('+30 days')),
+                'register_date' => date('Y-m-d H:i:s'),
+                'name' => 'Muebles Clásicos',
+                'created_at' => date('Y-m-d H:i:s'),
+                'updated_at' => date('Y-m-d H:i:s')
             ],
             [
-                'User_id' => '2',
-                'flea_market_id' => '2',
-                'home_delivery' => '0',
+                'user_id' => 2,
+                'flea_market_id' => 2,
+                'home_delivery' => 0,
                 'information' => 'Vendo juguetes y juegos de mesa usados',
-                'active' => '1',
-                'reset_date' => date('Y-m-d H:i:s', strtotime('+30 days'))
+                'active' => 1,
+                'reset_date' => date('Y-m-d H:i:s', strtotime('+30 days')),
+                'register_date' => date('Y-m-d H:i:s'),
+                'name' => 'Juguetes Retro',
+                'created_at' => date('Y-m-d H:i:s'),
+                'updated_at' => date('Y-m-d H:i:s')
             ],
-             [
-                'User_id' => '1',
-                'flea_market_id' => '2',
-                'home_delivery' => '1',
+            [
+                'user_id' => 1,
+                'flea_market_id' => 2,
+                'home_delivery' => 1,
                 'information' => 'Vendo libros de segunda mano en buen estado',
-                'active' => '1',
-                'reset_date' => date('Y-m-d H:i:s', strtotime('+30 days'))
+                'active' => 1,
+                'reset_date' => date('Y-m-d H:i:s', strtotime('+30 days')),
+                'register_date' => date('Y-m-d H:i:s'),
+                'name' => 'Libros Usados',
+                'created_at' => date('Y-m-d H:i:s'),
+                'updated_at' => date('Y-m-d H:i:s')
             ]
         ];
-        foreach ($Stalls as $stall) {
-            DB::table('stalls')->insert([
-                'User_id' => $stall['User_id'],
-                'flea_market_id' => $stall['flea_market_id'],
-                'home_delivery' => $stall['home_delivery'],
-                'information' => $stall['information'],
-                'active' => $stall['active'],
-                'reset_date' => $stall['reset_date']
-            ]);
-        }
+
+        DB::table('stalls')->insert($stalls);
     }
 }

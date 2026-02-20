@@ -1,0 +1,71 @@
+name: Deploy MercadillosLaPalma
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  web-deploy:
+    name: 🚀 Deploy to Hostinger
+    runs-on: ubuntu-latest
+
+    steps:
+      # 1. Obtener el código
+      - name: 🚚 Get latest code
+        uses: actions/checkout@v4
+
+      # 2. Configurar PHP
+      - name: 🧩 Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.2'
+          extensions: dom, curl, libxml, mbstring, zip, pcntl, pdo, sqlite, pdo_sqlite, bcmath, soap, intl, gd, exif, iconv
+          coverage: none
+
+      # 3. Instalar dependencias
+      - name: 📦 Install Composer Dependencies
+        run: composer install --no-ansi --no-interaction --no-progress --no-dev --optimize-autoloader
+
+      # 4. Configurar Node.js
+      - name: ⚡ Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      # 5. Compilar assets
+      - name: 🔨 Build Frontend Assets (Vite)
+        run: |
+          npm ci
+          npm run build
+
+      # 6. Crear el ZIP
+      - name: 🤐 Zip Release
+        run: |
+          zip -r deploy.zip . -x "*.git*" "node_modules/*" "tests/*" "storage/*.key" ".env*" ".editorconfig" "phpunit.xml" "README.md"
+
+      # 7. Preparar la carpeta de subida
+      - name: 📦 Prepare Upload Artifacts
+        run: |
+          mkdir upload_ready
+          mv deploy.zip upload_ready/
+          cp unzipper.php upload_ready/
+
+      # 8. Subir SOLO el ZIP y el script
+      - name: 🚀 Upload Zip via FTP
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
+        with:
+          server: ${{ secrets.FTP_SERVER }}
+          username: ${{ secrets.FTP_USERNAME }}
+          password: ${{ secrets.FTP_PASSWORD }}
+          
+          # AQUI ESTA EL CAMBIO CLAVE:
+          # Usamos la ruta completa relativa a tu usuario
+          server-dir: ./
+          
+          local-dir: ./upload_ready/
+
+      # 9. Descomprimir
+      - name: 🪄 Trigger Unzip on Server
+        # IMPORTANTE: Asegúrate de que esta URL apunta a esa carpeta nueva
+        run: curl -s "https://mercadilloslapalma.departamentoinformaticajmpp.com/unzipper.php?key=${{ secrets.DEPLOY_KEY }}"

@@ -11,20 +11,27 @@ class Stall extends Model
 {
     //
     protected $fillable = [
+        "flea_market_id",
+        "user_id",
         "home_delivery",
         "information",
+        'active',
+        'reset_date',
+        'register_date',
+        'name',
+        'img_url',
     ];
 
     public function fleaMarket(): BelongsTo{
-        return $this->belongsTo(FleaMarket::class, 'flea_market_id', 'flea_market_id');
+        return $this->belongsTo(FleaMarket::class);
     }
 
     public function user(): BelongsTo{
-        return $this->belongsTo(User::class,'user_id', 'user_id');
+        return $this->belongsTo(User::class);
     }
 
     public function orders(): HasMany{
-        return $this->hasMany(Order::class,'stalls_id','stalls_id');
+        return $this->hasMany(Order::class);
     }
 
     public function paymentMethods(): BelongsToMany{
@@ -32,10 +39,10 @@ class Stall extends Model
     }
 
     public function categories(): BelongsToMany{
-        return $this->belongsToMany(Category::class,'stalls_category');
+        return $this->belongsToMany(Category::class);
     }
 
     public function products(): BelongsToMany{
-        return $this->belongsToMany(Product::class,'stock_products')->withPivot('quantity', 'price_per_unit');
+        return $this->belongsToMany(Product::class)->withPivot('quantity', 'price_per_unit');
     }
 }

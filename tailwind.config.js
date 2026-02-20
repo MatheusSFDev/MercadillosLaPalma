@@ -11,7 +11,11 @@ export default {
 
     theme: {
         extend: {
+            screens: {
+                    '4k': '2560px',
+                },
             colors: {
+                
                 // --- COLORES CORPORATIVOS (Basados en pág. 6 Guía de Estilos) ---
 
                 // Verde Principal (Botones, Enlaces importantes, Iconos activos)

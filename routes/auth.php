@@ -19,6 +19,7 @@ Route::middleware('guest')->group(function () {
 });
 
 Route::middleware('auth')->group(function () {
+
     Volt::route('verify-email', 'pages.auth.verify-email')
         ->name('verification.notice');
 
@@ -28,4 +29,21 @@ Route::middleware('auth')->group(function () {
 
     Volt::route('confirm-password', 'pages.auth.confirm-password')
         ->name('password.confirm');
+
+    Route::get('/profile', function () {
+        return redirect()->route('general.profile');
+    })->name('profile.edit');
+
+    Route::post('/logout', function () {
+        Auth::logout();
+
+        request()->session()->invalidate();
+        request()->session()->regenerateToken();
+
+        return redirect('/');
+    })->name('logout');
 });
+
+Route::get('/', function () {
+    return app(\App\Http\Controllers\GenericController::class)->index();
+})->name('home');
