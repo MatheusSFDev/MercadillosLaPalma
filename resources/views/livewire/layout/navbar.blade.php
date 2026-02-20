@@ -8,12 +8,17 @@ $user = auth()->user();
         <div class="flex justify-between h-16">
 
             <div class="shrink-0 flex items-center">
-                <a href="/">
-                    <img class="block h-10 w-auto" src="/public/img/Logo Mercadillos.png" alt="Mercadillos La Palma" />
+                <a href="{{ route('home') }}">
+                    <img class="block h-16 w-auto" src="{{ asset('img/logo-mercadillos.png') }}" alt="Mercadillos La Palma" />
                 </a>
             </div>
 
             <div class="hidden sm:flex sm:items-center sm:ms-6 space-x-4">
+
+                <!-- <a href="{{ route('home') }}"
+                    class="text-gray-500 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium">
+                    Mercadillos
+                </a> -->
 
                 @auth
                     {{-- Opciones de VENDEDOR --}}
@@ -106,7 +111,7 @@ $user = auth()->user();
                         <a href="{{ route('login') }}" class="text-gray-500 hover:text-gray-900 font-medium">Iniciar
                             sesión</a>
                         <a href="{{ route('register') }}"
-                            class="bg-green-600 text-white px-4 py-2 rounded-md text-sm font-medium hover:bg-green-700">Registrarse</a>
+                            class="bg-primary text-white px-4 py-2 rounded-md text-sm font-medium hover:bg-primary-hover">Registrarse</a>
                     </div>
                 @endauth
             </div>
