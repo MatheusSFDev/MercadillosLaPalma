@@ -40,4 +40,9 @@ class FleaMarket extends Model
     public function municipality(): BelongsTo {
         return $this->belongsTo(Municipality::class);
     }
+
+    public function stalls(): HasMany
+    {
+        return $this->hasMany(Stall::class);
+    }
 }
