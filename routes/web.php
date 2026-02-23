@@ -27,12 +27,15 @@ Route::controller(GenericController::class)
 
             Route::get("/orders", "orders")->name("orders");
             Route::get("/profile", "profile")->name("profile");
+            Route::put("/profile", "update")->name("profile.update"); 
             Route::get("/products", "showProducts")->name("products");
 
             Route::get('fleamarket/{id}/stalls', 'showStalls')->name("stalls");
             Route::get("/stall/{id}", "showStallProducts")->name("stall");
     });   
 });
+
+Route::put("/profile", [GenericController::class, 'update'])->name("profile.update");
 
 Route::prefix('root')
     ->middleware(['auth', 'role:root'])
