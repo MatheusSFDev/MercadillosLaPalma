@@ -122,5 +122,6 @@ Route::prefix('deploy')->group(function () {
 });
 
 Route::get('/showmercadillo', ShowMercadillo::class)->name('showmercadillo');
+Route::get('/showpuesto/{id}', ShowPuesto::class)->name('showpuesto');
 
 require __DIR__ . '/auth.php';
