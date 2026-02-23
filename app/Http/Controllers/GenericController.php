@@ -6,7 +6,6 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Routing\Controller;
 use App\Models\User;
-use Spatie\Permission\Models\Role;
 
 class GenericController extends Controller
 {

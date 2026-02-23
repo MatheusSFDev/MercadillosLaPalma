@@ -45,6 +45,10 @@ new #[Layout('layouts.guest')] class extends Component
             'password' => ['required', 'string', 'confirmed', Rules\Password::defaults()],
         ]);
 
+        // Mapear correctamente el teléfono
+        $validated['phone_number'] = $validated['phone'] ?? null;
+        unset($validated['phone']);
+
         // Hashear contraseña
         $validated['password'] = Hash::make($validated['password']);
 

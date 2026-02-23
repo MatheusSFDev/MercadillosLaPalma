@@ -4,6 +4,7 @@ use App\Http\Controllers\AdminController;
 use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\SellerController;
 use App\Http\Controllers\GenericController;
+use App\Http\Controllers\RootController;
 use Illuminate\Support\Facades\Route;
 use App\Livewire\Guest\Mercadillo\ShowMercadillo;
 use Illuminate\Support\Facades\Artisan;
@@ -32,6 +33,27 @@ Route::controller(GenericController::class)
             Route::get("/stall/{id}", "showStallProducts")->name("stall");
     });   
 });
+
+Route::prefix('root')
+    ->middleware(['auth', 'role:root'])
+    ->name('root.')
+    ->group(function () {
+
+        Route::get('/', [RootController::class, 'index'])
+            ->name('dashboard');
+
+        Route::get('/users', [RootController::class, 'users'])
+            ->name('users');
+
+        Route::get('/users/{user}/roles', [RootController::class, 'editRoles'])
+            ->name('users.roles.edit');
+
+        Route::post('/users/{user}/roles', [RootController::class, 'updateRoles'])
+            ->name('users.roles.update');
+
+        Route::delete('/users/{user}', [RootController::class, 'destroyUser'])
+            ->name('users.destroy');
+    });
 
 Route::controller(CustomerController::class)
     ->prefix("customer")
