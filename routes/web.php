@@ -4,6 +4,7 @@ use App\Http\Controllers\AdminController;
 use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\SellerController;
 use App\Http\Controllers\GenericController;
+use App\Livewire\Guest\Puesto\ShowPuesto;
 use App\Http\Controllers\RootController;
 use Illuminate\Support\Facades\Route;
 use App\Livewire\Guest\Mercadillo\ShowMercadillo;
@@ -148,5 +149,6 @@ Route::prefix('deploy')->group(function () {
 });
 
 Route::get('/showmercadillo', ShowMercadillo::class)->name('showmercadillo');
+Route::get('/showpuesto/{id}', ShowPuesto::class)->name('showpuesto');
 
 require __DIR__ . '/auth.php';
