@@ -81,7 +81,7 @@ $user = auth()->user();
                                 class="flex rounded-full bg-white text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2">
                                 <span class="sr-only">Abrir menú</span>
                                 <img class="h-8 w-8 rounded-full object-cover"
-                                    src="{{ $user->profile_photo_url ?? 'https://ui-avatars.com/api/?name=' . urlencode($user->name) }}"
+                                    src="{{ $user->avatar ? asset('storage/' . $user->avatar) : 'https://ui-avatars.com/api/?name=' . urlencode($user->name) }}"
                                     alt="{{ $user->name }}">
                             </button>
                         </div>

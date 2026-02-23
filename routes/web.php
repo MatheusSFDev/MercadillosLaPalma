@@ -5,6 +5,7 @@ use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\SellerController;
 use App\Http\Controllers\GenericController;
 use App\Livewire\Guest\Puesto\ShowPuesto;
+use App\Http\Controllers\RootController;
 use Illuminate\Support\Facades\Route;
 use App\Livewire\Guest\Mercadillo\ShowMercadillo;
 use Illuminate\Support\Facades\Artisan;
@@ -27,12 +28,36 @@ Route::controller(GenericController::class)
 
             Route::get("/orders", "orders")->name("orders");
             Route::get("/profile", "profile")->name("profile");
+            Route::put("/profile", "update")->name("profile.update"); 
             Route::get("/products", "showProducts")->name("products");
 
             Route::get('fleamarket/{id}/stalls', 'showStalls')->name("stalls");
             Route::get("/stall/{id}", "showStallProducts")->name("stall");
     });   
 });
+
+Route::put("/profile", [GenericController::class, 'update'])->name("profile.update");
+
+Route::prefix('root')
+    ->middleware(['auth', 'role:root'])
+    ->name('root.')
+    ->group(function () {
+
+        Route::get('/', [RootController::class, 'index'])
+            ->name('dashboard');
+
+        Route::get('/users', [RootController::class, 'users'])
+            ->name('users');
+
+        Route::get('/users/{user}/roles', [RootController::class, 'editRoles'])
+            ->name('users.roles.edit');
+
+        Route::post('/users/{user}/roles', [RootController::class, 'updateRoles'])
+            ->name('users.roles.update');
+
+        Route::delete('/users/{user}', [RootController::class, 'destroyUser'])
+            ->name('users.destroy');
+    });
 
 Route::controller(CustomerController::class)
     ->prefix("customer")
@@ -43,6 +68,7 @@ Route::controller(CustomerController::class)
         Route::get("/profile", "profile")->name("profile");
         Route::get("/orders", "orders")->name("orders");
         Route::get('/cart', 'showCart')->name("cart");
+        Route::get('/cart/store', 'storeCart')->name("store");
         Route::get('/stalls', 'showStalls')->name("stalls");
     });
 

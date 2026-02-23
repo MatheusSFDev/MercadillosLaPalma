@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Models\Product;
+use App\Services\CustomerService;
+use Exception;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 
@@ -18,13 +20,28 @@ class CustomerController extends Controller
         return Product::whereIn('id', $ids)->get();
     }
 
+    public function showCart(){
+        return view("customers.cart");
+    }
+
+    // Hasta que frontend no defina como va enviar los datos del carrito no se puede completar...
+    public function storeCart(Request $request){
+        return view("customers.storeCart");
+    }
+
     /**
      *  Recupera los pedidos del usuario junto con los productos relacionados
      */
-    public function showOrders()
+    public function showOrders(CustomerService $customerService)
     {
-        $pedidos = Auth::user()->orders()->with('products')->get();
-        return view("customers.orders", compact('pedidos'));
+        try{        
+            $orders = $customerService->getOrdersCustomer();
+        }catch(Exception $e){
+            abort(404, $e->getMessage());
+        }
+
+        // Falta testear que las cantidades y el precio total del pedido sean correctos
+        return view("general.orders", ["orders" => $orders]);
     }
 
     /**
