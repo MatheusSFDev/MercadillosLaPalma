@@ -4,6 +4,7 @@ use App\Http\Controllers\AdminController;
 use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\SellerController;
 use App\Http\Controllers\GenericController;
+use App\Livewire\Guest\Puesto\ShowPuesto;
 use Illuminate\Support\Facades\Route;
 use App\Livewire\Guest\Mercadillo\ShowMercadillo;
 use Illuminate\Support\Facades\Artisan;
