@@ -64,6 +64,7 @@ Route::controller(CustomerController::class)
         Route::get("/profile", "profile")->name("profile");
         Route::get("/orders", "orders")->name("orders");
         Route::get('/cart', 'showCart')->name("cart");
+        Route::get('/cart/store', 'storeCart')->name("store");
         Route::get('/stalls', 'showStalls')->name("stalls");
     });
 
