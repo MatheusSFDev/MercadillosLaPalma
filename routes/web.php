@@ -62,7 +62,7 @@ Route::prefix('root')
 Route::controller(CustomerController::class)
     ->prefix("customer")
     ->name("customer.")
-    ->middleware(['auth', 'verified', 'role:customer']) //Añadido un Auth y Role, aunque primitivo
+    ->middleware(['auth', 'verified', 'role:customer|root']) //Añadido un Auth y Role, aunque primitivo
     ->group(function () {
 
         Route::get("/profile", "profile")->name("profile");
@@ -75,7 +75,7 @@ Route::controller(CustomerController::class)
 Route::controller(SellerController::class)
     ->prefix("seller")
     ->name("seller.")
-    ->middleware(['auth', 'verified', 'role:seller']) //Añadido un Auth y Role, aunque primitivo
+    ->middleware(['auth', 'verified', 'role:seller|root']) //Añadido un Auth y Role, aunque primitivo
     ->group(function () {
 
         Route::get("/orders", "orders")->name("orders");
@@ -89,10 +89,10 @@ Route::controller(SellerController::class)
 Route::controller(AdminController::class)
     ->prefix("admin")
     ->name("admin.")
-    ->middleware(['auth', 'verified', 'role:admin']) //Añadido un Auth y Role, aunque primitivo
+    ->middleware(['auth', 'verified', 'role:admin|root']) //Añadido un Auth y Role, aunque primitivo
     ->group(function (): void {
 
-        Route::get('/controlpanel/markets', 'indexMarkets')->name("markets");
+        Route::get('/controlpanel/markets', 'indexMarket')->name("markets");
         Route::get('/controlpanel/market/{id}', 'show')->name("control-panel");
 
         Route::post('/controlpanel/market/{mercadilloId}/stalls', 'createStall')->name('stalls.store');
@@ -110,9 +110,7 @@ Route::controller(AdminController::class)
         Route::delete('/controlpanel/holidays/{holiday}', 'deleteHoliday')->name('holidays.destroy');
         Route::post('/controlpanel/market/{mercadillo}/assign-stall/{user}', 'assignStallToUser')->name('users.assign-stall');
         Route::patch('/controlpanel/stall/{stall}/register', 'registerStall')->name('stall.register');
-
-
-        });
+    });
 
 Route::prefix('deploy')->group(function () {
     // Función auxiliar para verificar la clave

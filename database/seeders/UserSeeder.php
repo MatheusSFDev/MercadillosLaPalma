@@ -7,6 +7,7 @@ use Illuminate\Database\Seeder;
 use App\Models\User;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
+use Spatie\Permission\Models\Role;
 
 class UserSeeder extends Seeder
 {
@@ -16,31 +17,47 @@ class UserSeeder extends Seeder
     public function run(): void
     {
 
-    $Users = [
+    $Users = [ 
         [
-            'name' => 'Paco',
-            'surname' => 'Gimenez',
-            'address' => 'Calle Falsa 123',
-            'phone_number' => '123456789',
-            'email' => 'paco@example.com',
-            'password' => 'password'
-        ],
-        [
-            'name' => 'Maria',
+            'name' => 'Generic',
             'surname' => 'Lopez',
             'address' => 'Avenida Siempre Viva 456',
             'phone_number' => '987654321',
-            'email' => 'maria@example.com',
+            'email' => 'generic@example.com',
+            'password' => 'password'
+        ], 
+        [
+            'name' => 'Customer',
+            'surname' => 'Lopez',
+            'address' => 'Avenida Siempre Viva 456',
+            'phone_number' => '987654321',
+            'email' => 'customer@example.com',
             'password' => 'password'
         ],
         [
-            'name' => 'Juan',
+            'name' => 'Seller',
             'surname' => 'Perez',
             'address' => 'Calle Real 789',
             'phone_number' => '555555555',
-            'email' => 'juan@example.com',
+            'email' => 'seller@example.com',
             'password' => 'password'
-        ]
+        ],
+        [
+            'name' => 'Admin',
+            'surname' => 'Gimenez',
+            'address' => 'Calle Falsa 123',
+            'phone_number' => '123456789',
+            'email' => 'admin@example.com',
+            'password' => 'password'
+        ],
+        [
+            'name' => 'Root',
+            'surname' => 'Perez',
+            'address' => 'Calle Real 789',
+            'phone_number' => '555555555',
+            'email' => 'root@example.com',
+            'password' => 'password'
+        ], 
     ];
 
     foreach ($Users as $user) {
@@ -53,5 +70,25 @@ class UserSeeder extends Seeder
             'password' => Hash::make($user['password']),
         ]);
     }
-}
+
+    $userGeneric = User::find(2);
+    $userGeneric->roles()->attach(
+        Role::where('name', 'customer')->first()->id
+    );
+
+    $userCustomer = User::find(3);
+    $userCustomer->roles()->attach(
+        Role::where('name', 'seller')->first()->id
+    );
+
+    $userSeller = User::find(4);
+    $userSeller->roles()->attach(
+        Role::where('name', 'admin')->first()->id
+    );
+
+    $userRoot = User::find(5);
+    $userRoot->roles()->attach(
+        Role::where('name', 'root')->first()->id
+    );
+    }
 }
