@@ -7,8 +7,11 @@ use Illuminate\Support\Facades\Auth;
 
 class CustomerService 
 {
-    public function getOrdersCustomer(){
-        $orders = Auth::user()->orders()->with('products')->get();
+
+    // Hacer que devuelva los datos en orden más reciente a menos
+    public function getOrdersCustomer()
+    {
+        $orders = Auth::user()->orders()->with('products')->orderBy('order_date', 'desc')->get();
         
         foreach($orders as $order){
             foreach($orders as $order){
