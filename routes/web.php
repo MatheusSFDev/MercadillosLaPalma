@@ -146,3 +146,12 @@ Route::prefix('deploy')->group(function () {
 Route::get('/showmercadillo', ShowMercadillo::class)->name('showmercadillo');
 
 require __DIR__ . '/auth.php';
+
+
+// RUTAS DE TESTEO
+
+//RUTA TESTEO DE AÑADIR PRODUCTOS
+
+Route::get('/addProducts', function () {
+    return view('sellers.addProducts');
+});
