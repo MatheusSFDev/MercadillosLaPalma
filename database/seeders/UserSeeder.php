@@ -60,15 +60,20 @@ class UserSeeder extends Seeder
         ], 
     ];
 
-    foreach ($Users as $user) {
-        DB::table('users')->insert([
-            'name' => $user['name'],
-            'surname' => $user['surname'],
-            'address' => $user['address'],
-            'phone_number' => $user['phone_number'],
-            'email' => $user['email'],
-            'password' => Hash::make($user['password']),
-        ]);
+        foreach ($users as $data) {
+            $user = User::firstOrCreate(
+                ['email' => $data['email']],
+                [
+                    'name' => $data['name'],
+                    'surname' => $data['surname'],
+                    'address' => $data['address'],
+                    'phone_number' => $data['phone_number'],
+                    'password' => Hash::make($data['password']),
+                ]
+            );
+
+            $user->assignRole($data['role']);
+        }
     }
 
     $userGeneric = User::find(2);
