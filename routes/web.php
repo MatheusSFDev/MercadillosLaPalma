@@ -66,7 +66,7 @@ Route::controller(CustomerController::class)
     ->group(function () {
 
         Route::get("/profile", "profile")->name("profile");
-        Route::get("/orders", "orders")->name("orders");
+        Route::get("/orders", "showOrders")->name("orders");
         Route::get('/cart', 'showCart')->name("cart");
         Route::get('/cart/store', 'storeCart')->name("store");
         Route::get('/stalls', 'showStalls')->name("stalls");
@@ -77,7 +77,6 @@ Route::controller(SellerController::class)
     ->name("seller.")
     ->middleware(['auth', 'verified', 'role:seller|root']) //Añadido un Auth y Role, aunque primitivo
     ->group(function () {
-
         Route::get("/orders", "orders")->name("orders");
         Route::get('/create/product', 'createProduct')->name("create-product");
         Route::get('/edit/products', 'editProducts')->name("edit-products");
