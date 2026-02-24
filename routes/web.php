@@ -151,4 +151,11 @@ Route::prefix('deploy')->group(function () {
 Route::get('/showmercadillo', ShowMercadillo::class)->name('showmercadillo');
 Route::get('/showpuesto/{id}', ShowPuesto::class)->name('showpuesto');
 
+Route::middleware(['auth', 'role:root'])
+    ->prefix('root')
+    ->name('root.')
+    ->group(function () {
+        Route::get('/', [RootController::class, 'index'])->name('index');
+    });
+
 require __DIR__ . '/auth.php';
