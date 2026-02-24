@@ -156,3 +156,12 @@ Route::middleware(['auth', 'role:root'])
     });
 
 require __DIR__ . '/auth.php';
+
+
+// RUTAS DE TESTEO
+
+//RUTA TESTEO DE AÑADIR PRODUCTOS
+
+Route::get('/addProducts', function () {
+    return view('sellers.addProducts');
+});

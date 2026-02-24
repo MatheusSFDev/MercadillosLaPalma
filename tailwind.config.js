@@ -39,6 +39,11 @@ export default {
                     yellow: '#f3b93c', // Mostaza (Para destacar ofertas o estrellas) [cite: 441]
                     cream: '#c8c286', // Beige verdoso (Fondos alternativos) [cite: 441]
                     olive: '#4d5d3d', // Verde oliva oscuro (Para pies de página o bloques oscuros) [cite: 441]
+                    grey:'#a6a6a6', // Gris neutro (Para textos secundarios o fondos suaves) [cite: 441]
+                    lightgrey: '#dddddd', // Gris claro (Para fondos o tarjetas) [cite: 441]
+                    darkgrey: '#545454', // Gris oscuro (Para textos,fondos o bordes que necesitan contraste sin ser negro) [cite: 441]
+                    lightred:'#f3efef', // rojo claro(Para fondos de formularios) [cite: 441]
+                    lightgreen:'#dcf0d0'
                 },
 
                 // Estados del Sistema
