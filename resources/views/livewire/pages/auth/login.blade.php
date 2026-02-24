@@ -25,12 +25,11 @@ new #[Layout('layouts.guest')] class extends Component {
 <div class="fixed inset-0 bg-cover bg-center bg-no-repeat flex items-center justify-center md:grid md:grid-cols-2 md:bg-white"
     style="background-image: url('{{ asset('img/background.jpg') }}')">
 
-    <div
-        class="w-full max-w-md bg-white/95 backdrop-blur-sm rounded-2xl shadow-2xl overflow-hidden p-10 m-4 
-                md:bg-white md:shadow-none md:rounded-none md:m-0 md:max-w-full md:h-full md:flex md:items-center md:justify-center md:backdrop-blur-none">
+    <div class="w-full max-w-md bg-white/95 backdrop-blur-sm rounded-2xl shadow-2xl overflow-hidden p-10 m-4 
+              md:bg-white md:shadow-none md:rounded-none md:m-0 md:max-w-full md:h-full md:flex md:items-center md:justify-center md:backdrop-blur-none">
 
         <div class="w-full md:max-w-md 2xl:max-w-2xl 4k:max-w-5xl">
-            <h2 class="text-2xl font-bold text-center text-gray-800 mb-8 md:text-left md:text-3xl 2xl:text-5xl 2xl:mb-12  4k:text-8xl 4k:mb-20">
+            <h2 class="font-titulo-principal text-2xl font-bold text-center text-gray-800 mb-8 md:text-left md:text-3xl 2xl:text-5xl 2xl:mb-12 4k:text-8xl 4k:mb-20">
                 ¡Bienvenido!
             </h2>
 
@@ -87,8 +86,5 @@ new #[Layout('layouts.guest')] class extends Component {
         </div>
     </div>
 
-    <div class="hidden md:block h-full w-full bg-cover bg-center"
-        style="background-image: url('{{ asset('img/background.jpg') }}')">
-    </div>
-
+    <div class="hidden md:block h-full w-full bg-cover bg-center" style="background-image: url('{{ asset('img/background.jpg') }}')"></div>
 </div>

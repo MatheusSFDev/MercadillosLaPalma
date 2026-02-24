@@ -77,10 +77,12 @@ new #[Layout('layouts.guest')] class extends Component
      style="background-image: url('{{ asset('img/background.jpg') }}')">
    
     <div class="w-full max-w-md bg-white/95 backdrop-blur-sm rounded-2xl shadow-2xl overflow-hidden p-10 m-4 
-                md:bg-white md:shadow-none md:rounded-none md:m-0 md:max-w-full md:h-full md:flex md:items-center md:justify-center md:backdrop-blur-none">
+              md:bg-white md:shadow-none md:rounded-none md:m-0 md:max-w-full md:h-full md:flex md:items-center md:justify-center md:backdrop-blur-none">
         
-        <div class="w-full md:max-w-md">
-            <h2 class="text-2xl font-bold text-center text-gray-800 mb-8 md:text-left md:text-3xl">Registro</h2>
+        <div class="w-full md:max-w-md 2xl:max-w-2xl 4k:max-w-5xl">
+            <h2 class="text-2xl font-bold text-center text-gray-800 mb-8 md:text-left md:text-3xl">
+                Registro
+            </h2>
 
             <x-auth-session-status class="mb-4" :status="session('status')" />
 
@@ -157,7 +159,5 @@ new #[Layout('layouts.guest')] class extends Component
         </div>
     </div>
 
-    <div class="hidden md:block h-full w-full bg-cover bg-center" style="background-image: url('{{ asset('img/background.jpg') }}')">
-    </div>
-
+    <div class="hidden md:block h-full w-full bg-cover bg-center" style="background-image: url('{{ asset('img/background.jpg') }}')"></div>
 </div>
