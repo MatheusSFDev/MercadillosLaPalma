@@ -71,7 +71,7 @@ new #[Layout('layouts.guest')] class extends Component {
                     @endif
                 </div>
 
-                <x-primary-button class="bg-primary hover:bg-primary-hover text-white font-bold py-2.5 px-4 rounded-lg transition-colors flex justify-center">
+                <x-primary-button class="w-full bg-primary hover:bg-primary-hover text-white font-bold py-2.5 px-4 rounded-lg transition-colors flex justify-center">
                     {{ __('Iniciar sesión') }}
                 </x-primary-button>
 
