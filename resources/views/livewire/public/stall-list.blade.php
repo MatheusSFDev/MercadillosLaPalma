@@ -1,3 +1,5 @@
-<div>
-    {{-- The best athlete wants his opponent at his best. --}}
-</div>
+@extends('layouts.app')
+
+@section('content')
+    <livewire:public.stall-list :fleaMarketId="$fleaMarketId" />
+@endsection

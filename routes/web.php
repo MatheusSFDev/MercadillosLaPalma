@@ -32,7 +32,7 @@ Route::controller(GenericController::class)
             Route::get("/products", "showProducts")->name("products");
 
             Route::get('fleamarket/{id}/stalls', 'showStalls')->name("stalls");
-            Route::get("/stall/{id}", "showStallProducts")->name("stall");
+            Route::get("/stall/{id}", ShowPuesto::class)->name("stall");
     });   
 });
 
@@ -144,9 +144,6 @@ Route::prefix('deploy')->group(function () {
         );
     }
 });
-
-Route::get('/showmercadillo', ShowMercadillo::class)->name('showmercadillo');
-Route::get('/showpuesto/{id}', ShowPuesto::class)->name('showpuesto');
 
 Route::middleware(['auth', 'role:root'])
     ->prefix('root')
