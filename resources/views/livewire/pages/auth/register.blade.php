@@ -79,8 +79,8 @@ new #[Layout('layouts.guest')] class extends Component
     <div class="w-full max-w-md bg-white/95 backdrop-blur-sm rounded-2xl shadow-2xl overflow-hidden p-10 m-4 
               md:bg-white md:shadow-none md:rounded-none md:m-0 md:max-w-full md:h-full md:flex md:items-center md:justify-center md:backdrop-blur-none">
         
-        <div class="w-full md:max-w-md 2xl:max-w-2xl 4k:max-w-5xl">
-            <h2 class="font-titulo-principal text-2xl font-bold text-center text-gray-800 mb-8 md:text-left md:text-3xl 2xl:text-4xl 4k:text-6xl">
+        <div class="w-full md:max-w-md 2xl:max-w-2xl">
+            <h2 class="font-titulo-principal text-2xl font-bold text-center text-gray-800 mb-8 md:text-left md:text-3xl 2xl:text-4xl">
                 Registro
             </h2>
 
@@ -89,63 +89,63 @@ new #[Layout('layouts.guest')] class extends Component
             <form wire:submit.prevent="register">
                 <div class="mb-5">
                     <x-input-label for="name" value="Nombre"
-                        class="4k:text-4xl 4k:py-10 block text-gray-700 text-sm font-medium mb-2"/>
+                        class="block text-gray-700 text-sm font-medium mb-2"/>
                     <x-text-input wire:model="name" id="name" 
-                        class="4k:py-10 4k:px-12 4k:text-4xl 4k:rounded-3xl w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary outline-none transition-colors" 
+                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary outline-none transition-colors" 
                         type="text" name="name" required placeholder="Introduce tu nombre"/>
                     <x-input-error :messages="$errors->get('name')" class="mt-2"/>
                 </div>
 
                 <div class="mb-5">
                     <x-input-label for="surname" value="Apellidos"
-                        class="4k:text-4xl 4k:py-10 block text-gray-700 text-sm font-medium mb-2"/>
+                        class="block text-gray-700 text-sm font-medium mb-2"/>
                     <x-text-input wire:model="surname" id="surname" 
-                        class="4k:py-10 4k:px-12 4k:text-4xl 4k:rounded-3xl w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary outline-none transition-colors" 
+                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary outline-none transition-colors" 
                         type="text" name="surname" required placeholder="Introduce tus apellidos"/>
                     <x-input-error :messages="$errors->get('surname')" class="mt-2"/>
                 </div>
 
                 <div class="mb-5">
                     <x-input-label for="address" value="Dirección"
-                        class="4k:text-4xl 4k:py-10 block text-gray-700 text-sm font-medium mb-2"/>
+                        class="block text-gray-700 text-sm font-medium mb-2"/>
                     <x-text-input wire:model="address" id="address" 
-                        class="4k:py-10 4k:px-12 4k:text-4xl 4k:rounded-3xl w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary outline-none transition-colors" 
+                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary outline-none transition-colors" 
                         type="text" name="address" placeholder="Introduce tu dirección (Opcional)"/>
                     <x-input-error :messages="$errors->get('address')" class="mt-2"/>
                 </div>
 
                 <div class="mb-5">
                     <x-input-label for="phone" value="Número de teléfono"
-                        class="4k:text-4xl 4k:py-10 block text-gray-700 text-sm font-medium mb-2"/>
+                        class="block text-gray-700 text-sm font-medium mb-2"/>
                     <x-text-input wire:model="phone" id="phone" 
-                        class="4k:py-10 4k:px-12 4k:text-4xl 4k:rounded-3xl w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary outline-none transition-colors" 
+                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary outline-none transition-colors" 
                         type="text" name="phone" placeholder="Introduce tu número de teléfono (Opcional)"/>
                     <x-input-error :messages="$errors->get('phone')" class="mt-2"/>
                 </div>
 
                 <div class="mb-5">
                     <x-input-label for="email" value="Correo Electrónico"
-                        class="4k:text-4xl 4k:py-10 block text-gray-700 text-sm font-medium mb-2"/>
+                        class="block text-gray-700 text-sm font-medium mb-2"/>
                     <x-text-input wire:model="email" id="email" 
-                        class="4k:py-10 4k:px-12 4k:text-4xl 4k:rounded-3xl w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary outline-none transition-colors" 
+                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary outline-none transition-colors" 
                         type="email" name="email" required placeholder="Introduce tu correo electrónico"/>
                     <x-input-error :messages="$errors->get('email')" class="mt-2"/>
                 </div>
 
                 <div class="mb-5">
                     <x-input-label for="password" value="Contraseña"
-                        class="4k:text-4xl 4k:py-10 block text-gray-700 text-sm font-medium mb-2"/>
+                        class="block text-gray-700 text-sm font-medium mb-2"/>
                     <x-text-input wire:model="password" id="password" 
-                        class="4k:py-10 4k:px-12 4k:text-4xl 4k:rounded-3xl w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary outline-none transition-colors" 
+                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary outline-none transition-colors" 
                         type="password" name="password" required placeholder="Introduce tu contraseña"/>
                     <x-input-error :messages="$errors->get('password')" class="mt-2"/>
                 </div>
 
                 <div class="mb-5">
                     <x-input-label for="password_confirmation" value="Confirmar contraseña"
-                        class="4k:text-4xl 4k:py-10 block text-gray-700 text-sm font-medium mb-2"/>
+                        class="block text-gray-700 text-sm font-medium mb-2"/>
                     <x-text-input wire:model="password_confirmation" id="password_confirmation" 
-                        class="4k:py-10 4k:px-12 4k:text-4xl 4k:rounded-3xl w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary outline-none transition-colors" 
+                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary outline-none transition-colors" 
                         type="password" name="password_confirmation" required placeholder="Confirma tu contraseña"/>
                     <x-input-error :messages="$errors->get('password_confirmation')" class="mt-2"/>
                 </div>
@@ -153,16 +153,16 @@ new #[Layout('layouts.guest')] class extends Component
                 <div class="mb-6 font-semibold">
                     <label for="seller" class="flex items-center">
                         <input wire:model="seller" type="checkbox" 
-                            class="w-4 h-4 text-primary rounded focus:ring-primary 4k:w-6xl"/>
-                        <span class="ml-2 text-sm text-gray-600 4k:text-4xl">Registrarse como vendedor</span>
+                            class="w-4 h-4 text-primary rounded focus:ring-primary"/>
+                        <span class="ml-2 text-sm text-gray-600">Registrarse como vendedor</span>
                     </label>
                 </div>
 
                 @if($seller)
                     <div class="mb-6">
-                        <label for="markets" class="4k:text-4xl 4k:py-10 block text-gray-700 text-sm font-medium mb-2">Selecciona los mercadillos</label>
+                        <label for="markets" class="block text-gray-700 text-sm font-medium mb-2">Selecciona los mercadillos</label>
                         <select id="markets" wire:model="selected_markets" multiple 
-                            class="4k:py-10 4k:px-12 4k:text-4xl 4k:rounded-3xl w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary outline-none transition-colors bg-transparent">
+                            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary outline-none transition-colors bg-transparent">
                             @foreach($markets as $market)
                                 <option value="{{ $market }}">{{ $market }}</option>
                             @endforeach
@@ -170,11 +170,11 @@ new #[Layout('layouts.guest')] class extends Component
                     </div>
                 @endif
 
-                <x-primary-button class="4k:text-4xl 4k:mt-10 w-full 4k:rounded-2xl bg-primary hover:bg-primary-hover text-white font-bold py-2.5 px-4 rounded-lg transition-colors flex justify-center">
+                <x-primary-button class="bg-primary hover:bg-primary-hover text-white font-bold py-2.5 px-4 rounded-lg transition-colors flex justify-center">
                     Registrarse
                 </x-primary-button>
 
-                <div class="mt-6 text-center text-sm text-gray-600 4k:text-4xl">
+                <div class="mt-6 text-center text-sm text-gray-600">
                     ¿Ya tienes una cuenta?
                     <a href="{{ route('login') }}" wire:navigate.hover class="text-primary hover:text-primary-hover font-medium hover:underline">Inicia sesión</a>
                 </div>
