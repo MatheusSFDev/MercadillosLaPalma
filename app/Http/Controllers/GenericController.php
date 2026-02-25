@@ -76,13 +76,11 @@ class GenericController extends Controller
      * Mostrar puestos de un mercadillo
      * GET /general/fleamarket/{id}/stalls
      */
-    public function showStalls($fleamarketId)
+    public function showStalls($id)
     {
-        $stalls = \App\Models\Stall::where('flea_market_id', $fleamarketId)
-            ->with(['user'])
-            ->get();
-
-        return view('general.stalls', compact('stalls'));
+        return view('livewire.public.stall-list', [
+            'fleaMarketId' => $id
+        ]);
     }
 
     /**

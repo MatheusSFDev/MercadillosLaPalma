@@ -84,7 +84,7 @@
                             {{-- Botón: Alineado con los datos, sin bold ni uppercase --}}
                             <div class="flex-shrink-0">
                                 <a
-                                    href="#"
+                                    href="{{ route('general.stalls', $market->id) }}"
                                     class="bg-primary hover:bg-primary-hover text-white px-5 py-2 rounded-lg text-sm transition font-normal font-dm-serif shadow-sm inline-block"
                                 >
                                     Ver mercadillo
