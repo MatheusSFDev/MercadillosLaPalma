@@ -37,6 +37,7 @@ export default {
                 accent: {
                     orange: '#ff751f', // Naranja cálido (Llamados a la acción, Iconos destacados) [cite: 441]
                     yellow: '#f3b93c', // Mostaza (Para destacar ofertas o estrellas) [cite: 441]
+                    darkyellow: '#d19a23', //Mostaza oscuro (Para hovers de botones con color mostoza) [cite: 441]  
                     cream: '#c8c286', // Beige verdoso (Fondos alternativos) [cite: 441]
                     olive: '#4d5d3d', // Verde oliva oscuro (Para pies de página o bloques oscuros) [cite: 441]
                     grey:'#a6a6a6', // Gris neutro (Para textos secundarios o fondos suaves) [cite: 441]
