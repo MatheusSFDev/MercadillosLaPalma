@@ -18,6 +18,11 @@
     src: url('../fonts/PlayfairDisplay-Regular.ttf') format('truetype');
 }
 
+@font-face {
+    font-family: 'Open Sans';
+    src: url('../fonts/OpenSans-Regular.ttf') format('truetype');
+}
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;

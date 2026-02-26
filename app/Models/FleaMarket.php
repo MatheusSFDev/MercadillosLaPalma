@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class FleaMarket extends Model
 {
+    public $timestamps = false;
     /**
      * The attributes that are mass assignable.
      *
@@ -38,5 +39,10 @@ class FleaMarket extends Model
      */
     public function municipality(): BelongsTo {
         return $this->belongsTo(Municipality::class);
+    }
+
+    public function stalls(): HasMany
+    {
+        return $this->hasMany(Stall::class);
     }
 }

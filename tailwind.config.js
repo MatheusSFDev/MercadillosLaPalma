@@ -12,6 +12,7 @@ export default {
     theme: {
         extend: {
             colors: {
+                
                 // --- COLORES CORPORATIVOS (Basados en pág. 6 Guía de Estilos) ---
 
                 // Verde Principal (Botones, Enlaces importantes, Iconos activos)
@@ -19,6 +20,7 @@ export default {
                     DEFAULT: '#2b5c01', // El verde oscuro fuerte [cite: 441]
                     hover: '#5a8713', // Verde hoja más vivo para hovers [cite: 441]
                     light: '#7c995c', // Verde salvia para bordes o fondos suaves [cite: 441]
+                    pastel: '#e3eccd', // Verde pastel para fondos o tarjetas [cite: 441]
                 },
 
                 // Tonos Tierra (Textos, Fondos secundarios)
@@ -30,9 +32,16 @@ export default {
 
                 // Acentos y Utilidades
                 accent: {
+                    orange: '#ff751f', // Naranja cálido (Llamados a la acción, Iconos destacados) [cite: 441]
                     yellow: '#f3b93c', // Mostaza (Para destacar ofertas o estrellas) [cite: 441]
+                    darkyellow: '#d19a23', //Mostaza oscuro (Para hovers de botones con color mostoza) [cite: 441]  
                     cream: '#c8c286', // Beige verdoso (Fondos alternativos) [cite: 441]
                     olive: '#4d5d3d', // Verde oliva oscuro (Para pies de página o bloques oscuros) [cite: 441]
+                    grey:'#a6a6a6', // Gris neutro (Para textos secundarios o fondos suaves) [cite: 441]
+                    lightgrey: '#dddddd', // Gris claro (Para fondos o tarjetas) [cite: 441]
+                    darkgrey: '#545454', // Gris oscuro (Para textos,fondos o bordes que necesitan contraste sin ser negro) [cite: 441]
+                    lightred:'#f3efef', // rojo claro(Para fondos de formularios) [cite: 441]
+                    lightgreen:'#dcf0d0'
                 },
 
                 // Estados del Sistema
@@ -51,6 +60,7 @@ export default {
                 'titulo-seccion': ['Playfair', ...defaultTheme.fontFamily.serif],
                 'subtitulo': ['"DM Serif"', ...defaultTheme.fontFamily.serif],
                 'general': ['Atkinson', ...defaultTheme.fontFamily.serif],
+                'open-sans': ['"Open Sans"', ...defaultTheme.fontFamily.sans],
             },
         },
     },
