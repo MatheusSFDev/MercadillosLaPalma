@@ -3521,7 +3521,7 @@
                 "illuminate/container": "^12.0|^13.0",
                 "illuminate/contracts": "^12.0|^13.0",
                 "illuminate/database": "^12.0|^13.0",
-                "php": "^8.4",
+                "php": "^8.3",
                 "spatie/laravel-package-tools": "^1.0"
             },
             "require-dev": {
@@ -9741,5 +9741,5 @@
         "php": "^8.3"
     },
     "platform-dev": {},
-    "plugin-api-version": "2.6.0"
+    "plugin-api-version": "2.9.0"
 }
