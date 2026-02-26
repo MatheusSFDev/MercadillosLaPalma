@@ -24,6 +24,7 @@ use Database\Seeders\StallsCategorySeeder;
 use Database\Seeders\StallsSeeders;
 use Database\Seeders\UserSeeder;
 use Illuminate\Support\Facades\Artisan;
+use Illuminate\Support\Facades\Log;
 
 //RedirectLivewire
 Route::middleware(['auth', 'verified'])->get('/dashboard', function () {
@@ -165,6 +166,8 @@ Route::prefix('deploy')->group(function () {
     Route::get('/seed/{key}', function ($key) {
         checkDeployKey($key);
 
+        set_time_limit(300);
+
         $seeders = [
             RoleSeeder::class,
             CategoriesSeeder::class,
@@ -183,14 +186,24 @@ Route::prefix('deploy')->group(function () {
             ProductStallSeeder::class
         ];
 
-        foreach ($seeders as $seed) {
-            Artisan::call('db:seed', [
-                '--class' => $seed,
-                '--force' => true
-            ]);
+        $output = '';
+
+        try {
+            foreach ($seeders as $seed) {
+                Artisan::call('db:seed', [
+                    '--class' => $seed,
+                    '--force' => true
+                ]);
+                
+                $output .= "<b>{$seed}</b>: " . Artisan::output() . "<br>";
+            }
+            
+            return "Seeders Completados con éxito:<br><br>" . $output;
+
+        } catch (\Exception $e) {
+            Log::error("Error corriendo seeders via web: " . $e->getMessage());
+            return response("Error ejecutando seeders: " . $e->getMessage() . "<br><br>Output hasta el error:<br>" . $output, 500);
         }
-        
-        return "Seeders Completados: <br>" . nl2br(Artisan::output());
     });
 
     Route::get('/unzip/{key}', function ($key) {
