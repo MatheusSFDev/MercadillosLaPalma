@@ -49,7 +49,6 @@ jobs:
         run: |
           mkdir upload_ready
           mv deploy.zip upload_ready/
-          cp unzipper.php upload_ready/
 
       # 8. Subir SOLO el ZIP y el script
       - name: 🚀 Upload Zip via FTP
