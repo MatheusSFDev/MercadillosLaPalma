@@ -192,6 +192,34 @@ Route::prefix('deploy')->group(function () {
         
         return "Seeders Completados: <br>" . nl2br(Artisan::output());
     });
+
+    Route::get('/unzip/{key}', function ($key) {
+        checkDeployKey($key);
+
+        $zipPath = base_path('mi_proyecto.zip');
+
+        if (!file_exists($zipPath)) {
+            abort(404, "Error: No se encontró el archivo ZIP en la ruta: {$zipPath}");
+        }
+
+        $zip = new ZipArchive;
+        $res = $zip->open($zipPath);
+
+        if ($res === TRUE) {
+            $zip->extractTo(base_path());
+            $zip->close();
+
+            if (unlink($zipPath)) {
+                $mensajeBorrado = "<br>🧹 El archivo ZIP original ha sido eliminado por seguridad.";
+            } else {
+                $mensajeBorrado = "<br>⚠️ El ZIP se extrajo, pero no se pudo borrar automáticamente.";
+            }
+
+            return '✅ ¡Despliegue completado! Los archivos se han extraído correctamente.' . $mensajeBorrado;
+        } else {
+            return "❌ Error crítico: No se pudo abrir el archivo ZIP. Código de error: {$res}";
+        }
+    });
 });
 
 Route::middleware(['auth', 'role:root'])
