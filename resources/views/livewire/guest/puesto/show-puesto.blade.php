@@ -16,7 +16,19 @@
                     <div class="flex flex-col md:flex-row items-center gap-6">
                         <div
                             class="w-32 h-32 rounded-full border-4 border-white bg-white overflow-hidden shadow-lg -mb-16 md:mb-0">
-                            <img src="{{ $stall->user->avatar ?? asset('images/default-avatar.jpg') }}" class="w-full h-full object-cover">
+                            @if($stall->user->avatar)
+                                <img 
+                                    src="{{ asset('storage/' . $stall->user->avatar) }}" 
+                                    class="w-full h-full object-cover" 
+                                    alt="Avatar"
+                                >
+                            @else
+                                <img 
+                                    src="{{ asset('img/imgNotAvailable.png') }}" 
+                                    class="w-full h-full object-cover" 
+                                    alt="Sin avatar"
+                                >
+                            @endif
                         </div>
 
                         <div class="text-center md:text-left flex-grow">
@@ -46,7 +58,8 @@
                 <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
                     @foreach($productos as $producto)
                         @php
-                            $foto = $producto->photos()->first();
+                            $foto = $producto->photos ? $producto->photos->first() : null;
+                            $imagenUrl = $foto && $foto->url ? asset($foto->url) : asset('img/imgNotAvailable.png');
                         @endphp
                         <livewire:guest.puesto.product-card 
                             :key="'prod-' . $producto->id" 
@@ -54,7 +67,7 @@
                             :nombre="$producto->name"
                             :precio="$producto->pivot->price_per_unit ?? 0" 
                             :descripcion="$foto?->description ?? 'Producto disponible'" 
-                            :imagen="$foto?->url ? asset($foto->url) : asset('img/imgNotAvailable.png')" />
+                            :imagen="$imagenUrl" />
                     @endforeach
                 </div>
             @endif

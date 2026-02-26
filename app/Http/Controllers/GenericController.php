@@ -143,12 +143,17 @@ class GenericController extends Controller
             'puestos' => 'nullable|string|max:255',
         ]);
 
-        // Actualizar datos personales
-        $user->update($validated);
+        // Actualizar datos personales (sin avatar)
+        $user->update(array_diff_key($validated, ['avatar' => '']));
 
         // Guardar avatar si hay archivo
         if ($request->hasFile('avatar')) {
-            // Guardar en storage/app/public/avatars
+            // Eliminar avatar anterior si existe
+            if ($user->avatar && \Storage::disk('public')->exists($user->avatar)) {
+                \Storage::disk('public')->delete($user->avatar);
+            }
+
+            // Guardar el nuevo
             $path = $request->file('avatar')->store('avatars', 'public');
             $user->avatar = $path;
             $user->save();
