@@ -111,17 +111,34 @@
                                 </div>
 
                                 {{-- Puestos --}}
-                                <div class="bg-white rounded-xl p-4 border border-transparent grid grid-cols-1 md:grid-cols-3 items-center gap-1 md:gap-4">
-                                    <div class="flex items-center gap-1">
-                                        <span class="text-[10px] md:text-xs font-bold text-gray-400 uppercase tracking-wider">Puestos</span>
+                                <div class="bg-white rounded-xl p-4 border border-transparent grid grid-cols-1 md:grid-cols-3 items-start gap-1 md:gap-4">
+                                    <div class="flex items-center gap-1 md:mt-2">
+                                        <span class="text-[10px] md:text-xs font-bold text-gray-400 uppercase tracking-wider">
+                                            Puestos
+                                        </span>
                                         <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3 text-gray-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
                                         </svg>
                                     </div>
-                                    <div class="md:col-span-2">
-                                        <p class="font-medium text-sm md:text-base text-gray-500">
-                                            {{ $user->puestos && $user->puestos > 0 ? $user->puestos : '' }}
-                                        </p>
+
+                                    <div class="md:col-span-2 space-y-2">
+                                        @if ($user->stalls->isEmpty())
+                                            <p class="text-sm text-gray-500 italic">
+                                                Este usuario no tiene puestos asignados.
+                                            </p>
+                                        @else
+                                            <ul class="space-y-1">
+                                                @foreach ($user->stalls as $stall)
+                                                    <li class="text-sm md:text-base font-medium text-gray-700">
+                                                        • {{ $stall->name }}
+                                                        <span class="text-gray-400 text-xs">
+                                                            ({{ $stall->fleaMarket->municipality->name ?? 'Sin mercadillo' }})
+                                                        </span>
+                                                    </li>
+                                                @endforeach
+                                            </ul>
+                                        @endif
                                     </div>
                                 </div>
 

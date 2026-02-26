@@ -14,7 +14,7 @@ class ShowPuesto extends Component
     // El $id viene directamente de la URL /stall/{id}
     public function mount($id)
     {
-        $this->stall = Stall::with(['user', 'fleaMarket', 'products'])
+        $this->stall = Stall::with(['user', 'fleaMarket', 'products.photos'])
             ->findOrFail($id);
         
         $this->productos = $this->stall->products;
