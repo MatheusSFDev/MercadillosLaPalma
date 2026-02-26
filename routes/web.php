@@ -196,7 +196,7 @@ Route::prefix('deploy')->group(function () {
     Route::get('/unzip/{key}', function ($key) {
         checkDeployKey($key);
 
-        $zipPath = base_path('mi_proyecto.zip');
+        $zipPath = base_path('deploy.zip');
 
         if (!file_exists($zipPath)) {
             abort(404, "Error: No se encontró el archivo ZIP en la ruta: {$zipPath}");
