@@ -76,13 +76,11 @@ class GenericController extends Controller
      * Mostrar puestos de un mercadillo
      * GET /general/fleamarket/{id}/stalls
      */
-    public function showStalls($fleamarketId)
+    public function showStalls($id)
     {
-        $stalls = \App\Models\Stall::where('flea_market_id', $fleamarketId)
-            ->with(['user'])
-            ->get();
-
-        return view('general.stalls', compact('stalls'));
+        return view('livewire.public.stall-list', [
+            'fleaMarketId' => $id
+        ]);
     }
 
     /**
@@ -136,14 +134,25 @@ class GenericController extends Controller
         $user = auth()->user();
 
         $validated = $request->validate([
-            'name'         => 'required|string|max:255',
-            'surname'      => 'required|string|max:255',
-            'email'        => 'required|email|unique:users,email,' . $user->id,
-            'address'      => 'nullable|string|max:255',
+            'avatar' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'name' => 'sometimes|required|string|max:255',
+            'surname' => 'sometimes|required|string|max:255',
+            'email' => 'sometimes|required|email|unique:users,email,' . $user->id,
+            'address' => 'nullable|string|max:255',
             'phone_number' => 'nullable|string|max:20',
+            'puestos' => 'nullable|string|max:255',
         ]);
 
+        // Actualizar datos personales
         $user->update($validated);
+
+        // Guardar avatar si hay archivo
+        if ($request->hasFile('avatar')) {
+            // Guardar en storage/app/public/avatars
+            $path = $request->file('avatar')->store('avatars', 'public');
+            $user->avatar = $path;
+            $user->save();
+        }
 
         return redirect()
             ->route('general.profile')
