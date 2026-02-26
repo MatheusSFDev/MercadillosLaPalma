@@ -67,4 +67,4 @@ jobs:
       # 9. Descomprimir
       - name: 🪄 Trigger Unzip on Server
         # IMPORTANTE: Asegúrate de que esta URL apunta a esa carpeta nueva
-        run: curl -s "https://mercadilloslapalma.departamentoinformaticajmpp.com/unzipper.php?key=${{ secrets.DEPLOY_KEY }}"
+        run: curl -s "https://mercadilloslapalma.departamentoinformaticajmpp.com/deploy/unzip/${{ secrets.DEPLOY_KEY }}"
