@@ -8,6 +8,21 @@ use App\Livewire\Guest\Puesto\ShowPuesto;
 use App\Http\Controllers\RootController;
 use Illuminate\Support\Facades\Route;
 use App\Livewire\Guest\Mercadillo\ShowMercadillo;
+use Database\Seeders\AdministratorSeeder;
+use Database\Seeders\CategoriesSeeder;
+use Database\Seeders\FleaMarketSeeder;
+use Database\Seeders\MunicipalitiesSeeder;
+use Database\Seeders\OrderProductSeeder;
+use Database\Seeders\OrderSeeder;
+use Database\Seeders\PaymentMethodSeeder;
+use Database\Seeders\PaymentMethodStallSeeder;
+use Database\Seeders\PhotosSeeder;
+use Database\Seeders\ProductSeeder;
+use Database\Seeders\ProductStallSeeder;
+use Database\Seeders\RoleSeeder;
+use Database\Seeders\StallsCategorySeeder;
+use Database\Seeders\StallsSeeders;
+use Database\Seeders\UserSeeder;
 use Illuminate\Support\Facades\Artisan;
 
 //RedirectLivewire
@@ -121,28 +136,62 @@ Route::prefix('deploy')->group(function () {
                 abort(403, 'Acceso denegado o clave no configurada.');
             }
         }
-
-        Route::get('/migrate/{key}', function ($key) {
-            checkDeployKey($key);
-            Artisan::call('migrate', ['--force' => true]);
-            return 'Migración completada: <br>' . nl2br(Artisan::output());
-        }
-        );
-
-        Route::get('/optimize/{key}', function ($key) {
-            checkDeployKey($key);
-            Artisan::call('optimize:clear');
-            return 'Caché borrada: <br>' . nl2br(Artisan::output());
-        }
-        );
-
-        Route::get('/link/{key}', function ($key) {
-            checkDeployKey($key);
-            Artisan::call('storage:link');
-            return 'Storage linkeado: <br>' . nl2br(Artisan::output());
-        }
-        );
     }
+
+    Route::get('/migrate/{key}', function ($key) {
+        checkDeployKey($key);
+        Artisan::call('migrate', ['--force' => true]);
+        return 'Migración completada: <br>' . nl2br(Artisan::output());
+    });
+
+    Route::get('/optimize/{key}', function ($key) {
+        checkDeployKey($key);
+        Artisan::call('optimize:clear');
+        return 'Caché borrada: <br>' . nl2br(Artisan::output());
+    });
+
+    Route::get('/link/{key}', function ($key) {
+        checkDeployKey($key);
+        Artisan::call('storage:link');
+        return 'Storage linkeado: <br>' . nl2br(Artisan::output());
+    });
+
+    Route::get('/fresh/{key}', function ($key) {
+        checkDeployKey($key);
+        Artisan::call('migrate:fresh', ['--force' => true]);
+        return 'Base de datos refrescada (Tablas eliminadas y recreadas): <br>' . nl2br(Artisan::output());
+    });
+
+    Route::get('/seed/{key}', function ($key) {
+        checkDeployKey($key);
+
+        $seeders = [
+            RoleSeeder::class,
+            CategoriesSeeder::class,
+            UserSeeder::class,
+            ProductSeeder::class,
+            MunicipalitiesSeeder::class,
+            FleaMarketSeeder::class,
+            AdministratorSeeder::class,
+            StallsSeeders::class,
+            PaymentMethodSeeder::class,
+            PaymentMethodStallSeeder::class,
+            StallsCategorySeeder::class,
+            PhotosSeeder::class,
+            OrderSeeder::class,
+            OrderProductSeeder::class,
+            ProductStallSeeder::class
+        ];
+
+        foreach ($seeders as $seed) {
+            Artisan::call('db:seed', [
+                '--class' => $seed,
+                '--force' => true
+            ]);
+        }
+        
+        return "Seeders Completados: <br>" . nl2br(Artisan::output());
+    });
 });
 
 Route::middleware(['auth', 'role:root'])
