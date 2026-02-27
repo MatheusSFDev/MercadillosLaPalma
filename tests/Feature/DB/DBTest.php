@@ -152,7 +152,7 @@ test("CRUD Productos y Fotos (Con modelo)", function () {
 
     $product = Product::create([
         'name' => 'Producto 1',
-        'unit' => 'kg',
+        'unit' => 'Kg',
         'user_id' => $user->id,
         'category_id' => $category->id,
     ]);
@@ -166,7 +166,7 @@ test("CRUD Productos y Fotos (Con modelo)", function () {
     // Verificar creación
     assertDatabaseHas('products', [
         'name' => 'Producto 1',
-        'unit' => 'kg',
+        'unit' => 'Kg',
         'user_id' => $user->id,
         'category_id' => $category->id,
     ]);

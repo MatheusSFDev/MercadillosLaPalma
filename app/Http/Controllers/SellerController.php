@@ -121,7 +121,7 @@ class SellerController extends Controller
                 array_push($data['products'], [
                     "name" => $product->name,
                     "status" => $status == false ? 'Sin asignar' : 'Asignado',
-                    "stalls" => $status == false ? 'Sin asignar' : $product->stalls()->where('product_id', $product->id)->name,
+                    "stalls" => $status == false ? 'Sin asignar' : $product->stalls()->where('product_id', $product->id)->pluck('name')->first(),
                     "stock" => $status == false ? null : $product->stalls()->where('product_id', $product->id)->sum('product_stall.quantity'),
                     "price" => $status == false ? null : $product->stalls()->where('product_id', $product->id)->sum('product_stall.price_per_unit')
                 ]);
@@ -149,9 +149,7 @@ class SellerController extends Controller
 
             $assigned = false;
             if($request->filled('stall_id')){
-                $product->stall()->attach($data->stall_id, [
-                    "product_id" => $product->id,
-                    "stall_id" => $data->stall_id,
+                $product->stalls()->attach($data->stall_id, [
                     "quantity" => $data->quantity,
                     "price_per_unit" => $data->price
                 ]);
