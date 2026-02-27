@@ -17,31 +17,31 @@ class ProductSeeder extends Seeder
         $products = [
             [
                 'name' => 'Carne de cerdo',
-                'unit'=>'kg',
+                'unit'=>'Kg',
                 'user_id'=>1,
                 'category_id'=>1
             ],
             [
                 'name' => 'Pescado fresco',
-                'unit'=>'kg',
+                'unit'=>'Kg',
                 'user_id'=>2,
                 'category_id'=>2
             ],
             [
                 'name' => 'Frutas y verduras',
-                'unit'=>'kg',
+                'unit'=>'Kg',
                 'user_id'=>3,
                 'category_id'=>3
             ],
             [
                 'name' => 'Artesanía local',
-                'unit'=>'kg',
+                'unit'=>'Kg',
                 'user_id'=>1,
                 'category_id'=>4
             ],
             [
                 'name' => 'Productos varios',
-                'unit'=>'kg ',
+                'unit'=>'Kg',
                 'user_id'=>2,
                 'category_id'=>5
             ]

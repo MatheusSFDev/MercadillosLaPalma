@@ -43,9 +43,17 @@ class Product extends Model
         return $this->belongsToMany(Order::class)->withPivot('quantity', 'price_per_unit','status');
 
     }
-    public function stock():BelongsToMany
+
+    // relación con los puestos donde se vende el producto
+    public function stalls(): BelongsToMany
     {
         return $this->belongsToMany(Stall::class)->withPivot('quantity', 'price_per_unit');
+    }
+
+    // alias histórico
+    public function stock(): BelongsToMany
+    {
+        return $this->stalls();
     }
 
 }
