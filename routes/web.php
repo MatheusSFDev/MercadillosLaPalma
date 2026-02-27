@@ -252,3 +252,7 @@ require __DIR__ . '/auth.php';
 Route::get('/addProducts', function () {
     return view('sellers.addProducts');
 });
+
+Route::get('/showProducts', function () {
+    return view('sellers.showProducts');
+});
