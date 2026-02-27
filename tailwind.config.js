@@ -21,6 +21,7 @@ export default {
                     hover: '#5a8713', // Verde hoja más vivo para hovers [cite: 441]
                     light: '#7c995c', // Verde salvia para bordes o fondos suaves [cite: 441]
                     pastel: '#e3eccd', // Verde pastel para fondos o tarjetas [cite: 441]
+                    offgreen:'#4d5d3d'
                 },
 
                 // Tonos Tierra (Textos, Fondos secundarios)
@@ -41,7 +42,11 @@ export default {
                     lightgrey: '#dddddd', // Gris claro (Para fondos o tarjetas) [cite: 441]
                     darkgrey: '#545454', // Gris oscuro (Para textos,fondos o bordes que necesitan contraste sin ser negro) [cite: 441]
                     lightred:'#f3efef', // rojo claro(Para fondos de formularios) [cite: 441]
-                    lightgreen:'#dcf0d0'
+                    lightgreen:'#dcf0d0',
+                    lightorange:'#ffe9ba',
+                    altorange:'#f8dec1',
+                    pastelred:'#ffdcc5',
+                    againorange:'#efdac3'
                 },
 
                 // Estados del Sistema
