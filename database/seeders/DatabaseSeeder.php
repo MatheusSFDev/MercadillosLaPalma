@@ -30,7 +30,13 @@ class DatabaseSeeder extends Seeder
             PhotosSeeder::class,
             OrderSeeder::class,
             OrderProductSeeder::class,
-            ProductStallSeeder::class
+            ProductStallSeeder::class,
+            AdministratorSeeder::class,
+            ScheduleSeeder::class,
+            HolydaysSeeder::class,
+            PermisionSeeder::class,
+            Role_Has_PermisionSeeder::class,
+            SessionsSeeder::class,
         ]);
     }
 }
