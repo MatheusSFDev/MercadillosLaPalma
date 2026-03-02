@@ -123,8 +123,14 @@ Route::controller(AdminController::class)
         Route::post('/controlpanel/market/{mercadilloId}/holidays', 'createHoliday')->name('holidays.store');
         Route::patch('/controlpanel/holidays/{holiday}', 'updateHoliday')->name('holidays.update');
         Route::delete('/controlpanel/holidays/{holiday}', 'deleteHoliday')->name('holidays.destroy');
+
         Route::post('/controlpanel/market/{mercadillo}/assign-stall/{user}', 'assignStallToUser')->name('users.assign-stall');
         Route::patch('/controlpanel/stall/{stall}/register', 'registerStall')->name('stall.register');
+
+        
+        Route::patch('/controlpanel/stalls/accept', 'acceptStalls')->name('stalls.accept');
+        Route::get('/controlpanel/unregistered-counts', 'unregisteredCounts')->name('stalls.unregistered-counts');
+        Route::get('/controlpanel/market/{id}/stalls/pending', 'getStallWithoutR')->name('stalls.pending');
     });
 
 Route::prefix('deploy')->group(function () {

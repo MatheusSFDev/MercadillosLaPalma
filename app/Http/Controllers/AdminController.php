@@ -157,4 +157,29 @@ class AdminController extends Controller
         }
     }
 
+    /**
+     * Aceptar múltiples solicitudes de puestos (IDs pasados en `stall_ids`).
+     */
+    public function acceptStalls(Request $request)
+    {
+        $data = $request->validate([
+            'stall_ids' => 'required|array',
+            'stall_ids.*' => 'integer'
+        ]);
+
+        $updated = $this->stallService->acceptRequests($data['stall_ids']);
+
+        return back()->with('success', "$updated puestos aprobados.");
+    }
+
+    /**
+     * Devuelve conteo de puestos sin fecha de alta por mercadillo (JSON).
+     */
+    public function unregisteredCounts()
+    {
+        $counts = $this->stallService->countUnregisteredByMarket();
+
+        return response()->json($counts);
+    }
+
 }
