@@ -19,6 +19,9 @@ class CategoriesSeeder extends Seeder
             'Pescaderia',
             'Verduleria',
             'Artesania',
+            'Queseria',
+            'Floristeria',
+            'Panaderia',
             'Otros'
         ];
 
