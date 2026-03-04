@@ -93,11 +93,11 @@ Route::controller(SellerController::class)
     ->name("seller.")
     ->middleware(['auth', 'verified', 'role:seller|root']) //Añadido un Auth y Role, aunque primitivo
     ->group(function () {
-        Route::get("/orders", "orders")->name("orders");
+        Route::get("/orders", "sellerOrders")->name("orders");
         Route::get('/create/product', 'createProduct')->name("create-product");
         Route::get('/edit/products', 'editProducts')->name("edit-products");
         // Cambiar nombre
-        Route::get('/index', 'indexStalls')->name("index-stalls");
+        Route::get('/index', 'sellerStalls')->name("index-stalls");
         Route::get("stall/{id}/products", "showSellerProducts")->name("products");
 });
 
