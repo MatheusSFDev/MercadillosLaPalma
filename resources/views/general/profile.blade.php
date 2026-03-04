@@ -1,199 +1,365 @@
 @extends('layouts.app')
 
 @section('content')
-        {{-- CSS para limpieza de inputs y efectos --}}
     <style>
+        /* Limpiamos estilos por defecto de algunos inputs */
         select { -webkit-appearance: none; -moz-appearance: none; appearance: none; }
         select::-ms-expand { display: none; }
-        .form-input-profile { @apply w-full border border-gray-200 p-2.5 rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none text-base md:text-sm transition-all bg-white; }
-        /* Ajuste para que en móvil los inputs no se vean tan pequeños al hacer focus */
-        @media (max-width: 640px) {
-            .form-input-profile { font-size: 16px; } 
+        
+        /* Inputs en modo edición */
+        .form-input-edit { 
+            @apply w-full bg-[#fbfcf9] border-none p-3 rounded-xl focus:ring-2 focus:ring-[#dce6ca] outline-none text-gray-700 font-medium transition-all; 
+        }
+        
+        /* Cajas blancas en modo vista */
+        .view-box {
+            @apply w-full bg-white p-3 px-4 rounded-xl shadow-sm text-gray-700 font-medium;
+        }
+
+        /* Títulos Serif */
+        .font-serif-title {
+            font-family: ui-serif, Georgia, Cambria, "Times New Roman", Times, serif;
         }
     </style>
 
-    <div class="bg-[#e9f0d6] min-h-screen py-6 md:py-12 font-general text-status-dark">
-        <div class="container mx-auto px-4 max-w-5xl">
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8">
+    {{-- Fondo verde claro de toda la página --}}
+    <div class="bg-[#e4ebce] min-h-screen py-3 md:py-5 font-sans text-gray-800">
+        <div class="container mx-auto px-3 md:px-4 max-w-6xl">
+            
+            {{-- Formulario Principal --}}
+            <form id="profileForm" action="{{ route('general.profile.update') }}" method="POST" enctype="multipart/form-data">
+                @csrf
+                @method('PUT')
 
-                {{-- COLUMNA IZQUIERDA (Arriba en móvil): Perfil Rápido --}}
-                <div class="md:col-span-1">
-                    <div class="bg-white rounded-2xl shadow-sm p-6 md:p-8 flex flex-col items-center text-center border border-white/50 md:sticky md:top-10">
+                {{-- Contenedor Grid con items-stretch para igualar alturas --}}
+                <div class="grid grid-cols-1 md:grid-cols-12 gap-4 md:gap-8 items-stretch">
 
-                        {{-- Avatar --}}
-                        <form id="avatarForm" action="{{ route('general.profile.update') }}" method="POST" enctype="multipart/form-data" class="group">
-                            @csrf
-                            @method('PUT')
-                            <div class="relative w-28 h-28 md:w-32 md:h-32 mb-4 md:mb-6 mx-auto">
+                    {{-- ================= COLUMNA IZQUIERDA ================= --}}
+                    <div class="md:col-span-4 lg:col-span-4">
+                        <div class="bg-white rounded-2xl md:rounded-[2rem] shadow-sm p-6 md:p-10 flex flex-col items-center justify-center h-full min-h-[300px] md:min-h-[400px]">
+                            
+                            {{-- Avatar --}}
+                            <div class="relative w-24 h-24 md:w-36 md:h-36 mb-4 md:mb-6 mx-auto group">
                                 <div id="avatarPreview" 
-                                    class="w-28 h-28 md:w-32 md:h-32 rounded-full border-4 flex items-center justify-center text-white text-3xl md:text-4xl font-bold overflow-hidden shadow-inner bg-gray-200 transition-transform group-hover:scale-[1.02]"
+                                    class="w-24 h-24 md:w-36 md:h-36 rounded-full border-4 border-white shadow-md flex items-center justify-center text-white text-3xl md:text-4xl font-bold overflow-hidden bg-[#5a6b47] transition-transform group-hover:scale-[1.02]"
                                     style="background-image: url('{{ $user->avatar ? asset('storage/' . $user->avatar) : '' }}'); background-size: cover; background-position: center;">
+                                    
                                     @if(!$user->avatar)
-                                        <span class="text-gray-500 opacity-80">{{ strtoupper(substr($user->name, 0, 2)) }}</span>
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-10 w-10 md:h-16 md:w-16 opacity-90" viewBox="0 0 20 20" fill="currentColor">
+                                            <path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd" />
+                                        </svg>
                                     @endif
                                 </div>
                                 <input type="file" name="avatar" id="avatarInput" class="hidden" accept="image/*">
-                                <label for="avatarInput" class="absolute bottom-0 right-0 md:bottom-1 md:right-1 bg-primary text-white w-8 h-8 md:w-9 md:h-9 flex items-center justify-center rounded-full cursor-pointer shadow-md hover:bg-primary-hover transition-all">
-                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
+                                
+                                {{-- Lápiz de edición avatar --}}
+                                <label for="avatarInput" class="absolute bottom-1 right-2 bg-[#f4f4f4] text-gray-700 w-8 h-8 md:w-9 md:h-9 flex items-center justify-center rounded-full cursor-pointer shadow border border-gray-200 hover:bg-white transition-all">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3 md:h-4 md:w-4" viewBox="0 0 20 20" fill="currentColor">
+                                        <path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z" />
                                     </svg>
                                 </label>
                             </div>
-                        </form>
 
-                        <h2 class="text-xl md:text-2xl font-dm-serif font-bold text-status-dark leading-tight">
-                            {{ $user->name }} {{ $user->surname }}
-                        </h2>
-                        <p class="text-xs md:text-sm text-gray-500 mt-1">{{ $user->email }}</p>
-
-                        <div class="mt-4 md:mt-6 w-full pt-4 md:pt-6 border-t border-gray-100">
-                            <span class="inline-block bg-primary-light/20 text-primary px-4 md:px-5 py-1 md:py-1.5 rounded-full text-[10px] md:text-xs font-bold tracking-widest uppercase">
-                                {{ ucfirst($user->getRoleNames()->first() ?? 'Usuario') }}
-                            </span>
+                            {{-- Nombre --}}
+                            <h2 class="text-xl md:text-3xl font-serif-title font-bold text-[#3d4530] mt-2 md:mt-2 text-center">
+                                <span class="block text-sm md:text-base">{{ $user->name }}</span>
+                                <span class="block text-sm md:text-base">{{ $user->surname }}</span>
+                            </h2>
                         </div>
                     </div>
-                </div>
 
-                {{-- COLUMNA DERECHA (Debajo en móvil): Información --}}
-                <div class="md:col-span-2">
-                    <div class="bg-white/60 backdrop-blur-sm rounded-2xl shadow-sm p-5 md:p-8 border border-white">
-                        
-                        <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-6 md:mb-8 gap-4">
-                            <h3 class="text-xl md:text-2xl font-bold font-dm-serif text-status-dark">Información personal</h3>
-                            <button id="editBtn" class="w-full sm:w-auto bg-primary hover:bg-primary-hover text-white px-6 py-2.5 md:py-2 rounded-xl text-sm transition-all font-medium shadow-sm active:scale-95">
-                                Editar perfil
-                            </button>
-                        </div>
-
-                        <form action="{{ route('general.profile.update') }}" method="POST">
-                            @csrf
-                            @method('PUT')
-
-                            <div class="grid grid-cols-1 gap-y-3 md:gap-y-4" id="personalInfo">
+                    {{-- ================= COLUMNA DERECHA ================= --}}
+                    <div class="md:col-span-8 lg:col-span-8">
+                        <div class="bg-[#f2f5eb] rounded-2xl md:rounded-[2rem] shadow-sm p-5 md:p-12 flex flex-col justify-center h-full">
+                            
+                            {{-- Cabecera: Título y Botón Editar (Solo visible en View Mode) --}}
+                            <div class="flex flex-col md:flex-row md:items-center md:justify-between mb-6 md:mb-8 gap-3 md:gap-4">
+                                <h3 class="text-xl md:text-3xl font-serif-title font-bold text-[#3d4530]">Información personal</h3>
                                 
-                                {{-- Nombre y Apellidos --}}
-                                <div class="bg-white rounded-xl p-4 border border-transparent grid grid-cols-1 md:grid-cols-3 items-start gap-1 md:gap-4">
-                                    <span class="text-[10px] md:text-xs font-bold text-gray-400 uppercase tracking-wider md:mt-2">Nombre y Apellidos</span>
-                                    <div class="md:col-span-2">
-                                        <p class="info-text font-medium text-sm md:text-base">{{ $user->name }} {{ $user->surname }}</p>
-                                        <div class="hidden flex-col gap-3 edit-fields">
-                                            <input type="text" name="name" value="{{ $user->name }}" class="form-input-profile" placeholder="Nombre" />
-                                            <input type="text" name="surname" value="{{ $user->surname }}" class="form-input-profile" placeholder="Apellidos" />
+                                <button type="button" id="btnEditProfile" class="view-element bg-[#e1ebd2] hover:bg-[#d0ddbe] text-[#4d593c] px-4 md:px-6 py-2 md:py-2.5 rounded-xl text-xs md:text-sm transition-all font-bold shadow-sm flex items-center justify-center gap-2 active:scale-95 w-full md:w-auto">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3 md:h-4 md:w-4" viewBox="0 0 20 20" fill="currentColor">
+                                        <path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z" />
+                                    </svg>
+                                    Editar
+                                </button>
+                            </div>
+
+                            {{-- ===== DATOS PERSONALES ===== --}}
+                            <div class="flex flex-col gap-3 md:gap-5">
+                                
+                                {{-- Nombre Completo --}}
+                                <div class="bg-white rounded-xl px-3 md:p-2 py-2 md:py-2 flex flex-col md:flex-row md:items-center gap-3 md:gap-6">
+                                    <label class="md:w-1/3 font-bold text-[#3d4530] text-sm md:text-lg whitespace-nowrap">Nombre Completo</label>
+                                    <div class="w-full md:w-2/3">
+                                        <div class="view-element view-box">{{ $user->name }} {{ $user->surname }}</div>
+                                        <div class="edit-element hidden flex flex-col md:flex-row gap-2 md:gap-3">
+                                            <input type="text" name="name" value="{{ $user->name }}" class="form-input-edit w-full md:w-1/2 rounded-xl bg-gray-100 border-none text-sm" placeholder="Nombre" />
+                                            <input type="text" name="surname" value="{{ $user->surname }}" class="form-input-edit w-full md:w-1/2 rounded-xl bg-gray-100 border-none text-sm" placeholder="Apellidos" />
                                         </div>
                                     </div>
                                 </div>
 
                                 {{-- Email --}}
-                                <div class="bg-white rounded-xl p-4 border border-transparent grid grid-cols-1 md:grid-cols-3 items-center gap-1 md:gap-4">
-                                    <span class="text-[10px] md:text-xs font-bold text-gray-400 uppercase tracking-wider">Email</span>
-                                    <div class="md:col-span-2">
-                                        <p class="info-text font-medium text-sm md:text-base">{{ $user->email }}</p>
-                                        <input type="email" name="email" value="{{ $user->email }}" class="hidden form-input-profile edit-fields" />
+                                <div class="bg-white rounded-xl px-3 md:p-2 py-2 md:py-2 flex flex-col md:flex-row md:items-center gap-3 md:gap-6">
+                                    <label class="md:w-1/3 font-bold text-[#3d4530] text-sm md:text-lg whitespace-nowrap">Email</label>
+                                    <div class="w-full md:w-2/3">
+                                        <div class="view-element view-box text-xs md:text-base">{{ $user->email }}</div>
+                                        <input type="email" name="email" value="{{ $user->email }}" class="edit-element hidden form-input-edit rounded-xl bg-gray-100 border-none text-sm" />
                                     </div>
                                 </div>
 
                                 {{-- Teléfono --}}
-                                <div class="bg-white rounded-xl p-4 border border-transparent grid grid-cols-1 md:grid-cols-3 items-center gap-1 md:gap-4">
-                                    <span class="text-[10px] md:text-xs font-bold text-gray-400 uppercase tracking-wider">Teléfono</span>
-                                    <div class="md:col-span-2">
-                                        <p class="info-text font-medium text-sm md:text-base">{{ $user->phone_number ?? 'No especificado' }}</p>
-                                        <input type="text" name="phone_number" value="{{ $user->phone_number ?? '' }}" class="hidden form-input-profile edit-fields" />
+                                <div class="bg-white rounded-xl px-3 md:p-2 py-2 md:py-2 flex flex-col md:flex-row md:items-center gap-3 md:gap-6">
+                                    <label class="md:w-1/3 font-bold text-[#3d4530] text-sm md:text-lg whitespace-nowrap">Teléfono</label>
+                                    <div class="w-full md:w-2/3">
+                                        <div class="view-element view-box text-xs md:text-base">{{ $user->phone_number ?? 'No especificado' }}</div>
+                                        <input type="text" name="phone_number" value="{{ $user->phone_number ?? '' }}" class="edit-element hidden form-input-edit rounded-xl bg-gray-100 border-none text-sm" />
                                     </div>
                                 </div>
 
                                 {{-- Dirección --}}
-                                <div class="bg-white rounded-xl p-4 border border-transparent grid grid-cols-1 md:grid-cols-3 items-center gap-1 md:gap-4">
-                                    <span class="text-[10px] md:text-xs font-bold text-gray-400 uppercase tracking-wider">Dirección</span>
-                                    <div class="md:col-span-2">
-                                        <p class="info-text font-medium text-sm md:text-base">{{ $user->address ?? 'No especificada' }}</p>
-                                        <input type="text" name="address" value="{{ $user->address ?? '' }}" class="hidden form-input-profile edit-fields" />
+                                <div class="bg-white rounded-xl px-3 md:p-2 py-2 md:py-2 flex flex-col md:flex-row md:items-center gap-3 md:gap-6">
+                                    <label class="md:w-1/3 font-bold text-[#3d4530] text-sm md:text-lg whitespace-nowrap">Dirección</label>
+                                    <div class="w-full md:w-2/3">
+                                        <div class="view-element view-box text-xs md:text-base">{{ $user->address ?? 'No especificada' }}</div>
+                                        <input type="text" name="address" value="{{ $user->address ?? '' }}" class="edit-element hidden form-input-edit rounded-xl bg-gray-100 border-none text-sm" />
                                     </div>
                                 </div>
 
-                                {{-- Puestos --}}
-                                <div class="bg-white rounded-xl p-4 border border-transparent grid grid-cols-1 md:grid-cols-3 items-start gap-1 md:gap-4">
-                                    <div class="flex items-center gap-1 md:mt-2">
-                                        <span class="text-[10px] md:text-xs font-bold text-gray-400 uppercase tracking-wider">
-                                            Puestos
-                                        </span>
-                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3 text-gray-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                                d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
-                                        </svg>
+                                @hasrole('seller')
+                                    {{-- ===== PUESTOS (Solo View Mode) ===== --}}
+                                    <div class="view-element bg-white rounded-xl px-3 md:p-2 py-2 md:py-2 flex flex-col md:flex-row md:items-start gap-3 md:gap-6">
+                                        <label class="md:w-1/3 font-bold text-[#3d4530] text-sm md:text-lg whitespace-nowrap">Puestos</label>
+                                        <div class="w-full md:w-2/3">
+                                            @if ($user->stalls->isEmpty())
+                                                <p class="text-gray-500 italic text-xs md:text-base">No tienes puestos asignados.</p>
+                                            @else
+                                                <ul class="space-y-1 md:space-y-2 text-gray-700 text-xs md:text-base font-medium">
+                                                    @foreach ($user->stalls as $stall)
+                                                        <li class="flex items-start">
+                                                            <span class="mr-2 md:mr-3 text-[#5a6b47]">•</span>
+                                                            <span>
+                                                                {{ $stall->name }} 
+                                                                <span class="text-gray-400 text-xs md:text-sm ml-1 font-normal">({{ $stall->fleaMarket->municipality->name ?? 'Sin mercadillo' }})</span>
+                                                            </span>
+                                                        </li>
+                                                    @endforeach
+                                                </ul>
+                                            @endif
+                                        </div>
                                     </div>
+                                @endhasrole
 
-                                    <div class="md:col-span-2 space-y-2">
-                                        @if ($user->stalls->isEmpty())
-                                            <p class="text-sm text-gray-500 italic">
-                                                Este usuario no tiene puestos asignados.
-                                            </p>
-                                        @else
-                                            <ul class="space-y-1">
-                                                @foreach ($user->stalls as $stall)
-                                                    <li class="text-sm md:text-base font-medium text-gray-700">
-                                                        • {{ $stall->name }}
-                                                        <span class="text-gray-400 text-xs">
-                                                            ({{ $stall->fleaMarket->municipality->name ?? 'Sin mercadillo' }})
-                                                        </span>
-                                                    </li>
-                                                @endforeach
-                                            </ul>
-                                        @endif
+                                {{-- ===== CONTRASEÑA ACTUAL (Requerida para cualquier cambio) ===== --}}
+                                <div class="edit-element hidden bg-white rounded-xl px-3 md:p-2 py-2 md:py-2 flex flex-col md:flex-row md:items-center gap-3 md:gap-6 border-l-4 border-orange-400">
+                                    <label class="md:w-1/3 font-bold text-[#3d4530] text-sm md:text-lg whitespace-nowrap">Contraseña actual *</label>
+                                    <div class="w-full md:w-2/3">
+                                        <input type="password" name="current_password" id="currentPassword" class="form-input-edit rounded-xl bg-gray-100 border-none text-sm" placeholder="Ingresa tu contraseña para confirmar cambios" />
+                                    </div>
+                                </div>
+
+                                {{-- ===== CONTRASEÑA NUEVA (Solo Edit Mode) ===== --}}
+                                <div class="edit-element hidden mt-3 md:mt-4">
+                                    <h3 class="text-lg md:text-3xl font-serif-title font-bold text-[#3d4530] mb-3 md:mb-5">Cambiar Contraseña</h3>
+                                    
+                                    <div class="bg-white rounded-xl px-3 md:p-2 py-2 md:py-2 flex flex-col gap-3 md:gap-5">
+
+                                        <div class="bg-white rounded-xl px-3 md:p-2 py-2 md:py-2 flex flex-col md:flex-row md:items-center gap-3 md:gap-6">
+                                            <label class="md:w-1/3 font-bold text-[#3d4530] text-sm md:text-lg whitespace-nowrap">Contraseña nueva</label>
+                                            <div class="w-full md:w-2/3">
+                                                <input type="password" name="password" class="form-input-edit rounded-xl bg-gray-100 border-none text-sm" />
+                                            </div>
+                                        </div>
+
+                                        <div class="bg-white rounded-xl px-3 md:p-2 py-2 md:py-2 flex flex-col md:flex-row md:items-center gap-3 md:gap-6">
+                                            <label class="md:w-1/3 font-bold text-[#3d4530] text-sm md:text-lg whitespace-nowrap">Confirmar Contraseña</label>
+                                            <div class="w-full md:w-2/3">
+                                                <input type="password" name="password_confirmation" class="form-input-edit rounded-xl bg-gray-100 border-none text-sm" />
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
 
                             </div>
 
-                            {{-- Botón de Guardar --}}
-                            <div class="mt-8 hidden flex justify-end" id="saveBtnContainer">
-                                <button type="submit" class="w-full sm:w-auto bg-green-600 hover:bg-green-700 text-white px-10 py-3 md:py-2.5 rounded-xl text-sm font-medium shadow-md transition-all active:scale-95">
-                                    Guardar cambios
+                            {{-- Botones de Acción (Solo Edit Mode) --}}
+                            <div class="edit-element hidden flex flex-col md:flex-row justify-center items-center gap-3 md:gap-6 mt-6 md:mt-10">
+                                <button type="submit" class="w-full md:w-auto bg-[#dcf0cd] hover:bg-[#cbe3b9] text-[#4d593c] px-6 md:px-10 py-2 md:py-3 rounded-xl font-bold shadow-sm transition-all active:scale-95 text-sm md:text-base">
+                                    Guardar
+                                </button>
+                                <button type="button" id="btnCancelEdit" class="w-full md:w-auto bg-[#f0dfd5] hover:bg-[#e6d0c4] text-[#8b4f3a] px-6 md:px-10 py-2 md:py-3 rounded-xl font-bold shadow-sm transition-all active:scale-95 text-sm md:text-base">
+                                    Cancelar
                                 </button>
                             </div>
-                        </form>
-                    </div>
-                </div>
 
-            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </form>
         </div>
     </div>
 
     <script>
-    // Avatar logic
-    document.getElementById('avatarInput').addEventListener('change', function(event) {
-        const file = event.target.files[0];
-        if (file) {
+    document.addEventListener('DOMContentLoaded', function() {
+        const avatarInput = document.getElementById('avatarInput');
+        const avatarPreview = document.getElementById('avatarPreview');
+        const profileForm = document.getElementById('profileForm');
+
+        // Validar tipo de archivo y tamaño
+        function validateImage(file) {
+            const validTypes = ['image/jpeg', 'image/png', 'image/jpg', 'image/gif'];
+            const maxSize = 2048 * 1024; // 2MB
+
+            if (!validTypes.includes(file.type)) {
+                showNotification('Por favor selecciona un formato válido (JPEG, PNG, GIF)', 'error');
+                return false;
+            }
+
+            if (file.size > maxSize) {
+                showNotification('La imagen no puede superar 2MB', 'error');
+                return false;
+            }
+
+            return true;
+        }
+
+        // Mostrar notificación
+        function showNotification(message, type = 'success') {
+            const notification = document.createElement('div');
+            notification.className = `fixed top-5 right-5 px-6 py-3 rounded-lg text-white font-medium z-50 ${
+                type === 'success' ? 'bg-green-500' : 'bg-red-500'
+            }`;
+            notification.textContent = message;
+            document.body.appendChild(notification);
+
+            setTimeout(() => {
+                notification.remove();
+            }, 3000);
+        }
+
+        // Actualizar avatar en navbar
+        function updateNavbarAvatars(imageDataUrl) {
+            const navbarDesktop = document.getElementById('navbarAvatarDesktop');
+            const navbarMobile = document.getElementById('navbarAvatarMobile');
+            
+            if (navbarDesktop) {
+                navbarDesktop.src = imageDataUrl;
+            }
+            if (navbarMobile) {
+                navbarMobile.src = imageDataUrl;
+            }
+        }
+
+        // Previsualizar y enviar imagen automáticamente
+        avatarInput.addEventListener('change', async function(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            // Validar imagen
+            if (!validateImage(file)) {
+                avatarInput.value = ''; // Limpiar input
+                return;
+            }
+
+            // Mostrar preview local
             const reader = new FileReader();
             reader.onload = (e) => {
-                const preview = document.getElementById('avatarPreview');
-                preview.style.backgroundImage = `url(${e.target.result})`;
-                preview.innerHTML = '';
-                document.getElementById('avatarForm').submit();
+                const imageDataUrl = e.target.result;
+                avatarPreview.style.backgroundImage = `url(${imageDataUrl})`;
+                avatarPreview.style.backgroundSize = 'cover';
+                avatarPreview.style.backgroundPosition = 'center';
+                avatarPreview.innerHTML = ''; 
+                avatarPreview.style.backgroundColor = 'transparent';
+                avatarPreview.style.opacity = '0.7'; // Indicar que se está guardando
+
+                // Actualizar navbar también con la previsualización
+                updateNavbarAvatars(imageDataUrl);
             };
             reader.readAsDataURL(file);
-        }
-    });
 
-    // Edit logic
-    const editBtn = document.getElementById('editBtn');
-    editBtn.addEventListener('click', () => {
-        const isEditing = editBtn.textContent.trim() === 'Cancelar';
-        
-        document.querySelectorAll('.info-text').forEach(p => p.classList.toggle('hidden'));
-        
-        document.querySelectorAll('.edit-fields').forEach(field => {
-            field.classList.toggle('hidden');
-            if (field.classList.contains('flex-col')) {
-                if (!isEditing) field.classList.add('flex');
-                else field.classList.remove('flex');
+            // Enviar imagen al servidor
+            const formData = new FormData();
+            formData.append('avatar', file);
+            formData.append('_token', document.querySelector('input[name="_token"]').value);
+            formData.append('_method', 'PUT');
+
+            try {
+                const response = await fetch('{{ route("general.profile.update") }}', {
+                    method: 'POST',
+                    body: formData,
+                });
+
+                if (response.ok) {
+                    avatarPreview.style.opacity = '1';
+                    showNotification('Avatar actualizado correctamente', 'success');
+                    avatarInput.value = ''; // Limpiar input
+                } else {
+                    const error = await response.json();
+                    throw new Error(error.message || 'Error al actualizar el avatar');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                showNotification('Error al actualizar el avatar: ' + error.message, 'error');
+                avatarPreview.style.opacity = '1';
+                avatarInput.value = ''; // Limpiar input
+                location.reload(); // Recargar para restaurar la imagen anterior
             }
         });
 
-        document.getElementById('saveBtnContainer').classList.toggle('hidden');
-        
-        editBtn.textContent = isEditing ? 'Editar perfil' : 'Cancelar';
-        editBtn.classList.toggle('bg-primary');
-        editBtn.classList.toggle('bg-gray-400');
+        // Manejar envío del formulario de información personal
+        profileForm.addEventListener('submit', async function(event) {
+            event.preventDefault();
+
+            // Validar que la contraseña actual esté presente
+            const currentPassword = document.getElementById('currentPassword').value.trim();
+            if (!currentPassword) {
+                showNotification('Debes ingresar tu contraseña actual para confirmar los cambios', 'error');
+                return;
+            }
+
+            const formData = new FormData(this);
+
+            try {
+                const response = await fetch('{{ route("general.profile.update") }}', {
+                    method: 'POST',
+                    body: formData,
+                });
+
+                if (response.ok) {
+                    showNotification('Información actualizada correctamente', 'success');
+                    // Recargar la página después de 1.5 segundos para mostrar los cambios
+                    setTimeout(() => {
+                        location.reload();
+                    }, 1500);
+                } else {
+                    const error = await response.json();
+                    throw new Error(error.message || 'Error al actualizar la información');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                showNotification('Error al actualizar: ' + error.message, 'error');
+            }
+        });
+
+        // Lógica para alternar entre "Ver" y "Editar"
+        const btnEdit = document.getElementById('btnEditProfile');
+        const btnCancel = document.getElementById('btnCancelEdit');
+        const viewElements = document.querySelectorAll('.view-element');
+        const editElements = document.querySelectorAll('.edit-element');
+
+        function toggleEditMode(isEditing) {
+            if (isEditing) {
+                viewElements.forEach(el => el.classList.add('hidden'));
+                editElements.forEach(el => el.classList.remove('hidden'));
+            } else {
+                editElements.forEach(el => el.classList.add('hidden'));
+                viewElements.forEach(el => el.classList.remove('hidden'));
+            }
+        }
+
+        btnEdit.addEventListener('click', () => toggleEditMode(true));
+        btnCancel.addEventListener('click', () => toggleEditMode(false));
     });
     </script>
 @endsection

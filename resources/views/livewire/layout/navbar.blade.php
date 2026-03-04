@@ -53,7 +53,7 @@ $roleName = $user && $user->getRoleNames()->first() ? ucfirst($user->getRoleName
                     <button @click="dropdownOpen = !dropdownOpen" type="button"
                         class="flex rounded-full bg-white text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2">
                         <span class="sr-only">Abrir menú</span>
-                        <img class="h-8 w-8 rounded-full object-cover" src="{{ $avatarUrl }}" alt="{{ $user->name }}">
+                        <img id="navbarAvatarDesktop" class="h-8 w-8 rounded-full object-cover" src="{{ $avatarUrl }}" alt="{{ $user->name }}">
                     </button>
 
                     <div x-show="dropdownOpen" @click.away="dropdownOpen = false"
@@ -146,7 +146,7 @@ $roleName = $user && $user->getRoleNames()->first() ? ucfirst($user->getRoleName
             @auth
             <div class="px-4 flex items-center">
                 <div class="shrink-0">
-                    <img class="h-10 w-10 rounded-full object-cover" src="{{ $avatarUrl }}" alt="{{ $user->name }}" />
+                    <img id="navbarAvatarMobile" class="h-10 w-10 rounded-full object-cover" src="{{ $avatarUrl }}" alt="{{ $user->name }}" />
                 </div>
                 <div class="ms-3">
                     <div class="font-medium text-base text-gray-800">{{ $user->name }}</div>

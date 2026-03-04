@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Validation\ValidationException;
 use Illuminate\Routing\Controller;
 use App\Models\User;
 
@@ -140,24 +142,50 @@ class GenericController extends Controller
             'email' => 'sometimes|required|email|unique:users,email,' . $user->id,
             'address' => 'nullable|string|max:255',
             'phone_number' => 'nullable|string|max:20',
-            'puestos' => 'nullable|string|max:255',
+
+            // 🔐 Contraseña (opcional)
+            'current_password' => 'nullable|required_with:password',
+            'password' => 'nullable|string|min:8|confirmed',
         ]);
 
-        // Actualizar datos personales (sin avatar)
-        $user->update(array_diff_key($validated, ['avatar' => '']));
+        /* ===============================
+        DATOS PERSONALES (SIN PASSWORD)
+        =============================== */
+        $user->update(
+            collect($validated)->except([
+                'avatar',
+                'password',
+                'password_confirmation',
+                'current_password',
+            ])->toArray()
+        );
 
-        // Guardar avatar si hay archivo
+        /* ===============================
+        AVATAR
+        =============================== */
         if ($request->hasFile('avatar')) {
-            // Eliminar avatar anterior si existe
             if ($user->avatar && \Storage::disk('public')->exists($user->avatar)) {
                 \Storage::disk('public')->delete($user->avatar);
             }
 
-            // Guardar el nuevo
             $path = $request->file('avatar')->store('avatars', 'public');
             $user->avatar = $path;
-            $user->save();
         }
+
+        /* ===============================
+        CONTRASEÑA
+        =============================== */
+        if ($request->filled('password')) {
+            if (!Hash::check($request->current_password, $user->password)) {
+                throw ValidationException::withMessages([
+                    'current_password' => 'La contraseña actual no es correcta.',
+                ]);
+            }
+
+            $user->password = Hash::make($request->password);
+        }
+
+        $user->save();
 
         return redirect()
             ->route('general.profile')
