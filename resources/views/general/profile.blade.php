@@ -126,11 +126,11 @@
                                     </div>
                                 </div>
 
-                                {{-- ===== PUESTOS (Solo View Mode) ===== --}}
-                                <div class="view-element bg-white rounded-xl px-3 md:p-2 py-2 md:py-2 flex flex-col md:flex-row md:items-start gap-3 md:gap-6">
-                                    <label class="md:w-1/3 font-bold text-[#3d4530] text-sm md:text-lg whitespace-nowrap">Puestos</label>
-                                    <div class="w-full md:w-2/3">
-                                        <div class="p-3 md:p-5 shadow-sm">
+                                @hasrole('seller')
+                                    {{-- ===== PUESTOS (Solo View Mode) ===== --}}
+                                    <div class="view-element bg-white rounded-xl px-3 md:p-2 py-2 md:py-2 flex flex-col md:flex-row md:items-start gap-3 md:gap-6">
+                                        <label class="md:w-1/3 font-bold text-[#3d4530] text-sm md:text-lg whitespace-nowrap">Puestos</label>
+                                        <div class="w-full md:w-2/3">
                                             @if ($user->stalls->isEmpty())
                                                 <p class="text-gray-500 italic text-xs md:text-base">No tienes puestos asignados.</p>
                                             @else
@@ -148,7 +148,7 @@
                                             @endif
                                         </div>
                                     </div>
-                                </div>
+                                @endhasrole
 
                                 {{-- ===== CONTRASEÑA ACTUAL (Requerida para cualquier cambio) ===== --}}
                                 <div class="edit-element hidden bg-white rounded-xl px-3 md:p-2 py-2 md:py-2 flex flex-col md:flex-row md:items-center gap-3 md:gap-6 border-l-4 border-orange-400">
