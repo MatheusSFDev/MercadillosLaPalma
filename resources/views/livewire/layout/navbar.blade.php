@@ -1,5 +1,5 @@
 @php
-$user = auth()->user();
+$user = Auth::user();
 // Optimización: Generar URL de avatar una sola vez
 $avatarUrl = $user ? ($user->avatar ? asset('storage/' . $user->avatar) : 'https://ui-avatars.com/api/?name=' .
 urlencode($user->name)) : null;
@@ -21,28 +21,28 @@ $roleName = $user && $user->getRoleNames()->first() ? ucfirst($user->getRoleName
             {{-- Opciones principales Navbar (Desktop) --}}
             <div class="hidden sm:flex sm:items-center sm:ms-6 space-x-4">
                 @auth
-                @if ($user->hasRole('vendedor'))
-                <a href="{{ route('seller.index-stalls') }}"
-                    class="text-gray-500 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium">Mis Puestos</a>
-                <a href="{{ route('general.orders') }}"
-                    class="text-gray-500 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium">Mis Pedidos</a>
-                <a href="{{ route('seller.edit-products') }}"
-                    class="text-gray-500 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium">Mis Productos</a>
-                @if (request()->routeIs('seller.edit-products'))
-                <a href="{{ route('seller.create-product') }}"
-                    class="bg-green-100 text-green-800 px-3 py-2 rounded-md text-sm font-medium">+ Añadir Producto</a>
-                @endif
-                @endif
+                    @if ($user->hasRole('seller'))
+                        <a href="{{ route('seller.index-stalls') }}"
+                            class="text-gray-500 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium">Mis Puestos</a>
+                        <a href="{{ route('general.orders') }}"
+                            class="text-gray-500 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium">Mis Pedidos</a>
+                        <a href="{{ route('seller.edit-products') }}"
+                            class="text-gray-500 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium">Mis Productos</a>
+                        @if (request()->routeIs('seller.edit-products'))
+                            <a href="{{ route('seller.create-product') }}"
+                                class="bg-green-100 text-green-800 px-3 py-2 rounded-md text-sm font-medium">+ Añadir Producto</a>
+                        @endif
+                    @endif
 
-                @if ($user->hasRole('comprador'))
-                <a href="{{ route('customer.cart') }}"
-                    class="text-gray-500 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium">Mi Carrito</a>
-                <a href="{{ route('general.orders') }}"
-                    class="text-gray-500 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium">Mis Pedidos</a>
-                <a href="{{ route('seller.request') }}"
-                    class="ml-4 bg-orange-100 text-orange-700 hover:bg-orange-200 px-3 py-2 rounded-md text-sm font-medium border border-orange-300">Quiero
-                    Vender!</a>
-                @endif
+                    @if ($user->hasRole('customer'))
+                        <a href="{{ route('customer.cart') }}"
+                            class="text-gray-500 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium">Mi Carrito</a>
+                        <a href="{{ route('general.orders') }}"
+                            class="text-gray-500 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium">Mis Pedidos</a>
+                        <a href="{{ route('customer.seller-request') }}"
+                            class="ml-4 bg-orange-100 text-orange-700 hover:bg-orange-200 px-3 py-2 rounded-md text-sm font-medium border border-orange-300">Quiero
+                            Vender!</a>
+                    @endif
                 @endauth
             </div>
 

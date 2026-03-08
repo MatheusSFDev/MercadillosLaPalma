@@ -53,6 +53,11 @@ class CustomerController extends Controller
         return view("customers.profile", compact('userData'));
     }
 
+    public function showSellerRequest(){
+        $userData = Auth::user()->except(['password', 'remember_token', 'created_at', 'updated_at', 'email_verified_at']);
+        return view("customers.seller-request", compact('userData'));
+    }
+
     /**
      * Display a listing of the resource.
      */
