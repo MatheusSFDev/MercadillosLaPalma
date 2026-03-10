@@ -34,10 +34,14 @@
                         <img src="{{ asset('img/icons/marcador.png') }}" class="w-3.5 h-3.5" alt="ubicación">
                         {{ $stall->fleaMarket?->municipality?->name ?? 'Sin ubicación' }}
                     </span>
-                    <span class="flex items-center gap-1">
+                    <div class="flex items-center gap-1 flex-wrap">
                         <img src="{{ asset('img/icons/caja-abierta-llena.png') }}" class="w-3.5 h-3.5" alt="categoría">
-                        {{ $stall->category?->name ?? 'Sin categoría' }}
-                    </span>
+                        @forelse($item['categories'] as $category)
+                            <span>{{ $category }}@unless($loop->last), @endunless</span>
+                        @empty
+                            <span>Sin categoría</span>
+                        @endforelse
+                    </div>
                 </div>
 
                 <div class="grid grid-cols-3 gap-3 mb-4">
