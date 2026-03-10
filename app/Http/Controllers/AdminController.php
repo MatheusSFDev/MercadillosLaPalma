@@ -37,9 +37,7 @@ class AdminController extends Controller
 
     public function indexMarket()
     {
-        $mercadillos = $this->fleaMarketService->getAllBasic();
-
-        return view('admin.markets', compact('mercadillos'));
+        return view('admin.markets');
     }
 
 

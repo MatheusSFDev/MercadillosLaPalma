@@ -16,7 +16,19 @@ class AdministratorSeeder extends Seeder
             [
                 'user_email' => 'paco@example.com',
                 'flea_market_address' => 'Av. Carlos Francisco Lorenzo Navarro, Los Llanos',
-            ]
+            ],
+            [
+                'user_email' => 'admin@example.com',
+                'flea_market_address' => 'Av. Carlos Francisco Lorenzo Navarro, Los Llanos',
+            ],
+            [
+                'user_email' => 'admin@example.com',
+                'flea_market_address' => 'Av. Marítima, Santa Cruz de La Palma',
+            ],
+            [
+                'user_email' => 'admin@example.com',
+                'flea_market_address' => 'Calle Manuel Taño, El Paso',
+            ],
         ];
 
         foreach ($assignments as $assignment) {
