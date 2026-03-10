@@ -15,8 +15,8 @@ return new class extends Migration
             $table->id();
             $table->enum('day_of_week', ['Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado', 'Domingo']);
             $table->unsignedBigInteger('flea_market_id');
-            $table->time('opening_time');
-            $table->time('closing_time');
+            $table->time('opening_time')->nullable();
+            $table->time('closing_time')->nullable();
 
             $table->foreign('flea_market_id')->references('id')->on('flea_markets')->onDelete('cascade');
         });

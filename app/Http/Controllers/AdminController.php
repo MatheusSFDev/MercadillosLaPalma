@@ -46,9 +46,11 @@ class AdminController extends Controller
 
     public function show($id)
     {
-        $mercadillo = $this->fleaMarketService->getFullById($id);
+        $fleaMarket = auth()->user()->fleaMarketsAsAdmin()
+            ->with(['stalls.user', 'stalls.orders', 'stalls.products', 'municipality'])
+            ->findOrFail($id);
 
-        return view('admin.controlPanel', compact('mercadillo'));
+        return view('admin.controlPanel', compact('fleaMarket'));
     }
 
     public function createStall(StallStoreRequest $request, $mercadilloId)
@@ -61,13 +63,57 @@ class AdminController extends Controller
         return back()->with('success', 'Puesto creado correctamente.');
     }
 
+    public function updateMarket(\App\Http\Requests\FleaMarketUpdateRequest $request, FleaMarket $mercadillo)
+    {
+        $data = $request->validated();
+        dd($data); // Debug: ver qué datos se reciben
+        // update basic fields
+        $mercadillo->update([
+            'address' => $data['address'],
+            'img_url' => $data['img_url'] ?? null,
+        ]);
+
+        // update schedules if provided (list keyed by day name)
+        if (isset($data['schedules']) && is_array($data['schedules'])) {
+            foreach ($data['schedules'] as $day => $vals) {
+                // ensure opening/closing fields exist
+                $opening = $vals['opening_time'] ?? null;
+                $closing = $vals['closing_time'] ?? null;
+                if ($opening === '') $opening = null;
+                if ($closing === '') $closing = null;
+                $existing = $mercadillo->schedules()->where('day_of_week', ucfirst($day))->first();
+                if ($existing) {
+                    $existing->update([
+                        'opening_time' => $opening,
+                        'closing_time' => $closing,
+                    ]);
+                } else {
+                    $mercadillo->schedules()->create([
+                        'day_of_week' => ucfirst($day),
+                        'opening_time' => $opening,
+                        'closing_time' => $closing,
+                    ]);
+                }
+            }
+        }
+
+        return redirect()->route('admin.control-panel', $mercadillo->id)
+            ->with('success', 'Información del mercadillo actualizada.')
+            ->with('tab', 'info');
+    }
+
+    public function editStallForm(Stall $stall)
+    {
+        $fleaMarket = $stall->fleaMarket;
+        return view('admin.stalls.edit', compact('stall', 'fleaMarket'));
+    }
+
     public function updateStall(StallUpdateRequest $request, Stall $stall)
     {
         $data = $request->validated();
-
         $this->stallService->update($stall, $data);
 
-        return back()->with('success', 'Puesto actualizado correctamente.');
+        return redirect()->route('admin.control-panel', $stall->flea_market_id)->with('success', 'Puesto actualizado correctamente.');
     }
 
     public function activateStall(Stall $stall)
