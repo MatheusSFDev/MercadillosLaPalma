@@ -86,6 +86,7 @@ Route::controller(CustomerController::class)
         Route::get('/cart', 'showCart')->name("cart");
         Route::get('/cart/store', 'storeCart')->name("store");
         Route::get('/stalls', 'showStalls')->name("stalls");
+        Route::get('/request', 'showSellerRequest')->name('seller-request');
     });
 
 Route::controller(SellerController::class)

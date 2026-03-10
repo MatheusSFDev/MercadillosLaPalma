@@ -66,15 +66,13 @@ class SellerController extends Controller
     }
 
     // Falta tests - Solo he refactorizado y modularizado, falta comprobar logica de sql query
-    public function sellerStalls(SellerService $sellerService){
-       try{
-           $data = $sellerService->getSellerStalls(); 
-            dump($data);
-            
-            return view('sellers.stalls', [$data]);
-       }catch(Exception $e){
+    public function sellerStalls(){
+        try{
+            $stalls = Auth::user()->stalls;
+            return view('sellers.stalls', compact('stalls'));
+        }catch(Exception $e){
             abort(404, "Pagina no encontrada");
-       } 
+        } 
 
         
     }
@@ -140,5 +138,10 @@ class SellerController extends Controller
                 ]
             ]);
         }
+    }
+
+    public function editProducts(){
+        $products = Auth::user()->products;
+        return view('sellers.editProducts', compact('products'));
     }
 }
