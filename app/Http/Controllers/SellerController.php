@@ -73,6 +73,7 @@ class SellerController extends Controller
             foreach($stalls as $stall){
                 $products = $stall->products()->count();
                 $orders = $stall->orders;
+                
                 $incomes = 0;
                 $ordersCount = 0;
 
@@ -87,10 +88,17 @@ class SellerController extends Controller
                     $ordersCount++;
                 }
 
+                $categories = [];
+
+                foreach($stall->categories as $category){
+                    array_push($categories, $category->name);
+                }
+
                 array_push($data, [
                     "products" => $products,
                     "orders" => $ordersCount,
                     "income" => $incomes,
+                    "categories" => $categories,
                     "stallData" => $stall
                 ]);
             }
