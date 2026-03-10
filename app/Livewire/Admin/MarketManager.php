@@ -31,7 +31,7 @@ class MarketManager extends Component
     public function selectTab($tab)
     {
         $this->tab = $tab;
-        // reset editing states when switching tabs
+        
         if ($tab !== 'stalls') {
             $this->editingStallId = null;
         }
