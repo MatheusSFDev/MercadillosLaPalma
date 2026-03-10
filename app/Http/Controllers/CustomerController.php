@@ -11,22 +11,42 @@ use Illuminate\Http\Request;
 class CustomerController extends Controller
 {
     /**
-     *  Recupera los IDs de los productos del carrito y manda los datos
-     *  para mostrarlos en la vista 
+     *  Recupera los datos de los productos del carrito desde localStorage,
+     *  incluyendo el precio específico del puesto
      */
-    public function showCartProducts(Request $request)
+    public function showCartProducts(Request $request, CustomerService $customerService)
     {   
-        $ids = $request->ids ?? [];
-        return Product::whereIn('id', $ids)->get();
+        $cartItems = $request->input('cart', []);
+        return $customerService->getCartProducts($cartItems);
     }
 
     public function showCart(){
         return view("customers.cart");
     }
 
-    // Hasta que frontend no defina como va enviar los datos del carrito no se puede completar...
-    public function storeCart(Request $request){
-        return view("customers.storeCart");
+    public function storeCart(Request $request, CustomerService $customerService)
+    {
+        $request->validate([
+            'cart' => 'required|array|min:1',
+            'cart.*.product_id' => 'required|integer|exists:products,id',
+            'cart.*.stall_id' => 'required|integer|exists:stalls,id',
+            'cart.*.quantity' => 'required|integer|min:1',
+        ]);
+
+        try {
+            $result = $customerService->createOrder($request->input('cart'));
+        } catch (Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Error inesperado al procesar el pedido: ' . $e->getMessage(),
+            ], 500);
+        }
+
+        if (!$result['success']) {
+            return response()->json($result, 422);
+        }
+
+        return response()->json($result, 201);
     }
 
     /**
