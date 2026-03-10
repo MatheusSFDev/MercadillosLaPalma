@@ -50,21 +50,13 @@
                 </div>
 
                 <div class="hidden md:grid md:grid-cols-8 gap-3">
-                    @php
-                        $categories = [
-                            ['name' => 'Carnicería', 'icon' => '🥩'],
-                            ['name' => 'Pescadería', 'icon' => '🐟'],
-                            ['name' => 'Verdulería', 'icon' => '🍎'],
-                            ['name' => 'Artesanía', 'icon' => '🏺'],
-                            ['name' => 'Quesería', 'icon' => '🧀'],
-                            ['name' => 'Floristería', 'icon' => '🪴'],
-                            ['name' => 'Panadería', 'icon' => '🍞'],
-                            ['name' => 'Otros', 'icon' => '💬'],
-                        ];
-                    @endphp
+                  
+                        
                     @foreach($categories as $cat)
                         <div class="bg-white p-4 rounded-xl shadow-sm flex flex-col items-center justify-center cursor-pointer hover:bg-gray-50 transition border border-transparent hover:border-[#556b2f]">
-                            <span class="text-3xl mb-2">{{ $cat['icon'] }}</span>
+
+                       @php $imgurl = 'img/icons/' . $cat['name'] . '.png'; @endphp
+                        <span class="text-3xl mb-2"><img src="{{ asset($imgurl) }}" alt="{{ $cat['name'] }}"></span>
                             <span class="text-[11px] font-bold text-gray-700 uppercase text-center">{{ $cat['name'] }}</span>
                         </div>
                     @endforeach

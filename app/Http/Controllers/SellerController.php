@@ -69,9 +69,35 @@ class SellerController extends Controller
     public function sellerStalls(){
         try{
             $stalls = Auth::user()->stalls;
-            return view('sellers.stalls', compact('stalls'));
+            $data = [];
+            foreach($stalls as $stall){
+                $products = $stall->products()->count();
+                $orders = $stall->orders;
+                $incomes = 0;
+                $ordersCount = 0;
+
+                foreach($orders as $order){
+                    foreach($order->products as $product){
+                        $q = $product->pivot->quantity;
+                        $ppu = $product->pivot->price_per_unit;
+
+                        $incomes += $q * $ppu;
+                    }
+
+                    $ordersCount++;
+                }
+
+                array_push($data, [
+                    "products" => $products,
+                    "orders" => $ordersCount,
+                    "income" => $incomes,
+                    "stallData" => $stall
+                ]);
+            }
+            return view('sellers.stalls', compact('data'));
         }catch(Exception $e){
-            abort(404, "Pagina no encontrada");
+            echo "ERROR: Ha ocurrido el error " . $e->getMessage();
+            /*abort(404, "Pagina no encontrada");*/
         } 
 
         
