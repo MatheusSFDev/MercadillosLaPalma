@@ -63,6 +63,14 @@
                     </div>
                     @error('unit') <span class="text-red-600 text-sm">{{ $message }}</span> @enderror
                 </div>
+                <div class="mb-6">
+                    <label for="cantidad-minima" class="block text-status-dark font-dm-serif font-bold mb-2">
+                        Cantidad mínima*
+                    </label>
+                    <input type="number" wire:model="min_quantity" id="cantidad-minima" placeholder="Ej: 2"
+                        class="w-full bg-accent-lightred border-none rounded py-3 px-4 text-status-dark focus:ring-2 focus:ring-primary-light outline-none placeholder:text-accent-grey">
+                    @error('min_quantity') <span class="text-red-600 text-sm">{{ $message }}</span> @enderror
+                </div>
 
                 <div class="mb-6">
                     <label for="categoria" class="block font-dm-serif text-status-dark font-bold mb-2">
@@ -77,6 +85,15 @@
                     </select>
                     @error('category_id') <span class="text-red-600 text-sm">{{ $message }}</span> @enderror
                 </div>
+                
+                <div class="mb-6 mt-2">
+                    <label for="descripcion" class="block text-status-dark font-dm-serif font-bold mb-2">
+                        Descripción*
+                    </label>
+                    <textarea wire:model="description" id="descripcion" placeholder="Descripción del producto"
+                        class="w-full bg-accent-lightred border-none rounded py-3 px-4 text-status-dark focus:ring-2 focus:ring-primary-light outline-none placeholder:text-accent-grey"></textarea>
+                    @error('description') <span class="text-red-600 text-sm">{{ $message }}</span> @enderror
+                </div>
 
                 <div class="mb-6 md:mb-0">
                     <label class="block font-dm-serif text-status-dark font-bold mb-2">
@@ -85,6 +102,7 @@
                     <input type="file" wire:model="img" class="w-full" />
                     @error('img') <span class="text-red-600 text-sm">{{ $message }}</span> @enderror
                 </div>
+                 
             </section>
 
             <section>
