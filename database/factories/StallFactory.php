@@ -25,7 +25,7 @@ class StallFactory extends Factory
             'information'    => fake()->optional()->paragraph(),
             'home_delivery'  => fake()->boolean(40),
             'active'         => fake()->boolean(80),
-            'img_url'        => fake()->optional()->imageUrl(400, 300, 'business'),
+            'img_url'        => fake()->imageUrl(400, 300, 'business'),
             'register_date'  => fake()->dateTimeBetween('-3 years', 'now')->format('Y-m-d'),
             'reset_date'     => fake()->optional()->dateTimeBetween('-1 year', 'now')?->format('Y-m-d'),
         ];
