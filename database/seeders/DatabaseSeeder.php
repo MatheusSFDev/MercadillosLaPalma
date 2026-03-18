@@ -22,6 +22,7 @@ class DatabaseSeeder extends Seeder
             ProductSeeder::class,
             MunicipalitiesSeeder::class,
             FleaMarketSeeder::class,
+            ScheduleSeeder::class,
             AdministratorSeeder::class,
             StallsSeeders::class,
             PaymentMethodSeeder::class,

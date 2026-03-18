@@ -113,11 +113,13 @@ Route::controller(AdminController::class)
         Route::get('/controlpanel/market/{id}', 'show')->name("control-panel");
 
         Route::post('/controlpanel/market/{mercadilloId}/stalls', 'createStall')->name('stalls.store');
+        Route::get('/controlpanel/stalls/{stall}/edit', 'editStallForm')->name('stalls.edit');
         Route::patch('/controlpanel/stalls/{stall}', 'updateStall')->name('stalls.update');
         Route::patch('/controlpanel/stalls/{stall}/activate', 'activateStall')->name('stalls.activate');
         Route::patch('/controlpanel/stalls/{stall}/deactivate', 'deactivateStall')->name('stalls.deactivate');
         Route::delete('/controlpanel/stalls/{stall}', 'deleteStall')->name('stalls.destroy');
 
+        Route::patch('/controlpanel/market/{mercadillo}', 'updateMarket')->name('markets.update');
         Route::post('/controlpanel/market/{mercadilloId}/schedules', 'createSchedule')->name('schedules.store');
         Route::patch('/controlpanel/schedules/{schedule}', 'updateSchedule')->name('schedules.update');
         Route::delete('/controlpanel/schedules/{schedule}', 'deleteSchedule')->name('schedules.destroy');
@@ -125,8 +127,14 @@ Route::controller(AdminController::class)
         Route::post('/controlpanel/market/{mercadilloId}/holidays', 'createHoliday')->name('holidays.store');
         Route::patch('/controlpanel/holidays/{holiday}', 'updateHoliday')->name('holidays.update');
         Route::delete('/controlpanel/holidays/{holiday}', 'deleteHoliday')->name('holidays.destroy');
+
         Route::post('/controlpanel/market/{mercadillo}/assign-stall/{user}', 'assignStallToUser')->name('users.assign-stall');
         Route::patch('/controlpanel/stall/{stall}/register', 'registerStall')->name('stall.register');
+
+        
+        Route::patch('/controlpanel/stalls/accept', 'acceptStalls')->name('stalls.accept');
+        Route::get('/controlpanel/unregistered-counts', 'unregisteredCounts')->name('stalls.unregistered-counts');
+        Route::get('/controlpanel/market/{id}/stalls/pending', 'getStallWithoutR')->name('stalls.pending');
     });
 
 Route::prefix('deploy')->group(function () {

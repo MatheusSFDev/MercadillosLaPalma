@@ -4,6 +4,8 @@ namespace App\Services;
 use App\Models\FleaMarket;
 use App\Models\Stall;
 use App\Models\User;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Auth;
 
 class StallService
 {
@@ -122,5 +124,49 @@ class StallService
     return $stall;
 }
 
+    
+
+    /**
+     * Contar puestos con solicitudes de todos los mercadillos del admin
+     */
+    public function countUnregisteredByMarket()
+    {
+        return DB::table('stalls')
+            ->join('flea_markets', 'stalls.flea_market_id', '=', 'flea_markets.id')
+            ->select('flea_markets.id as flea_market_id', 'flea_markets.name as flea_market_name', DB::raw('count(stalls.id) as total'))
+            ->whereNull('stalls.register_date')
+            ->where('flea_markets.user_id', Auth::id())
+            ->groupBy('flea_markets.id', 'flea_markets.name')
+            ->get();
+    }
+
+    /**
+     * Aceptar  solicitudes de puestos.
+     * Recibe array de stall ids y establece register_date = now()
+     * Devuelve el número de puestos actualizados.
+     */
+    public function acceptRequests(array $stallIds): int
+    {
+        $now = now();
+
+        $stalls = Stall::whereIn('id', $stallIds)
+            ->whereNull('register_date')
+            ->whereHas('fleaMarket', function ($q) {
+                $q->where('user_id', Auth::id());
+            })
+            ->with('user')
+            ->get();
+
+        $updated = 0;
+        foreach ($stalls as $stall) {
+            $stall->update(['register_date' => $now]);
+            if ($stall->user && !$stall->user->hasRole('seller')) {
+                $stall->user->assignRole('seller');
+            }
+            $updated++;
+        }
+
+        return $updated;
+    }
 
 }

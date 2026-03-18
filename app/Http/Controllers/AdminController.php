@@ -37,9 +37,7 @@ class AdminController extends Controller
 
     public function indexMarket()
     {
-        $mercadillos = $this->fleaMarketService->getAllBasic();
-
-        return view('admin.markets', compact('mercadillos'));
+        return view('admin.markets');
     }
 
 
@@ -48,9 +46,11 @@ class AdminController extends Controller
 
     public function show($id)
     {
-        $mercadillo = $this->fleaMarketService->getFullById($id);
+        $fleaMarket = auth()->user()->fleaMarketsAsAdmin()
+            ->with(['stalls.user', 'stalls.orders', 'stalls.products', 'municipality'])
+            ->findOrFail($id);
 
-        return view('admin.controlPanel', compact('mercadillo'));
+        return view('admin.controlPanel', compact('fleaMarket'));
     }
 
     public function createStall(StallStoreRequest $request, $mercadilloId)
@@ -63,13 +63,57 @@ class AdminController extends Controller
         return back()->with('success', 'Puesto creado correctamente.');
     }
 
-    public function updateStall(StallUpdateRequest $request, Stall $stall)
+    public function updateMarket(\App\Http\Requests\FleaMarketUpdateRequest $request, FleaMarket $mercadillo)
     {
         $data = $request->validated();
 
+        $mercadillo->update([
+            'address' => $data['address'],
+            'img_url' => $data['img_url'] ?? null,
+        ]);
+
+   
+        if (isset($data['schedules']) && is_array($data['schedules'])) {
+            foreach ($data['schedules'] as $day => $vals) {
+               
+                $opening = $vals['opening_time'] ?? null;
+                $closing = $vals['closing_time'] ?? null;
+                if ($opening === '') $opening = null;
+                if ($closing === '') $closing = null;
+                $dayOfWeek = mb_convert_case($day, MB_CASE_TITLE, 'UTF-8');
+                $existing = $mercadillo->schedules()->where('day_of_week', $dayOfWeek)->first();
+                if ($existing) {
+                    $existing->update([
+                        'opening_time' => $opening,
+                        'closing_time' => $closing,
+                    ]);
+                } else {
+                    $mercadillo->schedules()->create([
+                        'day_of_week' => $dayOfWeek,
+                        'opening_time' => $opening,
+                        'closing_time' => $closing,
+                    ]);
+                }
+            }
+        }
+
+        return redirect()->route('admin.control-panel', $mercadillo->id)
+            ->with('success', 'Información del mercadillo actualizada.')
+            ->with('tab', 'info');
+    }
+
+    public function editStallForm(Stall $stall)
+    {
+        $fleaMarket = $stall->fleaMarket;
+        return view('admin.stalls.edit', compact('stall', 'fleaMarket'));
+    }
+
+    public function updateStall(StallUpdateRequest $request, Stall $stall)
+    {
+        $data = $request->validated();
         $this->stallService->update($stall, $data);
 
-        return back()->with('success', 'Puesto actualizado correctamente.');
+        return redirect()->route('admin.control-panel', $stall->flea_market_id)->with('success', 'Puesto actualizado correctamente.');
     }
 
     public function activateStall(Stall $stall)
@@ -102,7 +146,7 @@ class AdminController extends Controller
         return back()->with('success', 'Horario creado correctamente.');
     }
 
-    // Actualizar horario
+    
     public function updateSchedule(ScheduleRequest $request, Schedule $schedule)
     {
         $schedule->update($request->validated());
@@ -110,7 +154,6 @@ class AdminController extends Controller
         return back()->with('success', 'Horario actualizado correctamente.');
     }
 
-    // Eliminar horario
     public function deleteSchedule(Schedule $schedule)
     {
         $schedule->delete();
@@ -155,6 +198,27 @@ class AdminController extends Controller
         } catch (\Exception $e) {
             return back()->with('error', $e->getMessage());
         }
+    }
+
+   
+    public function acceptStalls(Request $request)
+    {
+        $data = $request->validate([
+            'stall_ids' => 'required|array',
+            'stall_ids.*' => 'integer'
+        ]);
+
+        $updated = $this->stallService->acceptRequests($data['stall_ids']);
+
+        return back()->with('success', "$updated puestos aprobados.");
+    }
+
+ 
+    public function unregisteredCounts()
+    {
+        $counts = $this->stallService->countUnregisteredByMarket();
+
+        return response()->json($counts);
     }
 
 }

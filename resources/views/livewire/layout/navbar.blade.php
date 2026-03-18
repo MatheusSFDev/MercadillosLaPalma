@@ -65,7 +65,7 @@ $roleName = $user && $user->getRoleNames()->first() ? ucfirst($user->getRoleName
 
                         {{-- Enlaces de administración ahora en GRIS --}}
                         @if ($user->hasRole('admin'))
-                        <a href="{{ route('admin.control-panel') }}"
+                        <a href="{{ route('admin.markets') }}"
                             class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Panel Admin</a>
                         @endif
 
@@ -157,7 +157,7 @@ $roleName = $user && $user->getRoleNames()->first() ? ucfirst($user->getRoleName
             <div class="mt-3 space-y-1">
                 {{-- Enlaces Administrativos en Gris para Móvil --}}
                 @if ($user->hasRole('admin'))
-                <a href="{{ route('admin.control-panel') }}"
+                <a href="{{ route('admin.markets') }}"
                     class="block w-full ps-3 pe-4 py-2 text-base font-medium text-gray-600 hover:bg-gray-100">Panel
                     Admin</a>
                 @endif
