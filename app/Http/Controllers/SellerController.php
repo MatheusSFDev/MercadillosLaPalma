@@ -3,40 +3,32 @@
 namespace App\Http\Controllers;
 
 use App\Enums\Status;
+use App\Models\User;
 use App\Enums\Units;
 use App\Http\Requests\StoreProductRequest;
 use App\Models\Order;
 use App\Models\Photo;
 use App\Models\Product;
 use App\Models\Stall;
+use App\Services\SellerService;
+use Error;
+use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
 class SellerController extends Controller
 {
-    public function sellerOrders(){
-        if(Auth::user()->hasRole('seller')){
-            $orders = Auth::user()->stalls()->orders();
-            $data = [];
-            foreach($orders as $order){
-                $stall_name = $order->stall()->name;
-                $products = $order->products()->count('order_product.product_id')->orderBy('order_product.order_id');
-                $total = $order->products()->multiply('order_product.price_per_unit', 'total', 'order_product.quantity');
-                $status = $order->completed == false ? Status::Pendiente : Status::Compleado;
-                array_push($data, [
-                    "stall_name" => $stall_name,
-                    "order_date" => $order->order_date,
-                    "products" => $products,
-                    "total" => $total,
-                    "status" => $status
-                ]);
-            }
+    public function sellerOrders(SellerService $sellerService){
+        try{
+            $data = $sellerService->getSellerOrders();
             return view('general.orders', [$data]);
-        }else{
-            return view('/');
+        }catch(Exception $e){
+            abort(404, "Pagina no encontrada");
         }
     }
 
+    // Función con nombre mal escrito que no es llamada por ningúna ruta del archivo web, quien llama a esta función?
+    // El responsable que le cambia el nombre al menos...
     public function orederDetail($order_id){
         if(Auth::user()->hasRole('seller')){
             $orderData = Order::findOrFail($order_id);
@@ -73,35 +65,50 @@ class SellerController extends Controller
         }
     }
 
+    // Falta tests - Solo he refactorizado y modularizado, falta comprobar logica de sql query
     public function sellerStalls(){
-        if(Auth::user()->hasRole('seller')){
-            $stalls = Auth::user()->stalls();
+        try{
+            $stalls = Auth::user()->stalls;
             $data = [];
             foreach($stalls as $stall){
-                $total = $stall->orders()
-                            ->join('order_product', 'orders.id', '=', 'order_product.order_id')
-                            ->whereBetween('orders.order_date', [
-                                now()->startOfWeek(),
-                                now()->endOfWeek()
-                            ])
-                            ->selectRaw('SUM(order_product.price_per_unit * order_product.quantity)')
-                            ->value('SUM(order_product.price_per_unit * order_product.quantity)');
+                $products = $stall->products()->count();
+                $orders = $stall->orders;
+                
+                $incomes = 0;
+                $ordersCount = 0;
+
+                foreach($orders as $order){
+                    foreach($order->products as $product){
+                        $q = $product->pivot->quantity;
+                        $ppu = $product->pivot->price_per_unit;
+
+                        $incomes += $q * $ppu;
+                    }
+
+                    $ordersCount++;
+                }
+
+                $categories = [];
+
+                foreach($stall->categories as $category){
+                    array_push($categories, $category->name);
+                }
 
                 array_push($data, [
-                    "name" => $stall->name,
-                    "municipio" => $stall->fleaMarket()->municipality()->name,
-                    "category" => $stall->categries,
-                    "status" => $stall->active,
-                    "products" => $stall->products()->count(),
-                    "orders" => $stall->orders()->count(),
-                    "total" => $total,
+                    "products" => $products,
+                    "orders" => $ordersCount,
+                    "income" => $incomes,
+                    "categories" => $categories,
+                    "stallData" => $stall
                 ]);
             }
+            return view('sellers.stalls', compact('data'));
+        }catch(Exception $e){
+            echo "ERROR: Ha ocurrido el error " . $e->getMessage();
+            /*abort(404, "Pagina no encontrada");*/
+        } 
 
-            return view('seller.stalls', [$data]);
-        }else{
-            return view('/');
-        }
+        
     }
 
     public function sellerProducts(){
@@ -165,5 +172,10 @@ class SellerController extends Controller
                 ]
             ]);
         }
+    }
+
+    public function editProducts(){
+        $products = Auth::user()->products;
+        return view('sellers.editProducts', compact('products'));
     }
 }

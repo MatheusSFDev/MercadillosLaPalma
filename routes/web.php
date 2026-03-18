@@ -84,8 +84,10 @@ Route::controller(CustomerController::class)
         Route::get("/profile", "profile")->name("profile");
         Route::get("/orders", "showOrders")->name("orders");
         Route::get('/cart', 'showCart')->name("cart");
-        Route::get('/cart/store', 'storeCart')->name("store");
+        Route::post('/cart/store', 'storeCart')->name("store");
+        Route::post('/cart/products', 'showCartProducts')->name("cart.products");
         Route::get('/stalls', 'showStalls')->name("stalls");
+        Route::get('/request', 'showSellerRequest')->name('seller-request');
     });
 
 Route::controller(SellerController::class)
@@ -93,11 +95,11 @@ Route::controller(SellerController::class)
     ->name("seller.")
     ->middleware(['auth', 'verified', 'role:seller|root']) //Añadido un Auth y Role, aunque primitivo
     ->group(function () {
-        Route::get("/orders", "orders")->name("orders");
+        Route::get("/orders", "sellerOrders")->name("orders");
         Route::get('/create/product', 'createProduct')->name("create-product");
         Route::get('/edit/products', 'editProducts')->name("edit-products");
         // Cambiar nombre
-        Route::get('/index', 'indexStalls')->name("index-stalls");
+        Route::get('/index', 'sellerStalls')->name("index-stalls");
         Route::get("stall/{id}/products", "showSellerProducts")->name("products");
 });
 
