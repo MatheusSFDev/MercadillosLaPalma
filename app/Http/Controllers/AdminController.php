@@ -66,22 +66,22 @@ class AdminController extends Controller
     public function updateMarket(\App\Http\Requests\FleaMarketUpdateRequest $request, FleaMarket $mercadillo)
     {
         $data = $request->validated();
-        dd($data); // Debug: ver qué datos se reciben
-        // update basic fields
+
         $mercadillo->update([
             'address' => $data['address'],
             'img_url' => $data['img_url'] ?? null,
         ]);
 
-        // update schedules if provided (list keyed by day name)
+   
         if (isset($data['schedules']) && is_array($data['schedules'])) {
             foreach ($data['schedules'] as $day => $vals) {
-                // ensure opening/closing fields exist
+               
                 $opening = $vals['opening_time'] ?? null;
                 $closing = $vals['closing_time'] ?? null;
                 if ($opening === '') $opening = null;
                 if ($closing === '') $closing = null;
-                $existing = $mercadillo->schedules()->where('day_of_week', ucfirst($day))->first();
+                $dayOfWeek = mb_convert_case($day, MB_CASE_TITLE, 'UTF-8');
+                $existing = $mercadillo->schedules()->where('day_of_week', $dayOfWeek)->first();
                 if ($existing) {
                     $existing->update([
                         'opening_time' => $opening,
@@ -89,7 +89,7 @@ class AdminController extends Controller
                     ]);
                 } else {
                     $mercadillo->schedules()->create([
-                        'day_of_week' => ucfirst($day),
+                        'day_of_week' => $dayOfWeek,
                         'opening_time' => $opening,
                         'closing_time' => $closing,
                     ]);
@@ -146,7 +146,7 @@ class AdminController extends Controller
         return back()->with('success', 'Horario creado correctamente.');
     }
 
-    // Actualizar horario
+    
     public function updateSchedule(ScheduleRequest $request, Schedule $schedule)
     {
         $schedule->update($request->validated());
@@ -154,7 +154,6 @@ class AdminController extends Controller
         return back()->with('success', 'Horario actualizado correctamente.');
     }
 
-    // Eliminar horario
     public function deleteSchedule(Schedule $schedule)
     {
         $schedule->delete();
@@ -201,9 +200,7 @@ class AdminController extends Controller
         }
     }
 
-    /**
-     * Aceptar múltiples solicitudes de puestos (IDs pasados en `stall_ids`).
-     */
+   
     public function acceptStalls(Request $request)
     {
         $data = $request->validate([
@@ -216,9 +213,7 @@ class AdminController extends Controller
         return back()->with('success', "$updated puestos aprobados.");
     }
 
-    /**
-     * Devuelve conteo de puestos sin fecha de alta por mercadillo (JSON).
-     */
+ 
     public function unregisteredCounts()
     {
         $counts = $this->stallService->countUnregisteredByMarket();

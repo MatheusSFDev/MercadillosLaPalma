@@ -16,7 +16,7 @@ class FleaMarketUpdateRequest extends FormRequest
     {
         return [
             'address' => 'required|string|max:255',
-            'img_url' => 'nullable|url|max:1024',
+            'img_url' => 'nullable|string|max:1024',
             'schedules' => 'array',
             'schedules.*.opening_time' => 'nullable',
             'schedules.*.closing_time' => 'nullable',

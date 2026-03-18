@@ -1,60 +1,20 @@
-<div>
-    <!DOCTYPE html>
-    <html lang="es">
-
-    <head>
-        <meta charset="utf-8" />
-        <meta content="width=device-width, initial-scale=1.0" name="viewport" />
-        <title>Mercadillos en la Palma - Dashboard</title>
-        <script src="https://cdn.tailwindcss.com?plugins=forms,typography"></script>
-        <link href="https://fonts.googleapis.com" rel="preconnect" />
-        <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect" />
-        <link
-            href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&amp;family=Inter:wght@400;500;600&amp;display=swap"
-            rel="stylesheet" />
-        <link
-            href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200"
-            rel="stylesheet" />
-        <script>
-            tailwind.config = {
-                darkMode: "class",
-                theme: {
-                    extend: {
-                        colors: {
-                            primary: "#556241",
-                            "background-light": "#E2E9D1",
-                            "background-dark": "#1a1c18",
-                            "sidebar-light": "#FFFFFF",
-                            "text-gold": "#937C4B",
-                            "footer-dark": "#0A1208",
-                        },
-                        fontFamily: {
-                            display: ["Playfair Display", "serif"],
-                            sans: ["Inter", "sans-serif"],
-                        },
-                        borderRadius: {
-                            DEFAULT: "8px",
-                        },
-                    },
-                },
-            };
-        </script>
+<div class="bg-background-light dark:bg-background-dark min-h-screen flex flex-col font-sans">
         <style>
             .material-symbols-outlined {
                 font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24;
             }
         </style>
-    </head>
-
-    <body class="bg-background-light dark:bg-background-dark min-h-screen flex flex-col font-sans">
         <div class="flex flex-1">
             <aside
                 class="w-64 bg-sidebar-light dark:bg-zinc-900 border-r border-gray-200 dark:border-zinc-800 flex flex-col pt-8 px-6">
                 
                 <nav class="space-y-4">
-                    <a wire:click.prevent="selectTab('index')" class="block px-6 py-2.5 {{ $tab==='index' ? 'bg-primary text-white' : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-zinc-800' }} rounded-lg text-center font-display tracking-wide"
-                        href="#">
+                    <a href="{{ route('admin.markets') }}" class="block px-6 py-2.5 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-zinc-800 rounded-lg text-center font-display tracking-wide">
                         Índice
+                    </a>
+                    <a wire:click.prevent="selectTab('requests')" class="block px-6 py-2.5 {{ $tab==='requests' ? 'bg-primary text-white' : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-zinc-800' }} rounded-lg text-center font-display tracking-wide"
+                        href="#">
+                        Solicitudes
                     </a>
                     @if(isset($fleaMarket))
                         <a wire:click.prevent="selectTab('info')" class="block px-6 py-2.5 {{ $tab==='info' ? 'bg-primary text-white' : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-zinc-800' }} rounded-lg text-center font-display tracking-wide"
@@ -65,20 +25,26 @@
                             href="#">
                             Puestos
                         </a>
-                        <a wire:click.prevent="selectTab('requests')" class="block px-6 py-2.5 {{ $tab==='requests' ? 'bg-primary text-white' : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-zinc-800' }} rounded-lg text-center font-display tracking-wide"
-                            href="#">
-                            Solicitudes
-                        </a>
-                    @else
-                        <a class="block px-6 py-2.5 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-zinc-800 rounded-lg text-center font-display tracking-wide"
-                            href="#">
-                            Solicitudes
-                        </a>
                     @endif
                 </nav>
             </aside>
             <main class="flex-1 p-12">
                 <header class="mb-10">
+                    @if(session('success'))
+                        <div class="mb-4 rounded border border-green-400 bg-green-50 p-4 text-green-700">
+                            {{ session('success') }}
+                        </div>
+                    @endif
+                    @if($errors->any())
+                        <div class="mb-4 rounded border border-red-400 bg-red-50 p-4 text-red-700">
+                            <ul class="list-disc pl-5">
+                                @foreach($errors->all() as $error)
+                                    <li>{{ $error }}</li>
+                                @endforeach
+                            </ul>
+                        </div>
+                    @endif
+
                     @if(isset($fleaMarket))
                         @if($tab === 'info')
                             <h1 class="text-4xl font-display text-gray-800 dark:text-gray-100 mb-1">Editar Mercadillo de {{ $fleaMarket->municipality->name }}</h1>
@@ -87,9 +53,12 @@
                             <h1 class="text-4xl font-display text-gray-800 dark:text-gray-100 mb-1">Puestos de {{ $fleaMarket->municipality->name }}</h1>
                             <p class="text-text-gold dark:text-amber-500 text-lg">Puestos que puedes gestionar</p>
                         @endif
-                    @elseif(isset($fleaMarkets))
+                    @elseif(isset($fleaMarkets) && $tab !== 'requests')
                         <h1 class="text-4xl font-display text-gray-800 dark:text-gray-100 mb-1">Mercadillos</h1>
                         <p class="text-text-gold dark:text-amber-500 text-lg">Mercadillos que puedes gestionar</p>
+                    @elseif($tab === 'requests')
+                        <h1 class="text-4xl font-display text-gray-800 dark:text-gray-100 mb-1">Solicitudes Generales</h1>
+                        <p class="text-text-gold dark:text-amber-500 text-lg">Solicitudes de puestos de todos tus mercadillos</p>
                     @endif
                 </header>
                 <div class="max-w-4xl space-y-6">
@@ -148,6 +117,57 @@
                                         </button>
                                     </div>
                                 </form>
+                            </div>
+                        @elseif($tab === 'requests')
+                            <div class="bg-white dark:bg-zinc-800 rounded-lg p-8 shadow-sm">
+                                <h3 class="text-2xl font-bold mb-3 serif-font dark:text-white">Solicitudes de puestos</h3>
+                                <p class="text-gray-600 dark:text-gray-400 mb-4">Puestos que aún no han sido dados de alta.</p>
+
+                                @if($pendingStalls->isEmpty())
+                                    <div class="rounded border border-gray-200 dark:border-zinc-700 bg-gray-50 dark:bg-zinc-900 p-6 text-gray-600 dark:text-gray-300">
+                                        No hay solicitudes pendientes.
+                                    </div>
+                                @else
+                                    <form action="{{ route('admin.stalls.accept') }}" method="POST" class="space-y-4">
+                                        @csrf
+                                        @method('PATCH')
+
+                                        <div class="space-y-2">
+                                            @foreach($pendingStalls as $stall)
+                                                <div class="flex items-start justify-between gap-3 rounded border border-gray-200 dark:border-zinc-700 bg-white dark:bg-zinc-900 p-4">
+                                                    <label class="flex items-start gap-3 flex-1">
+                                                        <input type="checkbox" name="stall_ids[]" value="{{ $stall->id }}" class="mt-1 h-4 w-4 rounded text-primary focus:ring-primary" />
+                                                        <div>
+                                                            <div class="flex items-center gap-2">
+                                                                <span class="font-semibold text-gray-800 dark:text-gray-100">{{ $stall->name ?? 'Puesto #' . $stall->id }}</span>
+                                                                @if($stall->user)
+                                                                    <span class="text-xs text-gray-500 dark:text-gray-400">({{ $stall->user->name }})</span>
+                                                                @endif
+                                                            </div>
+                                                            @if($stall->information)
+                                                                <p class="text-sm text-gray-600 dark:text-gray-400">{{ $stall->information }}</p>
+                                                            @endif
+                                                        </div>
+                                                    </label>
+                                                    <form action="{{ route('admin.stalls.destroy', $stall) }}" method="POST" onsubmit="return confirm('¿Eliminar solicitud de puesto?');">
+                                                        @csrf
+                                                        @method('DELETE')
+                                                        <button type="submit" class="text-sm text-red-600 hover:text-red-800 dark:text-red-400 dark:hover:text-red-200">Eliminar</button>
+                                                    </form>
+                                                </div>
+                                            @endforeach
+                                        </div>
+
+                                        <div class="flex justify-end gap-3">
+                                            <button type="submit" class="bg-primary text-white px-6 py-2 rounded hover:opacity-90">
+                                                Aceptar seleccionados
+                                            </button>
+                                            <button type="button" wire:click="selectTab('stalls')" class="bg-gray-500 text-white px-6 py-2 rounded hover:opacity-90">
+                                                Cancelar
+                                            </button>
+                                        </div>
+                                    </form>
+                                @endif
                             </div>
                         @else
                             <div class="mb-6 p-4 bg-white dark:bg-zinc-800 rounded-lg shadow-sm">
@@ -257,7 +277,7 @@
                                     <div>
                                         <h3 class="text-2xl font-display text-gray-800 dark:text-gray-100 mb-3">{{ $fleaMarket->municipality->name }}</h3>
                                         <div class="flex items-center gap-2 text-gray-600 dark:text-gray-400">
-                                            <span class="material-symbols-outlined text-primary">storefront</span>
+                                            <span class="material-symbols-outlined text-primary">Puestos</span>
                                             <span class="text-sm">{{ $fleaMarket->stalls->count() }} puestos</span>
                                         </div>
                                         <p class="text-sm text-gray-600 dark:text-gray-400">{{ $fleaMarket->address }}</p>
@@ -269,6 +289,59 @@
                                 </div>
                             </div>
                         @endforeach
+                        @if($tab === 'requests')
+                            <div class="bg-white dark:bg-zinc-800 rounded-lg p-8 shadow-sm">
+                                <h3 class="text-2xl font-bold mb-3 serif-font dark:text-white">Solicitudes Generales</h3>
+                                <p class="text-gray-600 dark:text-gray-400 mb-4">Solicitudes de puestos de todos tus mercadillos.</p>
+
+                                @if($pendingStalls->isEmpty())
+                                    <div class="rounded border border-gray-200 dark:border-zinc-700 bg-gray-50 dark:bg-zinc-900 p-6 text-gray-600 dark:text-gray-300">
+                                        No hay solicitudes pendientes.
+                                    </div>
+                                @else
+                                    <form action="{{ route('admin.stalls.accept') }}" method="POST" class="space-y-4">
+                                        @csrf
+                                        @method('PATCH')
+
+                                        <div class="space-y-2">
+                                            @foreach($pendingStalls as $stall)
+                                                <div class="flex items-start justify-between gap-3 rounded border border-gray-200 dark:border-zinc-700 bg-white dark:bg-zinc-900 p-4">
+                                                    <label class="flex items-start gap-3 flex-1">
+                                                        <input type="checkbox" name="stall_ids[]" value="{{ $stall->id }}" class="mt-1 h-4 w-4 rounded text-primary focus:ring-primary" />
+                                                        <div>
+                                                            <div class="flex items-center gap-2">
+                                                                <span class="font-semibold text-gray-800 dark:text-gray-100">{{ $stall->name ?? 'Puesto #' . $stall->id }}</span>
+                                                                <span class="text-xs text-gray-500 dark:text-gray-400">({{ $stall->fleaMarket->municipality->name }})</span>
+                                                                @if($stall->user)
+                                                                    <span class="text-xs text-gray-500 dark:text-gray-400"> - {{ $stall->user->name }}</span>
+                                                                @endif
+                                                            </div>
+                                                            @if($stall->information)
+                                                                <p class="text-sm text-gray-600 dark:text-gray-400">{{ $stall->information }}</p>
+                                                            @endif
+                                                        </div>
+                                                    </label>
+                                                    <form action="{{ route('admin.stalls.destroy', $stall) }}" method="POST" onsubmit="return confirm('¿Eliminar solicitud de puesto?');">
+                                                        @csrf
+                                                        @method('DELETE')
+                                                        <button type="submit" class="text-sm text-red-600 hover:text-red-800 dark:text-red-400 dark:hover:text-red-200">Eliminar</button>
+                                                    </form>
+                                                </div>
+                                            @endforeach
+                                        </div>
+
+                                        <div class="flex justify-end gap-3">
+                                            <button type="submit" class="bg-primary text-white px-6 py-2 rounded hover:opacity-90">
+                                                Aceptar seleccionados
+                                            </button>
+                                            <button type="button" wire:click="selectTab('index')" class="bg-gray-500 text-white px-6 py-2 rounded hover:opacity-90">
+                                                Cancelar
+                                            </button>
+                                        </div>
+                                    </form>
+                                @endif
+                            </div>
+                        @endif
                     @endif
                 </div>
             </main>

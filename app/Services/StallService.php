@@ -149,12 +149,22 @@ class StallService
     {
         $now = now();
 
-        $updated = Stall::whereIn('id', $stallIds)
+        $stalls = Stall::whereIn('id', $stallIds)
             ->whereNull('register_date')
             ->whereHas('fleaMarket', function ($q) {
                 $q->where('user_id', Auth::id());
             })
-            ->update(['register_date' => $now]);
+            ->with('user')
+            ->get();
+
+        $updated = 0;
+        foreach ($stalls as $stall) {
+            $stall->update(['register_date' => $now]);
+            if ($stall->user && !$stall->user->hasRole('seller')) {
+                $stall->user->assignRole('seller');
+            }
+            $updated++;
+        }
 
         return $updated;
     }

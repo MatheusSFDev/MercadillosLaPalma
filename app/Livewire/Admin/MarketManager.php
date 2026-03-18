@@ -61,21 +61,26 @@ class MarketManager extends Component
     public function render()
     {
         if ($this->selectedFleaMarketId) {
-            // Mostrar mercadillos incluido horarios cuando sea necesario
+      
             $query = auth()->user()->fleaMarketsAsAdmin()
                 ->with(['stalls.user', 'stalls.orders', 'stalls.products', 'municipality', 'schedules']);
 
-
             $fleaMarket = $query->findOrFail($this->selectedFleaMarketId);
 
-            return view('livewire.admin.market-manager', compact('fleaMarket'));
+            $pendingStalls = $fleaMarket->stalls()->whereNull('register_date')->with('user')->get();
+
+            return view('livewire.admin.market-manager', compact('fleaMarket', 'pendingStalls'));
         } else {
-            // Mostrar mercadillos asignados al admin
+      
             $fleaMarkets = auth()->user()->fleaMarketsAsAdmin()
                 ->with(['municipality', 'stalls'])
                 ->get();
 
-            return view('livewire.admin.market-manager', compact('fleaMarkets'));
+            $pendingStalls = \App\Models\Stall::whereHas('fleaMarket', function($q) {
+                $q->where('user_id', auth()->id());
+            })->whereNull('register_date')->with(['user', 'fleaMarket'])->get();
+
+            return view('livewire.admin.market-manager', compact('fleaMarkets', 'pendingStalls'));
         }
     }
 }
