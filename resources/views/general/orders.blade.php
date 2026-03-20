@@ -3,22 +3,13 @@
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             
             @php
-                // 🛠️ MODO PRUEBA: Cambia esto a 'vendedor' o 'comprador' para ver los distintos diseños
-                $rolPrueba = 'vendedor'; 
-
-                // Cuando el backend esté listo y tengas usuarios reales, borrarás la línea de arriba 
-                // y descomentarás la línea de abajo:
-                // $rolPrueba = auth()->check() ? auth()->user()->role : 'invitado';
+                $rolPrueba = auth()->check() ? auth()->user()->getRoleNames()->first() : 'invitado';
             @endphp
 
-            @if($rolPrueba === 'vendedor')
+            @if($rolPrueba === 'seller')
                 <livewire:seller.order-management />
-            
-            @elseif($rolPrueba === 'comprador')
-                <div class="p-10 bg-white rounded-lg shadow text-center">
-                    <h2 class="text-2xl font-bold">Vista del Comprador (En construcción) 🚧</h2>
-                </div>
-            
+            @elseif($rolPrueba === 'customer')
+                <livewire:customers.order-management />
             @else
                 <div class="p-10 bg-red-100 text-red-700 rounded-lg text-center font-bold">
                     No tienes permiso para ver esta página. Inicia sesión.

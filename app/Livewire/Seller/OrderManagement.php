@@ -3,49 +3,116 @@
 namespace App\Livewire\Seller;
 
 use Livewire\Component;
+use Livewire\WithPagination;
+use App\Models\Order;
+use App\Models\Stall;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 class OrderManagement extends Component
 {
-    // Variables enlazadas a los filtros del HTML
+    use WithPagination;
+
     public $filtroAno = '';
     public $filtroMes = '';
     public $filtroPuesto = '';
     public $filtroEstado = '';
     public $busqueda = '';
 
-    // Variables para el modal
     public $modalAbierto = false;
     public $pedidoSeleccionado = null;
 
+    public $dropdownAbierto = []; // Control de menús desplegables por producto
+
+    protected $paginationTheme = 'tailwind';
+
+    // Abrir modal y resetear dropdowns
     public function abrirModal($idPedido)
     {
-        // Aquí luego buscarás el pedido en la BD: Order::find($idPedido)
-        $this->pedidoSeleccionado = $idPedido; 
+        $this->pedidoSeleccionado = Order::with(['products', 'user', 'stall'])
+            ->find($idPedido);
+
         $this->modalAbierto = true;
+        $this->dropdownAbierto = [];
     }
 
-public function render()
+    // Cambiar estado de producto (Aceptado/Rechazado)
+    public function cambiarEstadoProducto($productId, $nuevoEstado)
     {
-        /* * 1. CUANDO EL BACKEND ESTÉ LISTO, USARÁS ALGO COMO ESTO:
-         * $pedidos = auth()->user()->orders()->where('estado', $this->filtroEstado)->get();
-         */
+        $orderId = $this->pedidoSeleccionado->id;
 
-        // 2. MIENTRAS TANTO, USAMOS DATOS FALSOS (MOCK) PARA PODER DISEÑAR
-        // Cambia esto a un array vacío [] para ver cómo queda la pantalla cuando no hay datos
-        $pedidos = [
-            (object)['id' => 1456, 'fecha' => '2026-01-25', 'hora' => '09:30', 'total' => 36.95, 'estado' => 'pendiente', 'cantidad_productos' => 5],
-            (object)['id' => 1457, 'fecha' => '2026-01-26', 'hora' => '10:15', 'total' => 12.50, 'estado' => 'completado', 'cantidad_productos' => 2],
-        ];
+        // Actualizar el pivot order_product
+        DB::table('order_product')
+            ->where('order_id', $orderId)
+            ->where('product_id', $productId)
+            ->update(['status' => $nuevoEstado]);
 
-        // 3. Calculamos el resumen contando los estados
-        $totalPendientes = collect($pedidos)->where('estado', 'pendiente')->count();
-        $totalCompletados = collect($pedidos)->where('estado', 'completado')->count();
+        // Recargar pedido con productos actualizados
+        $this->pedidoSeleccionado = Order::with(['products', 'user', 'stall'])
+            ->find($orderId);
 
-        // 4. Se lo enviamos a la vista HTML
+        // Cerrar dropdown del producto actualizado
+        $this->dropdownAbierto[$productId] = false;
+
+        // Verificar si todos los productos están aceptados o rechazados
+        $todosDefinidos = $this->pedidoSeleccionado->products->every(function ($p) {
+            return in_array($p->pivot->status, ['Aceptado', 'Rechazado']);
+        });
+
+        if ($todosDefinidos && !$this->pedidoSeleccionado->completed) {
+            $this->pedidoSeleccionado->completed = 1;
+            $this->pedidoSeleccionado->save();
+        }
+    }
+
+    public function render()
+    {
+        $user = Auth::user();
+
+        $pedidosQuery = Order::with(['products', 'user', 'stall']);
+
+        // Filtrar por rol
+        if ($user->role === 'vendedor') {
+            $pedidosQuery->where('stall_id', $user->stalls()->pluck('id'));
+        } elseif ($user->role === 'comprador') {
+            $pedidosQuery->where('user_id', $user->id);
+        } else {
+            $pedidosQuery->limit(0);
+        }
+
+        // Filtros
+        if ($this->filtroAno) {
+            $pedidosQuery->whereYear('order_date', $this->filtroAno);
+        }
+        if ($this->filtroMes) {
+            $pedidosQuery->whereMonth('order_date', $this->filtroMes);
+        }
+        if ($this->filtroEstado) {
+            $estado = $this->filtroEstado === 'pendiente' ? 0 : 1;
+            $pedidosQuery->where('completed', $estado);
+        }
+        if ($this->filtroPuesto) {
+            $pedidosQuery->where('stall_id', $this->filtroPuesto);
+        }
+        if ($this->busqueda) {
+            $pedidosQuery->whereHas('user', function ($q) {
+                $q->where('name', 'like', '%' . $this->busqueda . '%')
+                  ->orWhere('surname', 'like', '%' . $this->busqueda . '%');
+            });
+        }
+
+        $pedidos = $pedidosQuery->orderBy('order_date', 'desc')->paginate(10);
+
+        $totalPendientes = (clone $pedidosQuery)->where('completed', 0)->count();
+        $totalCompletados = (clone $pedidosQuery)->where('completed', 1)->count();
+
+        $puestos = Stall::all();
+
         return view('livewire.seller.order-management', [
             'pedidos' => $pedidos,
             'totalPendientes' => $totalPendientes,
             'totalCompletados' => $totalCompletados,
+            'puestos' => $puestos,
         ]);
     }
 }
