@@ -3,12 +3,12 @@
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             
             @php
-                $rolPrueba = auth()->check() ? auth()->user()->getRoleNames()->first() : 'invitado';
+                $rol = auth()->check() ? auth()->user()->getRoleNames()->first() : 'invitado';
             @endphp
 
-            @if($rolPrueba === 'seller')
+            @if($rol === 'seller')
                 <livewire:seller.order-management />
-            @elseif($rolPrueba === 'customer')
+            @elseif($rol === 'customer')
                 <livewire:customers.order-management />
             @else
                 <div class="p-10 bg-red-100 text-red-700 rounded-lg text-center font-bold">
