@@ -29,7 +29,7 @@ $roleName = $user && $user->getRoleNames()->first() ? ucfirst($user->getRoleName
                         <a href="{{ route('seller.edit-products') }}"
                             class="text-gray-500 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium">Mis Productos</a>
                         @if (request()->routeIs('seller.edit-products'))
-                            <a href="{{ route('seller.create-product') }}"
+                            <a href="{{ route('seller.add-product') }}"
                                 class="bg-green-100 text-green-800 px-3 py-2 rounded-md text-sm font-medium">+ Añadir Producto</a>
                         @endif
                     @endif

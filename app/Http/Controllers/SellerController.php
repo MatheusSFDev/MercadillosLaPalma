@@ -6,6 +6,7 @@ use App\Enums\Status;
 use App\Models\User;
 use App\Enums\Units;
 use App\Http\Requests\StoreProductRequest;
+use App\Models\Category;
 use App\Models\Order;
 use App\Models\Photo;
 use App\Models\Product;
@@ -138,6 +139,10 @@ class SellerController extends Controller
         }
     }
 
+    public function addProduct(){
+        return view('sellers.addProducts');
+    }
+
     public function storeProduct(StoreProductRequest $request){
         if(Auth::user()->hasRole('seller')){
             $data = $request->validated();
@@ -175,7 +180,6 @@ class SellerController extends Controller
     }
 
     public function editProducts(){
-        $products = Auth::user()->products;
-        return view('sellers.editProducts', compact('products'));
+        return view('sellers.showProducts');
     }
 }

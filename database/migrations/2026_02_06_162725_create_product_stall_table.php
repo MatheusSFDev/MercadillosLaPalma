@@ -16,6 +16,8 @@ return new class extends Migration
             $table->unsignedBigInteger('stall_id');
             $table->unsignedBigInteger('quantity');
             $table->double('price_per_unit');
+            $table->double('min_quantity');
+            $table->double('step_quantity');
             $table->timestamps();
             $table->primary(['product_id', 'stall_id']);
 

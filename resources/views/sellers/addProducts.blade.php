@@ -3,6 +3,7 @@
 @section('content')
     @hasrole('seller')
         <div>
+            <!-- Lleva a \resources\views\livewire\seller\add-product-form.blade.php -->
             <livewire:seller.add-product-form />
         </div>
     @else
