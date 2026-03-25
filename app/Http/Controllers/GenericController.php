@@ -8,6 +8,9 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\ValidationException;
 use Illuminate\Routing\Controller;
 use App\Models\User;
+use Illuminate\Auth\Events\Registered;
+use Illuminate\Validation\Rules;
+use App\Models\FleaMarket;
 
 class GenericController extends Controller
 {
@@ -30,6 +33,55 @@ class GenericController extends Controller
     public function index()
     {
         return view('general.index');
+    }
+
+    // I have to access the municipality name using foreing key
+    public function createUser()
+    {
+        $markets = FleaMarket::select('id', 'name')->get();
+
+        return view('general.register', [
+            'markets' => $markets,
+        ]);
+    }
+
+    public function storeUser(Request $request): void
+    {
+
+
+        $validated = $request->validate([
+        'name' => ['required', 'string', 'max:255'],
+        'surname' => ['required', 'string', 'max:255'],
+        'address' => ['nullable', 'string', 'max:255'],
+        'phone' => ['nullable', 'string', 'max:20'],
+        'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:' . User::class],
+        'password' => ['required', 'string', 'confirmed', Rules\Password::defaults()],
+    ]);
+
+        // Mapear correctamente el teléfono
+        $validated['phone_number'] = $validated['phone'] ?? null;
+        unset($validated['phone']);
+
+        // Hashear con"traseña
+        $validated['password'] = Hash::make($validated['password']);
+
+        // Crear usuario
+        $user = User::create($validated);
+
+        // Asignar rol customer
+        $user->assignRole('customer');
+
+        // Función que registra varios puestos automaticamente en los mercadillos seleccionados hasta que el admin acepte o rechaze petición
+        // sendPetitionStalls(['Mercadillo1', 'Mercadillo2'])
+
+        // Evento de registro para email verification
+        event(new Registered($user));
+
+        // Login automático
+        Auth::login($user);
+
+        // Redirigir
+        $this->redirect(route('dashboard', absolute: false), navigate: true);
     }
 
     /**

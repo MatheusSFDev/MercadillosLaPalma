@@ -37,6 +37,8 @@ Route::controller(GenericController::class)
     // Index Vista Mercadillos
     Route::get('/', 'index');
 
+    Route::get("/registerdevelop", "createUser");
+
     Route::prefix("general")
         ->name("general.")
         ->middleware(['auth', 'verified']) //Añadido un Auth, aunque primitivo
