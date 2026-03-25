@@ -18,6 +18,8 @@ class ProductStallSeeder extends Seeder
                 'product_id' => 1, // Carne de cerdo
                 'stall_id' => 1,
                 'quantity' => 50,
+                'min_quantity' => 1,
+                'step_quantity' => 5,
                 'price_per_unit' => 6.00,
                 'created_at' => Carbon::now(),
                 'updated_at' => Carbon::now(),
@@ -26,6 +28,8 @@ class ProductStallSeeder extends Seeder
                 'product_id' => 2, // Pescado fresco
                 'stall_id' => 2,
                 'quantity' => 30,
+                'min_quantity' => 1,
+                'step_quantity' => 5,
                 'price_per_unit' => 11.50,
                 'created_at' => Carbon::now(),
                 'updated_at' => Carbon::now(),
@@ -34,6 +38,8 @@ class ProductStallSeeder extends Seeder
                 'product_id' => 3, // Frutas y verduras
                 'stall_id' => 3,
                 'quantity' => 100,
+                'min_quantity' => 1,
+                'step_quantity' => 5,
                 'price_per_unit' => 3.25,
                 'created_at' => Carbon::now(),
                 'updated_at' => Carbon::now(),
@@ -42,6 +48,8 @@ class ProductStallSeeder extends Seeder
                 'product_id' => 4, // Artesanía local
                 'stall_id' => 4,
                 'quantity' => 15,
+                'min_quantity' => 1,
+                'step_quantity' => 5,
                 'price_per_unit' => 22.00,
                 'created_at' => Carbon::now(),
                 'updated_at' => Carbon::now(),
@@ -50,6 +58,8 @@ class ProductStallSeeder extends Seeder
                 'product_id' => 5, // Productos varios
                 'stall_id' => 2,
                 'quantity' => 60,
+                'min_quantity' => 1,
+                'step_quantity' => 5,
                 'price_per_unit' => 2.50,
                 'created_at' => Carbon::now(),
                 'updated_at' => Carbon::now(),

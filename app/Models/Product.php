@@ -14,6 +14,7 @@ class Product extends Model
         'user_id',
         'category_id',
         'name',
+        'description',
         'unit',
     ];
 
@@ -47,7 +48,7 @@ class Product extends Model
     // relación con los puestos donde se vende el producto
     public function stalls(): BelongsToMany
     {
-        return $this->belongsToMany(Stall::class)->withPivot('quantity', 'price_per_unit');
+        return $this->belongsToMany(Stall::class)->withPivot('quantity', 'price_per_unit', 'min_quantity', 'step_quantity');
     }
 
     // alias histórico

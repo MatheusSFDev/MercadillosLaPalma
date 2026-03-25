@@ -97,6 +97,7 @@ Route::controller(SellerController::class)
     ->group(function () {
         Route::get("/orders", "sellerOrders")->name("orders");
         Route::get('/create/product', 'createProduct')->name("create-product");
+        Route::get('/add/product', 'addProduct')->name("add-product");
         Route::get('/edit/products', 'editProducts')->name("edit-products");
         // Cambiar nombre
         Route::get('/index', 'sellerStalls')->name("index-stalls");
