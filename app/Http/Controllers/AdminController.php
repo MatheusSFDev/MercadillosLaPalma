@@ -12,21 +12,14 @@ use App\Models\FleaMarket;
 use App\Models\Schedule;
 use App\Models\Stall;
 use App\Models\User;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
+use Symfony\Component\HttpKernel\Exception\HttpException;
 
 class AdminController extends Controller
 {
     protected $fleaMarketService;
     protected $stallService;
-
-    /**
-     * Display a listing of the resource.
-     */
-
-
-    public function controlPanel()
-    {
-        return view("admin.controlPanel");
-    }
 
     public function __construct(FleaMarketService $fleaMarketService, StallService $stallService)
     {
@@ -34,27 +27,105 @@ class AdminController extends Controller
         $this->stallService = $stallService;
     }
 
-
-    public function indexMarket()
+    protected function adminFleaMarketsQuery()
     {
-        return view('admin.markets');
+        /** @var User|null $user */
+        $user = Auth::user();
+
+        abort_if(!$user, 403, 'Debes iniciar sesion.');
+
+        return $user->fleaMarketsAsAdmin();
+    }
+
+    protected function normalizeDayKey(string $day): string
+    {
+        $normalized = mb_strtolower(trim($day), 'UTF-8');
+        $normalized = str_replace(['á', 'é', 'í', 'ó', 'ú'], ['a', 'e', 'i', 'o', 'u'], $normalized);
+
+        return $normalized;
+    }
+
+
+    public function indexMarket(Request $request)
+    {
+        $tab = $request->query('tab', 'index');
+        if (!in_array($tab, ['index', 'requests'], true)) {
+            $tab = 'index';
+        }
+
+        $fleaMarkets = $this->adminFleaMarketsQuery()
+            ->with(['municipality', 'stalls'])
+            ->get();
+
+        $adminMarketIds = $this->adminFleaMarketsQuery()->pluck('flea_markets.id');
+
+        $pendingStalls = Stall::query()
+            ->whereIn('flea_market_id', $adminMarketIds)
+            ->whereNull('register_date')
+            ->with(['user', 'fleaMarket.municipality'])
+            ->get();
+
+        return view('admin.markets', compact('fleaMarkets', 'pendingStalls', 'tab'));
     }
 
 
 
 
 
-    public function show($id)
+    public function show(Request $request, $id)
     {
-        $fleaMarket = auth()->user()->fleaMarketsAsAdmin()
-            ->with(['stalls.user', 'stalls.orders', 'stalls.products', 'municipality'])
+        $tab = $request->query('tab', 'stalls');
+        if (!in_array($tab, ['stalls', 'info', 'requests'], true)) {
+            $tab = 'stalls';
+        }
+
+        $fleaMarket = $this->adminFleaMarketsQuery()
+            ->with(['stalls.user', 'stalls.orders', 'stalls.products', 'municipality', 'schedules'])
             ->findOrFail($id);
 
-        return view('admin.controlPanel', compact('fleaMarket'));
+        $assignableUsers = User::query()
+            ->role(['seller', 'customer'])
+            ->orderBy('name')
+            ->get(['id', 'name', 'surname', 'email']);
+
+        $pendingStalls = $fleaMarket->stalls()->whereNull('register_date')->with('user')->get();
+
+        $editingStallId = $request->query('edit_stall_id');
+        $editingStallId = is_numeric($editingStallId) ? (int) $editingStallId : null;
+
+        if ($editingStallId !== null && !$fleaMarket->stalls->contains('id', $editingStallId)) {
+            $editingStallId = null;
+        }
+
+        return view('admin.controlPanel', compact('fleaMarket', 'pendingStalls', 'tab', 'editingStallId', 'assignableUsers'));
+    }
+
+    protected function ensureAdminOwnsMarket(FleaMarket $fleaMarket): void
+    {
+        $ownsMarket = $this->adminFleaMarketsQuery()
+            ->where('flea_markets.id', $fleaMarket->id)
+            ->exists();
+
+        if (!$ownsMarket) {
+            throw new HttpException(403, 'No autorizado para gestionar este mercadillo.');
+        }
+    }
+
+    protected function ensureAdminOwnsStall(Stall $stall): void
+    {
+        $this->ensureAdminOwnsMarket($stall->fleaMarket);
+    }
+
+    protected function ensureAdminOwnsSchedule(Schedule $schedule): void
+    {
+        $this->ensureAdminOwnsMarket($schedule->fleaMarket);
     }
 
     public function createStall(StallStoreRequest $request, $mercadilloId)
     {
+        $fleaMarket = FleaMarket::findOrFail($mercadilloId);
+        $this->ensureAdminOwnsMarket($fleaMarket);
+
         $data = $request->validated();
         $data['flea_market_id'] = $mercadilloId;
 
@@ -65,59 +136,97 @@ class AdminController extends Controller
 
     public function updateMarket(\App\Http\Requests\FleaMarketUpdateRequest $request, FleaMarket $mercadillo)
     {
+        $this->ensureAdminOwnsMarket($mercadillo);
+
         $data = $request->validated();
 
-        $mercadillo->update([
-            'address' => $data['address'],
-            'img_url' => $data['img_url'] ?? null,
-        ]);
+        DB::transaction(function () use ($mercadillo, $data) {
+            $mercadillo->update([
+                'address' => $data['address'],
+                'img_url' => $data['img_url'] ?? null,
+            ]);
 
-   
-        if (isset($data['schedules']) && is_array($data['schedules'])) {
+            if (!isset($data['schedules']) || !is_array($data['schedules'])) {
+                return;
+            }
+
+            $dayNames = [
+                'lunes' => 'Lunes',
+                'martes' => 'Martes',
+                'miercoles' => 'Miércoles',
+                'jueves' => 'Jueves',
+                'viernes' => 'Viernes',
+                'sabado' => 'Sábado',
+                'domingo' => 'Domingo',
+            ];
+
             foreach ($data['schedules'] as $day => $vals) {
-               
                 $opening = $vals['opening_time'] ?? null;
                 $closing = $vals['closing_time'] ?? null;
-                if ($opening === '') $opening = null;
-                if ($closing === '') $closing = null;
-                $dayOfWeek = mb_convert_case($day, MB_CASE_TITLE, 'UTF-8');
-                $existing = $mercadillo->schedules()->where('day_of_week', $dayOfWeek)->first();
-                if ($existing) {
-                    $existing->update([
-                        'opening_time' => $opening,
-                        'closing_time' => $closing,
-                    ]);
-                } else {
-                    $mercadillo->schedules()->create([
-                        'day_of_week' => $dayOfWeek,
-                        'opening_time' => $opening,
-                        'closing_time' => $closing,
-                    ]);
-                }
-            }
-        }
 
-        return redirect()->route('admin.control-panel', $mercadillo->id)
-            ->with('success', 'Información del mercadillo actualizada.')
-            ->with('tab', 'info');
+                if ($opening === '') {
+                    $opening = null;
+                }
+                if ($closing === '') {
+                    $closing = null;
+                }
+
+                $normalizedDay = $this->normalizeDayKey($day);
+                if (!isset($dayNames[$normalizedDay])) {
+                    continue;
+                }
+
+                $dayOfWeek = $dayNames[$normalizedDay];
+
+                Schedule::query()->updateOrCreate(
+                    [
+                        'flea_market_id' => $mercadillo->id,
+                        'day_of_week' => $dayOfWeek,
+                    ],
+                    [
+                        'opening_time' => $opening,
+                        'closing_time' => $closing,
+                    ]
+                );
+            }
+        });
+
+        return redirect()->route('admin.control-panel', [
+            'id' => $mercadillo->id,
+            'tab' => 'info',
+        ])->with('success', 'Información del mercadillo actualizada.');
     }
 
     public function editStallForm(Stall $stall)
     {
+        $this->ensureAdminOwnsStall($stall);
+
         $fleaMarket = $stall->fleaMarket;
-        return view('admin.stalls.edit', compact('stall', 'fleaMarket'));
+        $assignableUsers = User::query()
+            ->role(['seller', 'customer'])
+            ->orderBy('name')
+            ->get(['id', 'name', 'surname', 'email']);
+
+        return view('admin.stalls.edit', compact('stall', 'fleaMarket', 'assignableUsers'));
     }
 
     public function updateStall(StallUpdateRequest $request, Stall $stall)
     {
+        $this->ensureAdminOwnsStall($stall);
+
         $data = $request->validated();
         $this->stallService->update($stall, $data);
 
-        return redirect()->route('admin.control-panel', $stall->flea_market_id)->with('success', 'Puesto actualizado correctamente.');
+        return redirect()->route('admin.control-panel', [
+            'id' => $stall->flea_market_id,
+            'tab' => 'stalls',
+        ])->with('success', 'Puesto actualizado correctamente.');
     }
 
     public function activateStall(Stall $stall)
     {
+        $this->ensureAdminOwnsStall($stall);
+
         $this->stallService->activate($stall);
 
         return back()->with('success', 'Puesto activado.');
@@ -125,6 +234,8 @@ class AdminController extends Controller
 
     public function deactivateStall(Stall $stall)
     {
+        $this->ensureAdminOwnsStall($stall);
+
         $this->stallService->deactivate($stall);
 
         return back()->with('success', 'Puesto desactivado.');
@@ -132,12 +243,17 @@ class AdminController extends Controller
 
     public function deleteStall(Stall $stall)
     {
+        $this->ensureAdminOwnsStall($stall);
+
         $this->stallService->delete($stall);
 
         return back()->with('success', 'Puesto eliminado.');
     }
     public function createSchedule(ScheduleRequest $request, $mercadilloId)
     {
+        $fleaMarket = FleaMarket::findOrFail($mercadilloId);
+        $this->ensureAdminOwnsMarket($fleaMarket);
+
         $data = $request->validated();
         $data['flea_market_id'] = $mercadilloId;
 
@@ -149,6 +265,8 @@ class AdminController extends Controller
     
     public function updateSchedule(ScheduleRequest $request, Schedule $schedule)
     {
+        $this->ensureAdminOwnsSchedule($schedule);
+
         $schedule->update($request->validated());
 
         return back()->with('success', 'Horario actualizado correctamente.');
@@ -156,12 +274,16 @@ class AdminController extends Controller
 
     public function deleteSchedule(Schedule $schedule)
     {
+        $this->ensureAdminOwnsSchedule($schedule);
+
         $schedule->delete();
 
         return back()->with('success', 'Horario eliminado correctamente.');
     }
     public function assignStallToUser(FleaMarket $mercadillo, User $user)
     {
+        $this->ensureAdminOwnsMarket($mercadillo);
+
         try {
             $this->stallService->assignStallToUser($user, $mercadillo);
             return back()->with('success', 'Usuario ahora es vendedor (puesto asignado).');
@@ -171,26 +293,36 @@ class AdminController extends Controller
     }
     public function getStallWithoutR($id)
     {
-        $mercadillo = FleaMarket::with([
+        $fleaMarket = FleaMarket::with([
             'municipality',
             'schedules',
             'holidays',
             'stalls.user',
+            'stalls.orders',
             'stalls.products'
         ])->findOrFail($id);
 
-        $stallsWithoutDate = $this->stallService
+        $this->ensureAdminOwnsMarket($fleaMarket);
+
+        $pendingStalls = $this->stallService
             ->getWithoutRegisterDateByMarket($id);
 
+        $tab = 'requests';
+        $editingStallId = null;
+
         return view('admin.controlPanel', compact(
-            'mercadillo',
-            'stallsWithoutDate'
+            'fleaMarket',
+            'pendingStalls',
+            'tab',
+            'editingStallId'
         ));
     }
    
 
     public function registerStall(Stall $stall)
     {
+        $this->ensureAdminOwnsStall($stall);
+
         try {
             $this->stallService->registerStall($stall);
 
@@ -208,7 +340,19 @@ class AdminController extends Controller
             'stall_ids.*' => 'integer'
         ]);
 
-        $updated = $this->stallService->acceptRequests($data['stall_ids']);
+        $allowedStallIds = Stall::query()
+            ->whereIn('id', $data['stall_ids'])
+            ->whereHas('fleaMarket', function ($query) {
+                $query->where('user_id', Auth::id());
+            })
+            ->pluck('id')
+            ->all();
+
+        if (empty($allowedStallIds)) {
+            return back()->with('error', 'No hay solicitudes autorizadas para aprobar.');
+        }
+
+        $updated = $this->stallService->acceptRequests($allowedStallIds);
 
         return back()->with('success', "$updated puestos aprobados.");
     }

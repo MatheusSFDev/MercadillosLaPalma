@@ -8,7 +8,7 @@ class FleaMarketUpdateRequest extends FormRequest
 {
     public function authorize()
     {
-        // authorization logic can be implemented later; for now allow admins
+        
         return auth()->check();
     }
 
@@ -17,9 +17,9 @@ class FleaMarketUpdateRequest extends FormRequest
         return [
             'address' => 'required|string|max:255',
             'img_url' => 'nullable|string|max:1024',
-            'schedules' => 'array',
-            'schedules.*.opening_time' => 'nullable',
-            'schedules.*.closing_time' => 'nullable',
+            'schedules' => 'sometimes|array',
+            'schedules.*.opening_time' => ['nullable', 'regex:/^([01]\d|2[0-3]):[0-5]\d(:[0-5]\d)?$/'],
+            'schedules.*.closing_time' => ['nullable', 'regex:/^([01]\d|2[0-3]):[0-5]\d(:[0-5]\d)?$/'],
         ];
     }
 }
