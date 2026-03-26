@@ -39,9 +39,6 @@ $roleName = $user && $user->getRoleNames()->first() ? ucfirst($user->getRoleName
                             class="text-gray-500 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium">Mi Carrito</a>
                         <a href="{{ route('general.orders') }}"
                             class="text-gray-500 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium">Mis Pedidos</a>
-                        <a href="{{ route('customer.seller-request') }}"
-                            class="ml-4 bg-orange-100 text-orange-700 hover:bg-orange-200 px-3 py-2 rounded-md text-sm font-medium border border-orange-300">Quiero
-                            Vender!</a>
                     @endif
                 @endauth
             </div>
@@ -114,11 +111,8 @@ $roleName = $user && $user->getRoleNames()->first() ? ucfirst($user->getRoleName
     {{-- Menú Desplegable (Móvil) --}}
     <div :class="{ 'block': open, 'hidden': !open }" class="hidden sm:hidden bg-gray-50">
         <div class="pt-2 pb-3 space-y-1">
-            <a href="/"
-                class="block w-full ps-3 pe-4 py-2 border-l-4 border-transparent text-start text-base font-medium text-gray-600 hover:text-gray-800 hover:bg-gray-50 hover:border-gray-300">Mercadillos</a>
-
             @auth
-            @if ($user->hasRole('vendedor'))
+            @if ($user->hasRole('seller'))
             <div class="border-t border-gray-200 my-2"></div>
             <span class="px-4 text-xs text-gray-400 font-bold uppercase">Zona Vendedor</span>
             <a href="{{ route('seller.index-stalls') }}"
@@ -132,7 +126,7 @@ $roleName = $user && $user->getRoleNames()->first() ? ucfirst($user->getRoleName
                 Productos</a>
             @endif
 
-            @if ($user->hasRole('comprador'))
+            @if ($user->hasRole('customer'))
             <a href="{{ route('customer.cart') }}"
                 class="block w-full ps-3 pe-4 py-2 text-base font-medium text-gray-600 hover:bg-gray-100">Mi Carrito</a>
             <a href="{{ route('general.orders') }}"
