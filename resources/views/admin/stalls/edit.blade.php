@@ -5,7 +5,7 @@
     <div class="max-w-2xl mx-auto">
         <h1 class="text-3xl font-bold mb-8">Editar Puesto</h1>
 
-        <a href="{{ route('admin.control-panel', $stall->flea_market_id) }}" class="inline-block bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded mb-6">
+        <a href="{{ route('admin.control-panel', ['id' => $stall->flea_market_id, 'tab' => 'stalls']) }}" class="inline-block bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded mb-6">
             ← Volver
         </a>
 
@@ -30,6 +30,21 @@
                     @enderror
                 </div>
 
+                <div class="mb-4">
+                    <label for="user_id" class="block text-gray-700 font-bold mb-2">Usuario asignado</label>
+                    <select id="user_id" name="user_id" class="w-full p-2 border rounded">
+                        <option value="">Sin asignar</option>
+                        @foreach($assignableUsers as $user)
+                            <option value="{{ $user->id }}" {{ (string) old('user_id', $stall->user_id) === (string) $user->id ? 'selected' : '' }}>
+                                {{ trim($user->name . ' ' . ($user->surname ?? '')) }} - {{ $user->email }}
+                            </option>
+                        @endforeach
+                    </select>
+                    @error('user_id')
+                        <span class="text-red-500 text-sm">{{ $message }}</span>
+                    @enderror
+                </div>
+
                 <div class="mb-4 flex items-center gap-4">
                   
                     <input type="hidden" name="active" value="0" />
@@ -49,7 +64,7 @@
                     <button type="submit" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
                         Guardar cambios
                     </button>
-                    <a href="{{ route('admin.control-panel', $stall->flea_market_id) }}" class="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded">
+                    <a href="{{ route('admin.control-panel', ['id' => $stall->flea_market_id, 'tab' => 'stalls']) }}" class="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded">
                         Cancelar
                     </a>
                 </div>
