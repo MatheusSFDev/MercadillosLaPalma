@@ -11,6 +11,7 @@ use App\Models\User;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Validation\Rules;
 use App\Models\FleaMarket;
+use App\Services\GenericService;
 
 class GenericController extends Controller
 {
@@ -22,7 +23,9 @@ class GenericController extends Controller
     {
         $this->middleware('auth')->except([
             'index',
-            'store'
+            'store',
+            'createUser',
+            'storeUser'
         ]);
     }
 
@@ -36,19 +39,20 @@ class GenericController extends Controller
     }
 
     // I have to access the municipality name using foreing key
-    public function createUser()
+   public function createUser()
+{
+    $markets = FleaMarket::with('municipality')
+        ->select('id', 'address', 'municipality_id')
+        ->get();
+
+    return view('general.register', [
+        'markets' => $markets,
+    ]);
+}
+
+    // Necesito completar esta función y insertar registros en tabla stalls
+    public function storeUser(Request $request, GenericService $genericService)
     {
-        $markets = FleaMarket::select('id', 'name')->get();
-
-        return view('general.register', [
-            'markets' => $markets,
-        ]);
-    }
-
-    public function storeUser(Request $request): void
-    {
-
-
         $validated = $request->validate([
         'name' => ['required', 'string', 'max:255'],
         'surname' => ['required', 'string', 'max:255'],
@@ -71,17 +75,23 @@ class GenericController extends Controller
         // Asignar rol customer
         $user->assignRole('customer');
 
-        // Función que registra varios puestos automaticamente en los mercadillos seleccionados hasta que el admin acepte o rechaze petición
         // sendPetitionStalls(['Mercadillo1', 'Mercadillo2'])
 
         // Evento de registro para email verification
-        event(new Registered($user));
+        // event(new Registered($user));
 
         // Login automático
         Auth::login($user);
 
-        // Redirigir
-        $this->redirect(route('dashboard', absolute: false), navigate: true);
+        $selectedMarkets = $request->input('selected_markets');
+
+        // Comprobación de que el usuario selecciono alguno de los mercados para registrarse 
+        if(count($selectedMarkets ?? []) > 0){
+            // función que inserta registros en la tabla de stalls
+            $genericService->requestCreateStalls($selectedMarkets);
+        }
+
+        return view("general.index");
     }
 
     /**

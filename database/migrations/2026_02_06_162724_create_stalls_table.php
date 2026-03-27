@@ -17,7 +17,7 @@ return new class extends Migration
             $table->unsignedBigInteger('flea_market_id');
             $table->boolean("home_delivery")->default(false); // boolean / string
             $table->string("information")->nullable();
-            $table->boolean("active")->default(true);
+            $table->boolean("active")->default(false);
             $table->dateTime("reset_date")->nullable();
             $table->dateTime('register_date')->nullable();
             $table->string('name')->nullable();
