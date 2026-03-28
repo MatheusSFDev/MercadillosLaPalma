@@ -85,8 +85,12 @@
                                     {{ $stall->name }}
                                 </h3>
                                 
-                                <div class="mb-6 md:mb-0 text-3xl">
-                                    🍎 {{-- Aquí podrías poner el icono según $stall->category --}}
+                                <!-- Zona de las categorías de los puestos -->
+                                <div class="mb-6 md:mb-0 text-3xl flex flex-row gap-3">
+                                    @foreach ($stall->categories as $stallCategory)
+                                            @php $imgurl = 'img/icons/' . $stallCategory['name'] . '.png'; @endphp
+                                            <img src="{{ asset($imgurl) }}" alt="{{ $stallCategory['name'] }}" class="h-8 w-8">
+                                    @endforeach
                                 </div>
 
                                 <a href="{{ route('general.stall', $stall->id) }}" 
