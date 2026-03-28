@@ -18,9 +18,9 @@ class StallList extends Component
         $this->fleaMarket = FleaMarket::with('municipality')
             ->findOrFail($fleaMarketId);
 
+        $this->stalls = $this->fleaMarket->stalls()->get();
+
         $this->categories = Category::all()->toArray();
-    
-        $this->stalls = Stall::where('flea_market_id', $fleaMarketId)->get();
 
     }
 
@@ -29,6 +29,7 @@ class StallList extends Component
         return view('livewire.public.stall-list-content', [
             'fleaMarket' => $this->fleaMarket,
             'stalls' => $this->stalls,
+            'categories' => $this->categories
         ]);
     }
 }
