@@ -20,6 +20,7 @@ class Stall extends Model
         'register_date',
         'name',
         'img_url',
+        'status'
     ];
 
     public function fleaMarket(): BelongsTo{

@@ -36,6 +36,8 @@ Route::controller(GenericController::class)
     ->group(function () {
     // Index Vista Mercadillos
     Route::get('/', 'index');
+    Route::get("/users/create", "createUser")->name("users-create");
+    Route::post("/users", "storeUser")->name("users-store");
 
     Route::prefix("general")
         ->name("general.")

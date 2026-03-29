@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id();
             $table->string("address");
             $table->string('img_url')->default('img/imgNotAvailable.png');
+            $table->string('status')->default('pending');
             $table->unsignedBigInteger('municipality_id');
             
             $table->foreign('municipality_id')->references('id')->on('municipalities')->onDelete('cascade');

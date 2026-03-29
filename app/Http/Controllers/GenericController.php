@@ -8,6 +8,10 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\ValidationException;
 use Illuminate\Routing\Controller;
 use App\Models\User;
+use Illuminate\Auth\Events\Registered;
+use Illuminate\Validation\Rules;
+use App\Models\FleaMarket;
+use App\Services\GenericService;
 
 class GenericController extends Controller
 {
@@ -19,7 +23,9 @@ class GenericController extends Controller
     {
         $this->middleware('auth')->except([
             'index',
-            'store'
+            'store',
+            'createUser',
+            'storeUser'
         ]);
     }
 
@@ -30,6 +36,61 @@ class GenericController extends Controller
     public function index()
     {
         return view('general.index');
+    }
+
+    // I have to access the municipality name using foreing key
+   public function createUser()
+{
+    $markets = FleaMarket::with('municipality')
+        ->select('id', 'address', 'municipality_id')
+        ->get();
+
+    return view('general.register', [
+        'markets' => $markets,
+    ]);
+}
+
+    // Necesito completar esta función y insertar registros en tabla stalls
+    public function storeUser(Request $request, GenericService $genericService)
+    {
+        $validated = $request->validate([
+        'name' => ['required', 'string', 'max:255'],
+        'surname' => ['required', 'string', 'max:255'],
+        'address' => ['nullable', 'string', 'max:255'],
+        'phone' => ['nullable', 'string', 'max:20'],
+        'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:' . User::class],
+        'password' => ['required', 'string', 'confirmed', Rules\Password::defaults()],
+    ]);
+
+        // Mapear correctamente el teléfono
+        $validated['phone_number'] = $validated['phone'] ?? null;
+        unset($validated['phone']);
+
+        // Hashear con"traseña
+        $validated['password'] = Hash::make($validated['password']);
+
+        // Crear usuario
+        $user = User::create($validated);
+
+        // Asignar rol customer
+        $user->assignRole('customer');
+
+
+        // Evento de registro para email verification falta por implementar
+        // event(new Registered($user));
+
+        // Login automático
+        Auth::login($user);
+
+        $selectedMarkets = $request->input('selected_markets');
+
+        // Comprobación de que el usuario selecciono alguno de los mercados para registrarse 
+        if(count($selectedMarkets ?? []) > 0){
+            // función que inserta registros en la tabla de stalls
+            $genericService->requestCreateStalls($selectedMarkets);
+        }
+
+        return view("general.index");
     }
 
     /**
