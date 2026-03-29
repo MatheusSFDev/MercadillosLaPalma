@@ -75,9 +75,8 @@ class GenericController extends Controller
         // Asignar rol customer
         $user->assignRole('customer');
 
-        // sendPetitionStalls(['Mercadillo1', 'Mercadillo2'])
 
-        // Evento de registro para email verification
+        // Evento de registro para email verification falta por implementar
         // event(new Registered($user));
 
         // Login automático

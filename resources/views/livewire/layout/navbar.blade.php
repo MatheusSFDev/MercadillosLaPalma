@@ -86,7 +86,7 @@ $roleName = $user && $user->getRoleNames()->first() ? ucfirst($user->getRoleName
                 <div class="space-x-4">
                     <a href="{{ route('login') }}" class="text-gray-500 hover:text-gray-900 font-medium">Iniciar
                         sesión</a>
-                    <a href="{{ route('register') }}"
+                    <a href="{{ route('users-create') }}"
                         class="bg-primary text-white px-4 py-2 rounded-md text-sm font-medium hover:bg-primary-hover">Registrarse</a>
                 </div>
                 @endauth
@@ -177,7 +177,7 @@ $roleName = $user && $user->getRoleNames()->first() ? ucfirst($user->getRoleName
                     class="block text-center w-full bg-white border border-gray-300 text-gray-700 py-2 rounded-md mb-2">Iniciar
                     Sesión</a>
                 {{-- Botón Registrarse se mantiene con sus colores originales --}}
-                <a href="{{ route('register') }}"
+                <a href="{{ route('users-create') }}"
                     class="block text-center w-full bg-green-600 text-white py-2 rounded-md">Registrarse</a>
             </div>
             @endauth

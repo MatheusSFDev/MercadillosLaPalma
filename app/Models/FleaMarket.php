@@ -17,7 +17,7 @@ class FleaMarket extends Model
     protected $fillable = [
         'address',
         'municipality_id',
-        'img_url'
+        'img_url',
     ];
 
     /**

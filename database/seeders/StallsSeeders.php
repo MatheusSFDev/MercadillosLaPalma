@@ -23,7 +23,8 @@ class StallsSeeders extends Seeder
                 'register_date' => date('Y-m-d H:i:s'),
                 'name' => 'Ropa Vintage',
                 'created_at' => date('Y-m-d H:i:s'),
-                'updated_at' => date('Y-m-d H:i:s')
+                'updated_at' => date('Y-m-d H:i:s'),
+                'status' => 'pending'
             ],
             [
                 'user_id' => 2,
@@ -35,7 +36,8 @@ class StallsSeeders extends Seeder
                 'register_date' => date('Y-m-d H:i:s'),
                 'name' => 'Muebles Clásicos',
                 'created_at' => date('Y-m-d H:i:s'),
-                'updated_at' => date('Y-m-d H:i:s')
+                'updated_at' => date('Y-m-d H:i:s'),
+                'status' => 'accepted'
             ],
             [
                 'user_id' => 2,
@@ -47,7 +49,8 @@ class StallsSeeders extends Seeder
                 'register_date' => date('Y-m-d H:i:s'),
                 'name' => 'Juguetes Retro',
                 'created_at' => date('Y-m-d H:i:s'),
-                'updated_at' => date('Y-m-d H:i:s')
+                'updated_at' => date('Y-m-d H:i:s'),
+                'status' => 'rejected'
             ],
             [
                 'user_id' => 1,
@@ -59,7 +62,8 @@ class StallsSeeders extends Seeder
                 'register_date' => date('Y-m-d H:i:s'),
                 'name' => 'Libros Usados',
                 'created_at' => date('Y-m-d H:i:s'),
-                'updated_at' => date('Y-m-d H:i:s')
+                'updated_at' => date('Y-m-d H:i:s'),
+                'status' => 'accepted'
             ]
         ];
 

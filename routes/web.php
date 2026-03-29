@@ -26,8 +26,6 @@ use Database\Seeders\UserSeeder;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Log;
 
-Route::get("/registerdevelop", [GenericController::class ,"createUser"])->name("registerdevelop");
-
 //RedirectLivewire
 Route::middleware(['auth', 'verified'])->get('/dashboard', function () {
     return redirect('/');
@@ -38,8 +36,8 @@ Route::controller(GenericController::class)
     ->group(function () {
     // Index Vista Mercadillos
     Route::get('/', 'index');
-
-    Route::post("/storedevelop", "storeUser")->name("storedevelop");
+    Route::get("/users/create", "createUser")->name("users-create");
+    Route::post("/users", "storeUser")->name("users-store");
 
     Route::prefix("general")
         ->name("general.")

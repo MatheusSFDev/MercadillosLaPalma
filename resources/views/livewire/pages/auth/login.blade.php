@@ -79,7 +79,7 @@ new #[Layout('layouts.guest')] class extends Component {
 
                     <div class="mt-6 text-center text-sm text-gray-600">
                         ¿No tienes una cuenta?
-                        <a href="{{ route('register') }}" wire:navigate.hover class="text-primary hover:text-primary-hover font-medium hover:underline">
+                        <a href="{{ route('users-create') }}" wire:navigate.hover class="text-primary hover:text-primary-hover font-medium hover:underline">
                             Regístrate
                         </a>
                     </div>

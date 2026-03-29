@@ -17,7 +17,7 @@
 
                 <x-auth-session-status class="mb-4" :status="session('status')"/>
 
-                <form method="POST" action="{{ route('storedevelop') }}">
+                <form method="POST" action="{{ route('users-store') }}">
     @csrf
 
     <div class="mb-5">
@@ -151,6 +151,30 @@
             Selecciona los mercadillos
         </label>
 
+        <div x-data="{ seller: false }" class="mb-6">
+
+    <!-- Toggle checkbox -->
+    <label class="flex items-center mb-4">
+        <input 
+            type="checkbox" 
+            x-model="seller"
+            class="w-4 h-4 text-primary rounded focus:ring-primary border-gray-300"
+        >
+        <span class="ml-2 text-sm text-gray-600">
+            Registrarse como vendedor
+        </span>
+    </label>
+
+    <!-- Hidden content -->
+    <div x-show="seller" x-transition>
+        <h2 class="text-gray-700 text-sm font-medium mb-2">
+            Para registrarse como vendor seleccione los mercadillos en los que quiera participar
+        </h2>
+
+        <label class="block text-gray-700 text-sm font-medium mb-2">
+            Selecciona los mercadillos
+        </label>
+
         <div class="space-y-2">
             @foreach($markets as $market)
                 <label class="flex items-center">
@@ -167,6 +191,9 @@
                 </label>
             @endforeach
         </div>
+    </div>
+
+</div>
 
         @error('selected_markets')
             <p class="mt-2 text-sm text-red-600">{{ $message }}</p>

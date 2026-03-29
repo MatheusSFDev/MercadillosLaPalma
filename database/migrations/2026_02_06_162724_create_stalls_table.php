@@ -22,6 +22,7 @@ return new class extends Migration
             $table->dateTime('register_date')->nullable();
             $table->string('name')->nullable();
             $table->string('img_url')->default('img/imgNotAvailable.png');
+            $table->string('status')->default('pending');
             $table->timestamps();
 
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
