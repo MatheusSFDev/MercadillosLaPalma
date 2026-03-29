@@ -59,7 +59,7 @@ class AdministratorSeeder extends Seeder
             ],
             [
                 'user_email' => 'notbatman@example.com',
-                'flea_market_address' => 'El Jesus, Tijarafe',
+                'flea_market_address' => 'El Jesús, Tijarafe',
             ],
             [
                 'user_email' => 'admin@example.com',

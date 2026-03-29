@@ -59,7 +59,7 @@ class FleaMarketSeeder extends Seeder
                 'img_url' => 'img/fleaMarkets/Villa_de_Mazo.jpg',
             ],
             [
-                'address' => 'Muelle deportivo, Tazacorte',
+                'address' => 'Muelle Deportivo, Tazacorte',
                 'municipality' => 'Tazacorte',
                 'img_url' => 'img/fleaMarkets/Tazacorte.jpg',
             ],

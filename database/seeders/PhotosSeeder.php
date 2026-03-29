@@ -14,34 +14,94 @@ class PhotosSeeder extends Seeder
     {
         $photos = [
             [
-                'product_name' => 'Carne de cerdo',
-                'url' => 'https://example.com/products/carne-cerdo-1.jpg',
-                'description' => 'Carne de cerdo fresca de producción local',
+                'product_name' => 'Carne de cerdo negro',
+                'url' => 'img/products/carne_cerdo_negro.jpg',
+                'description' => 'Carne fresca de cerdo negro palmero',
             ],
             [
-                'product_name' => 'Carne de cerdo',
-                'url' => 'https://example.com/products/carne-cerdo-2.jpg',
-                'description' => 'Corte tradicional de carne de cerdo',
+                'product_name' => 'Costillas adobadas',
+                'url' => 'img/products/costillas_adobadas.jpg',
+                'description' => 'Costillas adobadas listas para la parrilla',
             ],
             [
-                'product_name' => 'Pescado fresco',
-                'url' => 'https://example.com/products/pescado-fresco.jpg',
-                'description' => 'Pescado fresco del día',
+                'product_name' => 'Pescado fresco del día',
+                'url' => 'img/products/pescado_fresco.jpg',
+                'description' => 'Pescado fresco recién capturado',
             ],
             [
-                'product_name' => 'Frutas y verduras',
-                'url' => 'https://example.com/products/frutas-verduras.jpg',
-                'description' => 'Frutas y verduras cultivadas en La Palma',
+                'product_name' => 'Plátanos de Canarias',
+                'url' => 'img/products/platanos.jpg',
+                'description' => 'Plátanos de Canarias de La Palma',
             ],
             [
-                'product_name' => 'Artesanía local',
-                'url' => 'https://example.com/products/artesania-local.jpg',
-                'description' => 'Piezas de artesanía hechas a mano',
+                'product_name' => 'Aguacates de La Palma',
+                'url' => 'img/products/aguacates.jpg',
+                'description' => 'Aguacates ecológicos de cultivo local',
             ],
             [
-                'product_name' => 'Productos varios',
-                'url' => 'https://example.com/products/productos-varios.jpg',
-                'description' => null,
+                'product_name' => 'Queso Palmero curado',
+                'url' => 'img/products/queso_palmero.jpg',
+                'description' => 'Queso Palmero D.O.P. curado',
+            ],
+            [
+                'product_name' => 'Queso ahumado',
+                'url' => 'img/products/queso_ahumado.jpg',
+                'description' => 'Queso ahumado artesanal',
+            ],
+            [
+                'product_name' => 'Strelitzia',
+                'url' => 'img/products/strelitzia.jpg',
+                'description' => 'Ave del Paraíso en flor',
+            ],
+            [
+                'product_name' => 'Cerámica artesanal',
+                'url' => 'img/products/ceramica.jpg',
+                'description' => 'Pieza de cerámica artesanal palmera',
+            ],
+            [
+                'product_name' => 'Puros palmeros',
+                'url' => 'img/products/puros_palmeros.jpg',
+                'description' => 'Puros artesanales de La Palma',
+            ],
+            [
+                'product_name' => 'Pan de papa',
+                'url' => 'img/products/pan_de_papa.jpg',
+                'description' => 'Pan tradicional palmero',
+            ],
+            [
+                'product_name' => 'Rosquetes',
+                'url' => 'img/products/rosquetes.jpg',
+                'description' => 'Rosquetes glaseados artesanales',
+            ],
+            [
+                'product_name' => 'Vino de tea',
+                'url' => 'img/products/vino_de_tea.jpg',
+                'description' => 'Vino envejecido en madera de tea',
+            ],
+            [
+                'product_name' => 'Miel de palma',
+                'url' => 'img/products/miel_de_palma.jpg',
+                'description' => 'Miel de palma canaria',
+            ],
+            [
+                'product_name' => 'Bienmesabe',
+                'url' => 'img/products/bienmesabe.jpg',
+                'description' => 'Dulce tradicional de almendras',
+            ],
+            [
+                'product_name' => 'Rapadura',
+                'url' => 'img/products/rapadura.jpg',
+                'description' => 'Rapadura de miel de palma y gofio',
+            ],
+            [
+                'product_name' => 'Almendrados',
+                'url' => 'img/products/almendrados.jpg',
+                'description' => 'Pastas de almendra típicas',
+            ],
+            [
+                'product_name' => 'Aloe vera natural',
+                'url' => 'img/products/aloe_vera.jpg',
+                'description' => 'Gel de aloe vera puro',
             ],
         ];
 

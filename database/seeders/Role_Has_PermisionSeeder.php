@@ -30,11 +30,11 @@ class Role_Has_PermisionSeeder extends Seeder
             'role_id'=>'1',
             'permission_id'=>'4',
         ]];
-        foreach ($Role_Has_Permision as $Role_Has_Permision) {
+        foreach ($Role_Has_Permision as $item) {
             DB::table('role_has_permissions')->insert(
                 [
-                    'role_id' => $Role_Has_Permision['role_id'],    
-                    'permission_id' => $Role_Has_Permision['permission_id'],
+                    'role_id' => $item['role_id'],    
+                    'permission_id' => $item['permission_id'],
                 ]
             );
         }

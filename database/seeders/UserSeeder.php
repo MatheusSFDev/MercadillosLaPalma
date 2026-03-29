@@ -81,7 +81,7 @@ class UserSeeder extends Seeder
                 'phone_number' => '987654321',
                 'email' => 'paco@example.com',
                 'password' => 'password',
-                 'role' => 'customer'
+                 'role' => 'admin'
             ],
             [
                 'name' => 'María',
@@ -151,7 +151,7 @@ class UserSeeder extends Seeder
                 'surname' => 'Afton',
                 'address' => 'The Springtrap Street 789',
                 'phone_number' => '9045678901',
-                'email' => 'william@example.com',
+                'email' => 'afton@example.com',
                 'password' => 'password',
                 'role' => 'customer'
             ],
