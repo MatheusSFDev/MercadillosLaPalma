@@ -3,7 +3,7 @@
     <div class="container mx-auto px-4 md:px-12 max-w-7xl">
 
         {{-- Título Principal: Sin exceso de padding --}}
-        <h2 class="text-4xl md:text-5xl text-coffee mb-6 md:mb-8 font-bold font-playfair pl-1 leading-none">
+        <h2 class="text-4xl md:text-5xl text-coffee mb-6 md:mb-8 font-bold font-titulo-principal pl-1 leading-none">
             Mercadillos
         </h2>
 
@@ -17,11 +17,11 @@
                     {{-- Imagen --}}
                     <div class="w-full md:w-[32%] p-2 shrink-0">
                         <div class="h-40 md:h-full w-full overflow-hidden rounded-xl">
-                            <img
+                            <a href="{{ route('general.stalls', $market->id) }}"><img
                                 src="{{ $market->img_url ? asset($market->img_url) : asset('img/hero.png') }}"
                                 alt="Mercadillo {{ $market->municipality->name }}"
                                 class="w-full h-full object-cover transform hover:scale-105 transition-transform duration-500"
-                            >
+                            ></a>
                         </div>
                     </div>
 
@@ -29,12 +29,12 @@
                     <div class="p-4 flex flex-col justify-center flex-grow text-status-dark min-w-0">
                         
                         {{-- Nombre del municipio --}}
-                        <h3 class="text-xl font-bold font-dm-serif mb-2 leading-tight truncate">
+                        <h3 class="text-xl font-bold font-dm-serif mb-2">
                             {{ $market->municipality->name }}
                         </h3>
 
                         {{-- Fila de datos y botón alineados --}}
-                        <div class="flex items-end justify-between gap-2">
+                        <div class="flex items-end justify-between gap-4">
                             
                             {{-- Columna de Información --}}
                             <div class="space-y-1.5 font-general flex-grow">
@@ -43,7 +43,7 @@
                                     <div class="w-3.5 h-3.5 flex-shrink-0">
                                         <img src="{{ asset('img/icons/marcador.png') }}" class="w-full h-full opacity-80">
                                     </div>
-                                    <p class="text-[11px] leading-none truncate opacity-90 max-w-[180px]">
+                                    <p class="text-[11px] opacity-90 max-w-[180px]">
                                         {{ $market->address }}
                                     </p>
                                 </div>
@@ -56,8 +56,8 @@
                                     <div class="relative w-full max-w-[150px]">
                                         <select
                                             class="w-full bg-gray-100 text-status-dark text-[11px] 
-                                                   rounded-md px-2 py-1 pr-6 cursor-pointer border-none
-                                                   focus:ring-1 focus:ring-primary/50 appearance-none leading-tight"
+                                                rounded-md px-2 py-1 pr-6 cursor-pointer border-none
+                                                focus:ring-1 focus:ring-primary/50 appearance-none leading-tight"
                                             style="-webkit-appearance: none; -moz-appearance: none;"
                                         >
                                             <option disabled selected>Ver horarios</option>
@@ -85,7 +85,7 @@
                             <div class="flex-shrink-0">
                                 <a
                                     href="{{ route('general.stalls', $market->id) }}"
-                                    class="bg-primary hover:bg-primary-hover text-white px-5 py-2 rounded-lg text-sm transition font-normal font-dm-serif shadow-sm inline-block"
+                                    class="bg-primary-offgreen hover:bg-primary-offgreenhover text-white px-5 py-2 rounded-lg text-sm transition font-normal font-dm-serif shadow-sm inline-block"
                                 >
                                     Ver mercadillo
                                 </a>

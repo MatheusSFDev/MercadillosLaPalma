@@ -12,20 +12,20 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 use Livewire\Component;
 use Livewire\WithFileUploads;
+use Livewire\WithPagination;
 use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
 use Illuminate\Validation\Rule;
 
 class ProductInventory extends Component
 {
     use WithFileUploads;
+    use WithPagination;
 
-    // --- Colección de productos del vendedor y métricas del resumen ---
-    public $products;
+    // --- Métricas del resumen ---
     public $totalProducts = 0;
     public $assignedProducts = 0;
     public $unassignedProducts = 0;
     public $activeStalls = 0;
-    public $productRows = [];
 
     // --- Filtros de la tabla ---
     public $search = '';
@@ -38,39 +38,35 @@ class ProductInventory extends Component
     public $showDeleteProductModal = false;
     public $showDeleteFromStallModal = false;
     public $deletingProductId = null;
+    public $removingStallIndex = null;
 
-    // --- Estado del modal de edición ---
+    // --- Modo del modal: 'create' o 'edit' ---
+    public $modalMode = 'edit';
+
+    // --- Estado del modal ---
     public $editingProductId = null;
     public $editingProductName = null;
     public $editingProductDescription = null;
     public $editingProductCategoryId = null;
     public $editingProductUnit = null;
-    public $editingProductStalls = [];
     public $editingProductPhotos = [];
     public $photosToDelete = [];
     public $newPhotos = [];
     public $tempPhotos = [];
     public $sellerStalls = [];
-    public $selectedStallId = null;
-    public $editQuantity = null;
-    public $editPrice = null;
-    public $editMinQuantity = null;
-    public $editStepQuantity = null;
 
-    // Carga inicial del componente
+    // --- Asignaciones de puestos
+    // Cada bloque: ['stall_id', 'quantity', 'price', 'min_quantity', 'step_quantity', 'is_existing', 'marked_for_removal']
+    public $stallAssignments = [];
+    public $showStallConfig = false;
+
     public function mount()
     {
-        // Si el usuario no está autenticado o no es vendedor, se inicializa vacío
         if (!Auth::check() || !Auth::user()->hasRole('seller')) {
-            $this->products = collect();
             $this->categories = [];
             $this->sellerStalls = [];
-            $this->activeStalls = 0;
-            $this->prepareData();
             return;
         }
-
-        $this->loadProducts();
 
         $this->categories = Category::orderBy('name')
             ->get()
@@ -79,55 +75,51 @@ class ProductInventory extends Component
 
         $this->activeStalls = Auth::user()->stalls()->where('active', true)->count();
 
-        // Solo se cargan los puestos activos para el selector del modal
         $this->sellerStalls = Auth::user()
             ->stalls()
             ->where('active', true)
             ->get()
             ->map(fn($stall) => ['id' => $stall->id, 'name' => $stall->name])
             ->toArray();
-
-        $this->prepareData();
     }
 
-    // Carga los productos del vendedor con sus relaciones necesarias
-    protected function loadProducts(): void
-    {
-        $this->products = Auth::user()->products()
-            ->with(['stalls', 'category', 'photos'])
-            ->get();
-    }
+    public function updatedSearch(): void { $this->resetPage(); }
+    public function updatedCategory(): void { $this->resetPage(); }
+    public function updatedStatus(): void { $this->resetPage(); }
 
-    // Detecta cambios en los filtros y regenera las filas de la tabla
-    public function updated($propertyName)
-    {
-        if (in_array($propertyName, ['search', 'category', 'status'])) {
-            $this->prepareData();
-        }
-    }
-
-    // Se dispara cuando el usuario selecciona archivos en el input de fotos
-    // Valida, guarda el filename del archivo temporal con clave UUID y limpia el input
     public function updatedTempPhotos()
     {
-        $this->validate(['tempPhotos.*' => 'image|max:2048']);
+        $this->validate(['tempPhotos.*' => 'mimes:jpg,jpeg,png,webp|max:2048'],
+            [
+                'tempPhotos.*.mimes' => 'Solo se permiten imagenes en los formatos :values.',
+                'tempPhotos.*.max' => 'Cada imagen no debe superar los :max KB.',
+            ]
+        );
 
         foreach ($this->tempPhotos as $photo) {
-            // UUID como clave para poder borrar fotos individuales sin reindexar
             $this->newPhotos[(string) Str::uuid()] = $photo->getFilename();
         }
 
         $this->tempPhotos = [];
     }
 
-    // Abre el modal de edición y carga todos los datos del producto seleccionado
+    public function openCreateModal()
+    {
+        $this->resetModalState();
+        $this->modalMode = 'create';
+        $this->showEditModal = true;
+    }
+
+    // En edición, pre-carga los puestos asignados como bloques editables con is_existing = true
     public function openEditModal($productId)
     {
-        $product = $this->products->firstWhere('id', $productId);
+        $product = Product::where('id', $productId)
+            ->where('user_id', Auth::id())
+            ->with(['stalls', 'photos'])
+            ->firstOrFail();
 
-        if (!$product || $product->user_id !== Auth::id()) {
-            return;
-        }
+        $this->resetModalState();
+        $this->modalMode = 'edit';
 
         $this->editingProductId = $product->id;
         $this->editingProductName = $product->name;
@@ -135,59 +127,159 @@ class ProductInventory extends Component
         $this->editingProductCategoryId = $product->category_id;
         $this->editingProductUnit = $product->unit;
 
-        // Se cargan los puestos con los datos de la tabla pivot (precio, stock, etc.)
-        $this->editingProductStalls = $product->stalls->map(fn($stall) => [
-            'id' => $stall->id,
-            'name' => $stall->name,
+        $this->stallAssignments = $product->stalls->map(fn($stall) => [
+            'stall_id' => (string) $stall->id,
             'quantity' => $stall->pivot->quantity,
             'price' => $stall->pivot->price_per_unit,
             'min_quantity' => $stall->pivot->min_quantity,
             'step_quantity' => $stall->pivot->step_quantity,
+            'is_existing' => true,
+            'marked_for_removal' => false,
         ])->toArray();
 
-        // Se cargan las fotos existentes (solo id y url para mostrar y marcar para borrar)
+        // En edición siempre se muestra la sección de puestos
+        $this->showStallConfig = true;
+
         $this->editingProductPhotos = $product->photos->map(fn($photo) => [
             'id' => $photo->id,
             'url' => $photo->url,
         ])->toArray();
 
-        // Se limpian los estados temporales por si quedaron datos de una edición anterior
-        $this->photosToDelete = [];
-        $this->newPhotos = [];
-        $this->tempPhotos = [];
-        $this->selectedStallId = null;
-        $this->editQuantity = null;
-        $this->editPrice = null;
-        $this->editMinQuantity = null;
-        $this->editStepQuantity = null;
         $this->showEditModal = true;
     }
 
-    // Cuando se selecciona un puesto en el modal, se precargan sus datos de pivot
-    // Si el puesto no está asignado aún, se inicializan los campos a 0
-    public function updatedSelectedStallId($value)
+    protected function resetModalState(): void
     {
-        $stall = collect($this->editingProductStalls)->firstWhere('id', (int) $value);
+        $this->cleanupTempPhotos();
+        $this->editingProductId = null;
+        $this->editingProductName = null;
+        $this->editingProductDescription = null;
+        $this->editingProductCategoryId = null;
+        $this->editingProductUnit = null;
+        $this->editingProductPhotos = [];
+        $this->photosToDelete = [];
+        $this->newPhotos = [];
+        $this->tempPhotos = [];
+        $this->stallAssignments = [];
+        $this->showStallConfig = false;
+        $this->removingStallIndex = null;
+    }
 
-        if ($stall) {
-            $this->editQuantity = $stall['quantity'];
-            $this->editPrice = $stall['price'];
-            $this->editMinQuantity = $stall['min_quantity'];
-            $this->editStepQuantity = $stall['step_quantity'];
-        } elseif ($value) {
-            $this->editQuantity = 0;
-            $this->editPrice = 0;
-            $this->editMinQuantity = 0;
-            $this->editStepQuantity = 0;
-        } else {
-            $this->editQuantity = null;
-            $this->editPrice = null;
-            $this->editMinQuantity = null;
-            $this->editStepQuantity = null;
+    public function closeEditModal()
+    {
+        $this->showEditModal = false;
+        $this->resetModalState();
+    }
+
+    // Alterna la sección de puestos en modo crear
+    public function toggleStallConfig()
+    {
+        $this->showStallConfig = !$this->showStallConfig;
+
+        if ($this->showStallConfig && empty($this->stallAssignments)) {
+            $this->stallAssignments = [
+                ['stall_id' => '', 'quantity' => '', 'price' => '', 'min_quantity' => '', 'step_quantity' => '', 'is_existing' => false, 'marked_for_removal' => false],
+            ];
+        }
+
+        if (!$this->showStallConfig) {
+            $this->stallAssignments = [];
         }
     }
 
-    // Alterna el marcado de una foto existente para eliminar al guardar
+    // Añade un nuevo bloque vacío de asignación de puesto
+    public function addStallAssignment()
+    {
+        // Filtra los bloques visibles (no marcados para quitar) para la comprobación del último
+        $visibleAssignments = collect($this->stallAssignments)
+            ->filter(fn($a) => empty($a['marked_for_removal']))
+            ->values();
+
+        $last = $visibleAssignments->last();
+
+        if ($last && empty($last['stall_id'])) {
+            return;
+        }
+
+        // Cuenta puestos ya usados (incluyendo los marcados para quitar, para no confundir al usuario)
+        $usedStallIds = collect($this->stallAssignments)
+            ->filter(fn($a) => !empty($a['stall_id']))
+            ->pluck('stall_id')
+            ->unique();
+
+        if ($usedStallIds->count() >= count($this->sellerStalls)) {
+            return;
+        }
+
+        $this->stallAssignments[] = [
+            'stall_id' => '',
+            'quantity' => '',
+            'price' => '',
+            'min_quantity' => '',
+            'step_quantity' => '',
+            'is_existing' => false,
+            'marked_for_removal' => false,
+        ];
+    }
+
+    // Marca un bloque para quitar al guardar (si es existente) o lo elimina directamente (si es nuevo)
+    public function confirmRemoveStallAssignment($index)
+    {
+        $assignment = $this->stallAssignments[$index] ?? null;
+
+        if (!$assignment) {
+            return;
+        }
+
+        // Los bloques nuevos (no guardados) se eliminan directamente sin confirmación
+        if (empty($assignment['is_existing'])) {
+            $this->removeStallAssignmentDirect($index);
+            return;
+        }
+
+        // Los bloques existentes se marcan para quitar: se pide confirmación
+        $this->removingStallIndex = $index;
+        $this->showDeleteFromStallModal = true;
+    }
+
+    // Elimina un bloque nuevo directamente del array
+    protected function removeStallAssignmentDirect($index)
+    {
+        array_splice($this->stallAssignments, $index, 1);
+        $this->stallAssignments = array_values($this->stallAssignments);
+
+        // Si no quedan bloques visibles en modo crear, cierra la sección
+        $visibleCount = collect($this->stallAssignments)
+            ->filter(fn($a) => empty($a['marked_for_removal']))
+            ->count();
+
+        if ($visibleCount === 0 && $this->modalMode === 'create') {
+            $this->stallAssignments = [];
+            $this->showStallConfig = false;
+        }
+    }
+
+    // Marca el bloque existente como pendiente de quitar al guardar (no lo quita de BD todavía)
+    public function removeProductFromStall()
+    {
+        if ($this->removingStallIndex === null) {
+            return;
+        }
+
+        if (isset($this->stallAssignments[$this->removingStallIndex])) {
+            $this->stallAssignments[$this->removingStallIndex]['marked_for_removal'] = true;
+        }
+
+        $this->removingStallIndex = null;
+        $this->showDeleteFromStallModal = false;
+    }
+
+    public function cancelRemoveFromStall()
+    {
+        $this->removingStallIndex = null;
+        $this->showDeleteFromStallModal = false;
+    }
+
     public function toggleDeletePhoto($photoId)
     {
         if (in_array($photoId, $this->photosToDelete)) {
@@ -200,14 +292,27 @@ class ProductInventory extends Component
         }
     }
 
-    // Elimina una foto nueva (aún no guardada) del mapa por su clave UUID
     public function removeNewPhoto($key)
     {
-        unset($this->newPhotos[$key]);
+        if (isset($this->newPhotos[$key])) {
+            $tmpPath = storage_path('app/livewire-tmp/' . $this->newPhotos[$key]);
+            if (file_exists($tmpPath)) {
+                unlink($tmpPath);
+            }
+            unset($this->newPhotos[$key]);
+        }
     }
 
-    // Propiedad computada: reconstruye los objetos TemporaryUploadedFile
-    // a partir de los filenames guardados en $newPhotos para poder hacer temporaryUrl()
+    protected function cleanupTempPhotos(): void
+    {
+        foreach ($this->newPhotos as $filename) {
+            $tmpPath = storage_path('app/livewire-tmp/' . $filename);
+            if (file_exists($tmpPath)) {
+                unlink($tmpPath);
+            }
+        }
+    }
+
     public function getNewPhotosPreviewsProperty()
     {
         return collect($this->newPhotos)->map(function ($filename) {
@@ -215,29 +320,134 @@ class ProductInventory extends Component
         })->filter();
     }
 
-    // Cierra el modal de edición y resetea todos sus campos
-    public function closeEditModal()
+    public function saveModal()
     {
-        $this->showEditModal = false;
-        $this->editingProductId = null;
-        $this->editingProductName = null;
-        $this->editingProductDescription = null;
-        $this->editingProductCategoryId = null;
-        $this->editingProductUnit = null;
-        $this->editingProductStalls = [];
-        $this->editingProductPhotos = [];
-        $this->photosToDelete = [];
-        $this->newPhotos = [];
-        $this->tempPhotos = [];
-        $this->selectedStallId = null;
-        $this->editQuantity = null;
-        $this->editPrice = null;
-        $this->editMinQuantity = null;
-        $this->editStepQuantity = null;
+        if ($this->modalMode === 'create') {
+            $this->createProduct();
+        } else {
+            $this->updateProduct();
+        }
     }
 
-    // Guarda los cambios del producto: datos generales, fotos y asignación al puesto seleccionado
-    public function updateProductAtStall()
+    // Reglas de validación para los puestos, ignorando los marcados para quitar
+    protected function stallValidationRules(): array
+    {
+        $activeAssignments = collect($this->stallAssignments)
+            ->filter(fn($a) => empty($a['marked_for_removal']))
+            ->values()
+            ->toArray();
+
+        if (empty($activeAssignments)) {
+            return [];
+        }
+
+        return [
+            'stallAssignments.*.stall_id' => [
+                'nullable',
+                'exists:stalls,id',
+                function ($attribute, $value, $fail) {
+                    // Ignora la validación para los marcados para quitar
+                    $index = (int) explode('.', $attribute)[1];
+                    if (!empty($this->stallAssignments[$index]['marked_for_removal'])) {
+                        return;
+                    }
+                    if ($value && !Auth::user()->stalls()->where('id', $value)->exists()) {
+                        $fail('El puesto seleccionado no te pertenece.');
+                    }
+                },
+            ],
+            'stallAssignments.*.quantity' => 'required|numeric|min:1',
+            'stallAssignments.*.price' => 'required|numeric|min:0',
+            'stallAssignments.*.min_quantity' => 'required|numeric|min:1',
+            'stallAssignments.*.step_quantity' => 'required|numeric|min:1',
+        ];
+    }
+
+    // Ejecuta los detach de puestos marcados y el sync de los activos
+    protected function saveStallAssignments(Product $product): bool
+    {
+        // Separa los marcados para quitar de los activos
+        $toRemove = collect($this->stallAssignments)
+            ->filter(fn($a) => !empty($a['marked_for_removal']) && !empty($a['stall_id']))
+            ->pluck('stall_id');
+
+        $active = collect($this->stallAssignments)
+            ->filter(fn($a) => empty($a['marked_for_removal']) && !empty($a['stall_id']));
+
+        // Comprueba duplicados entre los activos
+        if ($active->pluck('stall_id')->count() !== $active->pluck('stall_id')->unique()->count()) {
+            $this->addError('stallAssignments', 'No puedes asignar el mismo puesto dos veces.');
+            return false;
+        }
+
+        // Desvincula los marcados para quitar
+        foreach ($toRemove as $stallId) {
+            $product->stalls()->detach($stallId);
+        }
+
+        // Guarda o actualiza los activos
+        foreach ($active as $assignment) {
+            $quantity = is_numeric($assignment['quantity'] ?? null) ? (int) $assignment['quantity'] : 1;
+            $price = is_numeric($assignment['price'] ?? null) ? (float) $assignment['price'] : 0;
+            $minQuantity = is_numeric($assignment['min_quantity'] ?? null) ? (int) $assignment['min_quantity'] : 1;
+            $stepQuantity = is_numeric($assignment['step_quantity'] ?? null) ? (int) $assignment['step_quantity'] : 1;
+
+            $product->stalls()->syncWithoutDetaching([
+                $assignment['stall_id'] => [
+                    'quantity' => $quantity,
+                    'price_per_unit' => $price,
+                    'min_quantity' => $minQuantity,
+                    'step_quantity' => $stepQuantity,
+                ],
+            ]);
+        }
+
+        return true;
+    }
+
+    protected function createProduct()
+    {
+        $rules = [
+            'editingProductName' => 'required|string|max:255',
+            'editingProductDescription' => 'nullable|string|max:1000',
+            'editingProductUnit' => ['required', Rule::enum(Units::class)],
+            'editingProductCategoryId' => 'required|exists:categories,id',
+            ...$this->stallValidationRules(),
+        ];
+
+        // Validaciones
+        $this->validate($rules, 
+            [
+                '*.required' => 'Campo requerido',
+                'stallAssignments.*.*.numeric' => "El campo debe ser numérico",
+                'stallAssignments.*.*.min' => "El valor mínimo es :min",
+            ]
+        );
+
+        $product = Product::create([
+            'name' => $this->editingProductName,
+            'description' => $this->editingProductDescription ?? null,
+            'unit' => $this->editingProductUnit,
+            'user_id' => Auth::id(),
+            'category_id' => $this->editingProductCategoryId,
+        ]);
+
+        foreach ($this->newPhotos as $filename) {
+            $file = TemporaryUploadedFile::createFromLivewire($filename);
+            Photo::create([
+                'url' => $file->store('products', 'public'),
+                'product_id' => $product->id,
+            ]);
+        }
+
+        if (!$this->saveStallAssignments($product)) {
+            return;
+        }
+
+        $this->closeEditModal();
+    }
+
+    protected function updateProduct()
     {
         $product = Product::where('id', $this->editingProductId)
             ->where('user_id', Auth::id())
@@ -248,26 +458,19 @@ class ProductInventory extends Component
             'editingProductDescription' => 'nullable|string|max:1000',
             'editingProductCategoryId' => 'required|exists:categories,id',
             'editingProductUnit' => ['required', Rule::enum(Units::class)],
+            ...$this->stallValidationRules(),
         ];
 
-        // Solo se validan los campos del puesto si hay uno seleccionado
-        if ($this->selectedStallId) {
-            $rules['selectedStallId'] = [
-                'required',
-                'exists:stalls,id',
-                function ($attribute, $value, $fail) {
-                    if (!Auth::user()->stalls()->where('id', $value)->exists()) {
-                        $fail('El puesto seleccionado no te pertenece.');
-                    }
-                },
-            ];
-            $rules['editQuantity'] = 'required|numeric|min:0';
-            $rules['editPrice'] = 'required|numeric|min:0';
-            $rules['editMinQuantity'] = 'required|numeric|min:0';
-            $rules['editStepQuantity'] = 'required|numeric|min:1';
-        }
-
-        $this->validate($rules);
+        // Validaciones
+        $this->validate($rules, 
+            [
+                '*.required' => 'Campo requerido',
+                'stallAssignments.*.*.numeric' => "El campo debe ser numérico",
+                'stallAssignments.*.*.min' => "El valor mínimo es :min",
+                'editingProductUnit.enum' => 'La unidad seleccionada no es válida.',
+                '*.max' => 'El límite es :max caracteres'
+            ]
+        );
 
         $product->name = $this->editingProductName;
         $product->description = $this->editingProductDescription;
@@ -275,7 +478,6 @@ class ProductInventory extends Component
         $product->category_id = $this->editingProductCategoryId;
         $product->save();
 
-        // Elimina del disco y de la BD las fotos marcadas para borrar
         foreach ($this->photosToDelete as $photoId) {
             $photo = Photo::whereHas('product', function ($q) {
                 $q->where('user_id', Auth::id());
@@ -287,7 +489,6 @@ class ProductInventory extends Component
             }
         }
 
-        // Guarda las fotos nuevas reconstruyendo el archivo temporal desde su filename
         foreach ($this->newPhotos as $filename) {
             $file = TemporaryUploadedFile::createFromLivewire($filename);
             Photo::create([
@@ -296,82 +497,24 @@ class ProductInventory extends Component
             ]);
         }
 
-        // Actualiza o crea la asignación del producto al puesto con syncWithoutDetaching
-        // para no afectar otros puestos ya asignados
-        if ($this->selectedStallId) {
-            $product->stalls()->syncWithoutDetaching([
-                $this->selectedStallId => [
-                    'quantity' => $this->editQuantity,
-                    'price_per_unit' => $this->editPrice,
-                    'min_quantity' => $this->editMinQuantity,
-                    'step_quantity' => $this->editStepQuantity,
-                ],
-            ]);
+        if (!$this->saveStallAssignments($product)) {
+            return;
         }
 
-        // Reemplaza el producto en la colección en memoria para no tener que recargar todo
-        $this->products = $this->products->map(function ($p) use ($product) {
-            if ($p->id == $product->id) {
-                return $product->load(['stalls', 'category', 'photos']);
-            }
-            return $p;
-        });
-
-        $this->prepareData();
         $this->closeEditModal();
     }
 
-    // Abre el modal de confirmación para quitar el producto del puesto seleccionado
-    public function confirmRemoveFromStall()
-    {
-        $this->showDeleteFromStallModal = true;
-    }
-
-    // Ejecuta la desvinculación del producto del puesto tras confirmación
-    public function removeProductFromStall()
-    {
-        $product = Product::where('id', $this->editingProductId)
-            ->where('user_id', Auth::id())
-            ->firstOrFail();
-
-        $this->validate([
-            'selectedStallId' => [
-                'required',
-                'exists:stalls,id',
-                function ($attribute, $value, $fail) {
-                    if (!Auth::user()->stalls()->where('id', $value)->exists()) {
-                        $fail('El puesto seleccionado no te pertenece.');
-                    }
-                },
-            ],
-        ]);
-
-        $product->stalls()->detach($this->selectedStallId);
-
-        $this->products = $this->products->map(function ($p) use ($product) {
-            if ($p->id == $product->id) {
-                return $product->load(['stalls', 'category', 'photos']);
-            }
-            return $p;
-        });
-
-        $this->showDeleteFromStallModal = false;
-        $this->prepareData();
-        $this->closeEditModal();
-    }
-
-    // Guarda el ID del producto a eliminar y abre el modal de confirmación
     public function confirmDeleteProduct($productId)
     {
         $this->deletingProductId = $productId;
         $this->showDeleteProductModal = true;
     }
 
-    // Elimina el producto completo: fotos del disco, desvincula puestos y borra el registro
     public function deleteProduct()
     {
         $product = Product::where('id', $this->deletingProductId)
             ->where('user_id', Auth::id())
+            ->with('photos')
             ->firstOrFail();
 
         foreach ($product->photos as $photo) {
@@ -381,84 +524,48 @@ class ProductInventory extends Component
         $product->stalls()->detach();
         $product->delete();
 
-        // Se elimina de la colección en memoria para actualizar la tabla sin recargar
-        $this->products = $this->products->reject(fn($p) => $p->id === $product->id);
         $this->showDeleteProductModal = false;
         $this->deletingProductId = null;
-        $this->prepareData();
     }
 
-    // Cancela la eliminación del producto y cierra el modal
     public function cancelDeleteProduct()
     {
         $this->showDeleteProductModal = false;
         $this->deletingProductId = null;
     }
 
-    // Cancela la eliminación del producto de un puesto y cierra el modal
-    public function cancelRemoveFromStall()
+    public function render()
     {
-        $this->showDeleteFromStallModal = false;
-    }
+        $baseQuery = Auth::user()->products()->with(['stalls', 'category']);
 
-    // Calcula métricas del resumen y aplica los filtros activos para generar $productRows
-    protected function prepareData(): void
-    {
-        $allProducts = $this->products->loadMissing(['stalls', 'category']);
-
-        $this->totalProducts = $allProducts->count();
-        $this->assignedProducts = $allProducts->filter(fn($p) => $p->stalls->isNotEmpty())->count();
+        $this->totalProducts = (clone $baseQuery)->count();
+        $this->assignedProducts = (clone $baseQuery)->has('stalls')->count();
         $this->unassignedProducts = $this->totalProducts - $this->assignedProducts;
 
-        $filtered = $allProducts;
+        $filteredQuery = (clone $baseQuery);
 
         if (!empty($this->search)) {
-            $search = mb_strtolower($this->search, 'UTF-8');
-            $filtered = $filtered->filter(
-                fn($p) => str_contains(mb_strtolower($p->name, 'UTF-8'), $search)
-            );
+            $filteredQuery->where('name', 'like', '%' . $this->search . '%');
         }
 
         if ($this->category !== 'all') {
-            $filtered = $filtered->filter(
-                fn($p) => optional($p->category)->name === $this->category
-            );
+            $filteredQuery->whereHas('category', fn($q) => $q->where('name', $this->category));
         }
 
         if ($this->status === 'asignado') {
-            $filtered = $filtered->filter(fn($p) => $p->stalls->isNotEmpty());
+            $filteredQuery->has('stalls');
         } elseif ($this->status === 'sin_asignar') {
-            $filtered = $filtered->filter(fn($p) => $p->stalls->isEmpty());
+            $filteredQuery->doesntHave('stalls');
         }
 
-        // Transforma cada producto en un array plano con los datos que necesita la tabla
-        $this->productRows = $filtered->map(function ($product) {
-            $stalls = $product->stalls;
-            $totalStock = $stalls->sum(fn($s) => $s->pivot->quantity ?? 0);
-            $avgPrice = $stalls->count()
-                ? $stalls->avg(fn($s) => $s->pivot->price_per_unit ?? 0)
-                : null;
+        $products = $filteredQuery->paginate(8);
 
-            return [
-                'id' => $product->id,
-                'name' => $product->name,
-                'status' => $stalls->isNotEmpty() ? 'Asignado' : 'Sin asignar',
-                'stalls' => $stalls->pluck('name')->join(', '),
-                'stock' => $totalStock,
-                'price' => $avgPrice ? round($avgPrice, 2) : null,
-                'unit' => $product->unit,
-            ];
-        })->toArray();
-    }
-
-    public function render()
-    {
         return view('livewire.seller.product-inventory', [
             'totalProducts' => $this->totalProducts,
             'assignedProducts' => $this->assignedProducts,
             'unassignedProducts' => $this->unassignedProducts,
             'activeStalls' => $this->activeStalls,
-            'productRows' => $this->productRows,
+            'products' => $products,
         ]);
     }
 }
