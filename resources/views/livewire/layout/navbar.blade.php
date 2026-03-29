@@ -4,7 +4,11 @@ $user = Auth::user();
 $avatarUrl = $user ? ($user->avatar ? asset('storage/' . $user->avatar) : 'https://ui-avatars.com/api/?name=' .
 urlencode($user->name)) : null;
 // Obtener el nombre del rol actual de forma segura
-$roleName = $user && $user->getRoleNames()->first() ? ucfirst($user->getRoleNames()->first()) : 'Usuario';
+$currentRole = $user ? $user->currentRole() : null;
+$roleName = $currentRole ? ucfirst($currentRole) : 'Usuario';
+// Obtener todos los roles del usuario
+$userRoles = $user ? $user->getRoleNames() : collect();
+$hasMultipleRoles = $userRoles->count() > 1;
 @endphp
 
 <nav x-data="{ open: false }" class="bg-white border-b border-gray-100 sticky top-0 z-50">
@@ -21,7 +25,7 @@ $roleName = $user && $user->getRoleNames()->first() ? ucfirst($user->getRoleName
             {{-- Opciones principales Navbar (Desktop) --}}
             <div class="hidden sm:flex sm:items-center sm:ms-6 space-x-4">
                 @auth
-                    @if ($user->hasRole('seller'))
+                    @if ($currentRole === 'seller')
                         <a href="{{ route('seller.index-stalls') }}"
                             class="text-gray-500 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium">Mis Puestos</a>
                         <a href="{{ route('general.orders') }}"
@@ -34,7 +38,7 @@ $roleName = $user && $user->getRoleNames()->first() ? ucfirst($user->getRoleName
                         @endif
                     @endif
 
-                    @if ($user->hasRole('customer'))
+                    @if ($currentRole === 'customer')
                         <a href="{{ route('customer.cart') }}"
                             class="text-gray-500 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium">Mi Carrito</a>
                         <a href="{{ route('general.orders') }}"
@@ -59,6 +63,19 @@ $roleName = $user && $user->getRoleNames()->first() ? ucfirst($user->getRoleName
                         <div class="px-4 py-2 text-xs text-gray-400 border-b border-gray-100">
                             {{ $user->name }} ({{ $roleName }})
                         </div>
+
+                        {{-- Selector de roles si tiene múltiples --}}
+                        @if ($hasMultipleRoles)
+                        <div class="px-4 py-2 border-b border-gray-100">
+                            <p class="text-xs text-gray-500 mb-1">Cambiar rol:</p>
+                            @foreach($userRoles as $role)
+                                <button wire:click="switchRole('{{ $role }}')"
+                                    class="block w-full text-left px-2 py-1 text-sm {{ $role === $currentRole ? 'text-blue-600 font-medium' : 'text-gray-700' }} hover:bg-gray-50 rounded">
+                                    {{ ucfirst($role) }}
+                                </button>
+                            @endforeach
+                        </div>
+                        @endif
 
                         {{-- Enlaces de administración ahora en GRIS --}}
                         @if ($user->hasRole('admin'))
@@ -112,7 +129,7 @@ $roleName = $user && $user->getRoleNames()->first() ? ucfirst($user->getRoleName
     <div :class="{ 'block': open, 'hidden': !open }" class="hidden sm:hidden bg-gray-50">
         <div class="pt-2 pb-3 space-y-1">
             @auth
-            @if ($user->hasRole('seller'))
+            @if ($currentRole === 'seller')
             <div class="border-t border-gray-200 my-2"></div>
             <span class="px-4 text-xs text-gray-400 font-bold uppercase">Zona Vendedor</span>
             <a href="{{ route('seller.index-stalls') }}"
@@ -126,7 +143,7 @@ $roleName = $user && $user->getRoleNames()->first() ? ucfirst($user->getRoleName
                 Productos</a>
             @endif
 
-            @if ($user->hasRole('customer'))
+            @if ($currentRole === 'customer')
             <a href="{{ route('customer.cart') }}"
                 class="block w-full ps-3 pe-4 py-2 text-base font-medium text-gray-600 hover:bg-gray-100">Mi Carrito</a>
             <a href="{{ route('general.orders') }}"
@@ -145,8 +162,22 @@ $roleName = $user && $user->getRoleNames()->first() ? ucfirst($user->getRoleName
                 <div class="ms-3">
                     <div class="font-medium text-base text-gray-800">{{ $user->name }}</div>
                     <div class="font-medium text-sm text-gray-500">{{ $user->email }}</div>
+                    <div class="font-medium text-sm text-gray-400">{{ $roleName }}</div>
                 </div>
             </div>
+
+            {{-- Selector de roles móvil si tiene múltiples --}}
+            @if ($hasMultipleRoles)
+            <div class="mt-3 space-y-1 px-4">
+                <p class="text-xs text-gray-500 mb-2">Cambiar rol:</p>
+                @foreach($userRoles as $role)
+                    <button wire:click="switchRole('{{ $role }}')"
+                        class="block w-full text-left px-3 py-2 text-sm {{ $role === $currentRole ? 'text-blue-600 font-medium bg-blue-50' : 'text-gray-700' }} hover:bg-gray-100 rounded">
+                        {{ ucfirst($role) }}
+                    </button>
+                @endforeach
+            </div>
+            @endif
 
             <div class="mt-3 space-y-1">
                 {{-- Enlaces Administrativos en Gris para Móvil --}}
@@ -183,4 +214,14 @@ $roleName = $user && $user->getRoleNames()->first() ? ucfirst($user->getRoleName
             @endauth
         </div>
     </div>
+
+    @push('scripts')
+    <script>
+        document.addEventListener('livewire:initialized', () => {
+            Livewire.on('role-changed', () => {
+                window.location.reload();
+            });
+        });
+    </script>
+    @endpush
 </nav>

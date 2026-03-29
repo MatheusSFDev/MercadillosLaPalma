@@ -79,5 +79,37 @@ class User extends Authenticatable
     public function products(): HasMany
     {
         return $this->hasMany(Product::class);
-    } 
+    }
+
+    /**
+     * Get the current active role for the user.
+     * If user has multiple roles, returns the one stored in session, otherwise the first role.
+     */
+    public function currentRole()
+    {
+        $roles = $this->getRoleNames();
+        
+        if ($roles->count() === 1) {
+            return $roles->first();
+        }
+        
+        if ($roles->count() > 1) {
+            $currentRole = session('current_role');
+            return $currentRole && $roles->contains($currentRole) ? $currentRole : $roles->first();
+        }
+        
+        return null;
+    }
+
+    /**
+     * Set the current active role for the user.
+     */
+    public function setCurrentRole(string $role)
+    {
+        if ($this->hasRole($role)) {
+            session(['current_role' => $role]);
+            return true;
+        }
+        return false;
+    }
 }

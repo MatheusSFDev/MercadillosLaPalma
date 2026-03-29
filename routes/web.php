@@ -55,7 +55,7 @@ Route::controller(GenericController::class)
 Route::put("/profile", [GenericController::class, 'update'])->name("profile.update");
 
 Route::prefix('root')
-    ->middleware(['auth', 'role:root'])
+    ->middleware(['auth', 'current_role:root'])
     ->name('root.')
     ->group(function () {
 
@@ -78,7 +78,7 @@ Route::prefix('root')
 Route::controller(CustomerController::class)
     ->prefix("customer")
     ->name("customer.")
-    ->middleware(['auth', 'verified', 'role:customer|root']) //Añadido un Auth y Role, aunque primitivo
+    ->middleware(['auth', 'verified', 'current_role:customer']) // Check current role is customer
     ->group(function () {
 
         Route::get("/profile", "profile")->name("profile");
@@ -93,7 +93,7 @@ Route::controller(CustomerController::class)
 Route::controller(SellerController::class)
     ->prefix("seller")
     ->name("seller.")
-    ->middleware(['auth', 'verified', 'role:seller|root']) //Añadido un Auth y Role, aunque primitivo
+    ->middleware(['auth', 'verified', 'current_role:seller']) // Check current role is seller
     ->group(function () {
         Route::get("/orders", "sellerOrders")->name("orders");
         Route::get('/create/product', 'createProduct')->name("create-product");
@@ -107,7 +107,7 @@ Route::controller(SellerController::class)
 Route::controller(AdminController::class)
     ->prefix("admin")
     ->name("admin.")
-    ->middleware(['auth', 'verified', 'role:admin|root']) //Añadido un Auth y Role, aunque primitivo
+    ->middleware(['auth', 'verified', 'current_role:admin']) // Check current role is admin
     ->group(function (): void {
 
         Route::get('/controlpanel/markets', 'indexMarket')->name("markets");
