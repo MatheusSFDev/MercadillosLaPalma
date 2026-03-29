@@ -25,7 +25,7 @@
             {{-- SUBTÍTULO --}}
             <div
                 class="mt-8 ml-auto text-right font-dm-serif
-                    max-w-[270px] md:max-w-[700px]"
+                    max-w-[270px] md:max-w-[700px] mb-8"
             >
                 <p class="text-md md:text-4xl leading-tight">
                     La web donde podrás informarte sobre los

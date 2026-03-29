@@ -21,7 +21,8 @@ export default {
                     hover: '#5a8713', // Verde hoja más vivo para hovers [cite: 441]
                     light: '#7c995c', // Verde salvia para bordes o fondos suaves [cite: 441]
                     pastel: '#e3eccd', // Verde pastel para fondos o tarjetas [cite: 441]
-                    offgreen:'#4d5d3d'
+                    offgreen:'#4d5d3d',
+                    offgreenhover:'#262c21'
                 },
 
                 // Tonos Tierra (Textos, Fondos secundarios)
