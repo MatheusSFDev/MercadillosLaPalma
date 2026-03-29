@@ -30,11 +30,11 @@ class PermisionSeeder extends Seeder
             'name'=>'Delete',
             'guard_name'=>'web',
         ]];
-        foreach ($permision as $permision) {
+        foreach ($permision as $perm) {
             DB::table('permissions')->insert(
                 [
-                    'name' => $permision['name'],
-                    'guard_name' => $permision['guard_name'],
+                    'name' => $perm['name'],
+                    'guard_name' => $perm['guard_name'],
                 ]
             );
         }

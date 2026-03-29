@@ -38,6 +38,52 @@ class FleaMarketSeeder extends Seeder
                 'municipality' => 'Fuencaliente de La Palma',
                 'img_url' => 'img/fleaMarkets/Fuencaliente.jpg',
             ],
+            [
+                'address' => 'Parque de Los Álamos, Breña Alta',
+                'municipality' => 'Breña Alta',
+                'img_url' => 'img/fleaMarkets/Breña_Alta.jpg',
+            ],
+            [
+                'address' => 'Paseo del Charco del Lino, Breña Baja',
+                'municipality' => 'Breña Baja',
+                'img_url' => 'img/fleaMarkets/Breña_Baja.jpg',
+            ],
+            [
+                'address' => 'Plaza de Montserrat, San Andrés y Sauces',
+                'municipality' => 'San Andrés y Sauces',
+                'img_url' => 'img/fleaMarkets/San_Andres_y_Sauces.jpg',
+            ],
+            [
+                'address' => 'Calle Doctor Morera Bravo, Villa de Mazo',
+                'municipality' => 'Villa de Mazo',
+                'img_url' => 'img/fleaMarkets/Villa_de_Mazo.jpg',
+            ],
+            [
+                'address' => 'Muelle Deportivo, Tazacorte',
+                'municipality' => 'Tazacorte',
+                'img_url' => 'img/fleaMarkets/Tazacorte.jpg',
+            ],
+            [
+                'address' => 'Calle La Camacha, Puntallana',
+                'municipality' => 'Puntallana',
+                'img_url' => 'img/fleaMarkets/Puntallana.jpg',
+            ],
+            [
+                'address' => 'El Jesús, Tijarafe',
+                'municipality' => 'Tijarafe',
+                'img_url' => 'img/fleaMarkets/Tijarafe.jpg',
+            ],
+            [
+                'address' => 'Centro de Promoción Agraria de San Antonio del Monte, Garafía',
+                'municipality' => 'Garafía',
+                'img_url' => 'img/fleaMarkets/Garafia.jpg',
+            ],
+            [
+                'address' => 'Plaza del Rosario, s/n, 38726, Barlovento',
+                'municipality' => 'Barlovento',
+                'img_url' => 'img/fleaMarkets/Barlovento.jpg',
+            ],
+            
         ];
 
         foreach ($fleaMarkets as $market) {
